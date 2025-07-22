@@ -1,0 +1,67 @@
+{
+  "name": "terraform",
+  "display_name": "Terraform",
+  "category": "devops",
+  "type": "infrastructure-as-code",
+  "description": "Terraform - Infrastructure as Code to provision and manage any cloud, infrastructure, or service",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "hashicorp/terraform",
+        "docs_path": "website/docs",
+        "branch": "main"
+      },
+      "website": "https://www.terraform.io/docs"
+    },
+    "examples": {
+      "github": {
+        "repo": "hashicorp/terraform",
+        "docs_path": "examples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "cli/install",
+    "configuration": "language",
+    "providers": "language/providers",
+    "resources": "language/resources",
+    "modules": "language/modules",
+    "state": "language/state",
+    "functions": "language/functions",
+    "cli": "cli"
+  },
+  "context_files": [
+    "website/docs/cli/install.mdx",
+    "website/docs/language/index.mdx",
+    "website/docs/language/providers/index.mdx",
+    "website/docs/language/resources/index.mdx",
+    "website/docs/language/modules/index.mdx"
+  ],
+  "key_features": [
+    "infrastructure-as-code",
+    "multi-cloud-support",
+    "state-management",
+    "execution-plans",
+    "resource-graph",
+    "change-automation",
+    "provider-ecosystem",
+    "module-system",
+    "workspace-management",
+    "version-control-integration"
+  ],
+  "common_patterns": [
+    "resource-definitions",
+    "provider-configuration",
+    "variable-usage",
+    "output-values",
+    "module-creation",
+    "state-management",
+    "workspace-organization",
+    "backend-configuration",
+    "conditional-resources",
+    "data-sources"
+  ],
+  "priority": 89
+}

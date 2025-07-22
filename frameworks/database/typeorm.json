@@ -1,0 +1,67 @@
+{
+  "name": "typeorm",
+  "display_name": "TypeORM",
+  "category": "database",
+  "type": "typescript-orm",
+  "description": "TypeORM - ORM that can run in Node.js and browsers, supports TypeScript and JavaScript",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "typeorm/typeorm",
+        "docs_path": "docs",
+        "branch": "master"
+      },
+      "website": "https://typeorm.io"
+    },
+    "examples": {
+      "github": {
+        "repo": "typeorm/typeorm",
+        "docs_path": "sample",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "installation",
+    "connection": "connection",
+    "entities": "entities",
+    "relations": "relations",
+    "repository": "working-with-repository",
+    "query-builder": "select-query-builder",
+    "migrations": "migrations",
+    "decorators": "decorator-reference"
+  },
+  "context_files": [
+    "docs/installation.md",
+    "docs/connection.md",
+    "docs/entities.md",
+    "docs/relations.md",
+    "docs/working-with-repository.md"
+  ],
+  "key_features": [
+    "typescript-support",
+    "decorators",
+    "active-record-pattern",
+    "data-mapper-pattern",
+    "query-builder",
+    "migrations",
+    "relations",
+    "entity-validation",
+    "connection-management",
+    "database-agnostic"
+  ],
+  "common_patterns": [
+    "entity-definition",
+    "repository-usage",
+    "query-builder-usage",
+    "relation-mapping",
+    "migration-scripts",
+    "connection-setup",
+    "decorator-usage",
+    "validation-rules",
+    "transaction-handling",
+    "custom-repositories"
+  ],
+  "priority": 86
+}

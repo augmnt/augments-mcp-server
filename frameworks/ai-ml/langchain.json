@@ -1,0 +1,70 @@
+{
+  "name": "langchain",
+  "display_name": "LangChain",
+  "category": "ai-ml",
+  "type": "llm-framework",
+  "description": "LangChain - Building applications with LLMs through composability",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "langchain-ai/langchain",
+        "docs_path": "docs",
+        "branch": "master"
+      },
+      "website": "https://langchain.com"
+    },
+    "examples": {
+      "github": {
+        "repo": "langchain-ai/langchain",
+        "docs_path": "docs/docs/tutorials",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "get_started/installation",
+    "quickstart": "get_started/quickstart",
+    "tutorials": "tutorials",
+    "how-to": "how_to"
+  },
+  "context_files": [
+    "docs/docs/get_started/installation.mdx",
+    "docs/docs/get_started/quickstart.mdx",
+    "docs/docs/tutorials/llm_chain.ipynb",
+    "docs/docs/how_to/chatbots_memory.ipynb"
+  ],
+  "key_features": [
+    "llm-integration",
+    "prompt-templates",
+    "chain-composition",
+    "memory-management",
+    "agent-framework",
+    "document-loaders",
+    "vector-stores",
+    "text-splitters",
+    "output-parsers",
+    "callbacks",
+    "streaming-support",
+    "multi-modal-support",
+    "tool-integration",
+    "retrieval-augmented-generation"
+  ],
+  "common_patterns": [
+    "llm-chains",
+    "prompt-engineering",
+    "agent-creation",
+    "document-qa",
+    "memory-chains",
+    "retrieval-chains",
+    "custom-tools",
+    "callback-handlers",
+    "output-parsing",
+    "vector-search",
+    "document-processing",
+    "conversational-ai",
+    "rag-implementation",
+    "multi-agent-systems"
+  ],
+  "priority": 85
+}

@@ -1,0 +1,70 @@
+{
+  "name": "solidjs",
+  "display_name": "Solid.js",
+  "category": "web",
+  "type": "javascript-framework",
+  "description": "Solid.js - Simple and performant reactivity for building user interfaces",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "solidjs/solid-docs",
+        "docs_path": "src/routes/docs",
+        "branch": "main"
+      },
+      "website": "https://solidjs.com"
+    },
+    "examples": {
+      "github": {
+        "repo": "solidjs/solid",
+        "docs_path": "examples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "getting-started",
+    "components": "guides/getting-started",
+    "reactivity": "concepts/reactivity",
+    "stores": "concepts/stores"
+  },
+  "context_files": [
+    "src/routes/docs/getting-started.mdx",
+    "src/routes/docs/concepts/reactivity.mdx",
+    "src/routes/docs/concepts/stores.mdx",
+    "src/routes/docs/guides/getting-started.mdx"
+  ],
+  "key_features": [
+    "fine-grained-reactivity",
+    "no-virtual-dom",
+    "jsx-templates",
+    "compile-time-optimization",
+    "reactive-primitives",
+    "stores",
+    "context",
+    "suspense",
+    "error-boundaries",
+    "transitions",
+    "concurrent-features",
+    "typescript-support",
+    "server-rendering",
+    "performance-optimized"
+  ],
+  "common_patterns": [
+    "component-definition",
+    "reactive-signals",
+    "derived-computations",
+    "effect-handling",
+    "store-management",
+    "context-usage",
+    "event-handling",
+    "conditional-rendering",
+    "list-rendering",
+    "resource-loading",
+    "suspense-patterns",
+    "error-boundaries",
+    "lifecycle-methods",
+    "performance-optimization"
+  ],
+  "priority": 78
+}

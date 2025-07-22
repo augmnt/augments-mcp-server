@@ -1,0 +1,67 @@
+{
+  "name": "webpack",
+  "display_name": "Webpack",
+  "category": "tools",
+  "type": "bundler",
+  "description": "Webpack - A static module bundler for modern JavaScript applications",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "webpack/webpack",
+        "docs_path": "docs",
+        "branch": "main"
+      },
+      "website": "https://webpack.js.org"
+    },
+    "examples": {
+      "github": {
+        "repo": "webpack/webpack",
+        "docs_path": "examples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "guides/installation",
+    "getting-started": "guides/getting-started",
+    "concepts": "concepts",
+    "configuration": "configuration",
+    "loaders": "loaders",
+    "plugins": "plugins",
+    "guides": "guides",
+    "api": "api"
+  },
+  "context_files": [
+    "docs/src/content/guides/installation.md",
+    "docs/src/content/guides/getting-started.md",
+    "docs/src/content/concepts/index.md",
+    "docs/src/content/configuration/index.md",
+    "docs/src/content/loaders/index.md"
+  ],
+  "key_features": [
+    "module-bundling",
+    "code-splitting",
+    "loaders",
+    "plugins",
+    "hot-module-replacement",
+    "tree-shaking",
+    "asset-optimization",
+    "dev-server",
+    "source-maps",
+    "lazy-loading"
+  ],
+  "common_patterns": [
+    "entry-configuration",
+    "output-configuration",
+    "loader-usage",
+    "plugin-configuration",
+    "code-splitting",
+    "optimization-settings",
+    "dev-server-setup",
+    "environment-variables",
+    "asset-management",
+    "production-builds"
+  ],
+  "priority": 88
+}

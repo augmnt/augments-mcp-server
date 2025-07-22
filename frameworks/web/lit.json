@@ -1,0 +1,67 @@
+{
+  "name": "lit",
+  "display_name": "Lit",
+  "category": "web",
+  "type": "web-components-library",
+  "description": "Lit - Simple. Fast. Web Components.",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "lit/lit",
+        "docs_path": "docs",
+        "branch": "main"
+      },
+      "website": "https://lit.dev"
+    },
+    "examples": {
+      "github": {
+        "repo": "lit/lit",
+        "docs_path": "examples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "docs/getting-started",
+    "tutorial": "docs/tutorials/intro-to-lit",
+    "components": "docs/components/defining",
+    "templates": "docs/templates/overview",
+    "styles": "docs/components/styles",
+    "lifecycle": "docs/components/lifecycle",
+    "properties": "docs/components/properties",
+    "events": "docs/components/events"
+  },
+  "context_files": [
+    "docs/getting-started.md",
+    "docs/tutorials/intro-to-lit.md",
+    "docs/components/defining.md",
+    "docs/templates/overview.md",
+    "docs/components/styles.md"
+  ],
+  "key_features": [
+    "web-components",
+    "lightweight",
+    "reactive-properties",
+    "templating",
+    "scoped-styling",
+    "typescript-support",
+    "decorators",
+    "lit-html-templates",
+    "shadow-dom",
+    "custom-elements"
+  ],
+  "common_patterns": [
+    "component-definition",
+    "property-declarations",
+    "template-rendering",
+    "event-handling",
+    "style-definition",
+    "lifecycle-callbacks",
+    "reactive-updates",
+    "slot-composition",
+    "custom-element-registration",
+    "typescript-decorators"
+  ],
+  "priority": 78
+}

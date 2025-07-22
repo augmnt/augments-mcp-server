@@ -1,0 +1,67 @@
+{
+  "name": "cypress",
+  "display_name": "Cypress",
+  "category": "testing",
+  "type": "e2e-testing-framework",
+  "description": "Cypress - Fast, easy and reliable testing for anything that runs in a browser",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "cypress-io/cypress",
+        "docs_path": "packages/server/docs",
+        "branch": "develop"
+      },
+      "website": "https://docs.cypress.io"
+    },
+    "examples": {
+      "github": {
+        "repo": "cypress-io/cypress-example-kitchensink",
+        "docs_path": "cypress",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "guides/getting-started/installing-cypress",
+    "writing-tests": "guides/end-to-end-testing/writing-your-first-end-to-end-test",
+    "best-practices": "guides/references/best-practices",
+    "api": "api/table-of-contents",
+    "commands": "api/commands",
+    "configuration": "guides/references/configuration",
+    "plugins": "guides/tooling/plugins-guide",
+    "ci": "guides/continuous-integration/introduction"
+  },
+  "context_files": [
+    "packages/server/docs/guides/getting-started/installing-cypress.md",
+    "packages/server/docs/guides/end-to-end-testing/writing-your-first-end-to-end-test.md",
+    "packages/server/docs/guides/references/best-practices.md",
+    "packages/server/docs/api/commands.md",
+    "packages/server/docs/guides/references/configuration.md"
+  ],
+  "key_features": [
+    "e2e-testing",
+    "component-testing",
+    "real-browser-testing",
+    "time-travel-debugging",
+    "automatic-waiting",
+    "network-stubbing",
+    "visual-testing",
+    "ci-integration",
+    "test-runner",
+    "dashboard-service"
+  ],
+  "common_patterns": [
+    "test-structure",
+    "element-selection",
+    "user-interactions",
+    "assertions",
+    "api-mocking",
+    "file-uploads",
+    "custom-commands",
+    "page-object-model",
+    "test-data-management",
+    "ci-configuration"
+  ],
+  "priority": 87
+}

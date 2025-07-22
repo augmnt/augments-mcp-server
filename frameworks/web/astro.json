@@ -1,0 +1,70 @@
+{
+  "name": "astro",
+  "display_name": "Astro",
+  "category": "web",
+  "type": "static-site-generator",
+  "description": "Astro - Build faster websites with less client-side JavaScript",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "withastro/astro",
+        "docs_path": "packages/astro/docs",
+        "branch": "main"
+      },
+      "website": "https://astro.build"
+    },
+    "examples": {
+      "github": {
+        "repo": "withastro/astro",
+        "docs_path": "examples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "getting-started",
+    "routing": "core-concepts/routing",
+    "components": "core-concepts/astro-components",
+    "integrations": "guides/integrations-guide"
+  },
+  "context_files": [
+    "src/content/docs/en/getting-started.mdx",
+    "src/content/docs/en/core-concepts/astro-components.mdx",
+    "src/content/docs/en/core-concepts/routing.mdx",
+    "src/content/docs/en/guides/integrations-guide.mdx"
+  ],
+  "key_features": [
+    "component-islands",
+    "zero-js-by-default",
+    "bring-your-own-framework",
+    "static-site-generation",
+    "partial-hydration",
+    "typescript-support",
+    "markdown-support",
+    "content-collections",
+    "integrations-ecosystem",
+    "build-optimization",
+    "file-based-routing",
+    "scoped-styling",
+    "server-side-rendering",
+    "edge-rendering"
+  ],
+  "common_patterns": [
+    "component-islands-architecture",
+    "selective-hydration",
+    "framework-agnostic-components",
+    "markdown-with-components",
+    "content-driven-sites",
+    "static-optimization",
+    "integration-setup",
+    "typescript-configuration",
+    "styling-approaches",
+    "deployment-optimization",
+    "performance-patterns",
+    "seo-optimization",
+    "content-management",
+    "build-customization"
+  ],
+  "priority": 82
+}

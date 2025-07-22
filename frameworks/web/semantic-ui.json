@@ -1,0 +1,67 @@
+{
+  "name": "semantic-ui",
+  "display_name": "Semantic UI",
+  "category": "web",
+  "type": "css-framework",
+  "description": "Semantic UI - User Interface is the language of the web",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "Semantic-Org/Semantic-UI",
+        "docs_path": "docs",
+        "branch": "master"
+      },
+      "website": "https://semantic-ui.com"
+    },
+    "examples": {
+      "github": {
+        "repo": "Semantic-Org/Semantic-UI",
+        "docs_path": "examples",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "introduction/getting-started",
+    "elements": "elements/button",
+    "collections": "collections/breadcrumb",
+    "views": "views/card",
+    "modules": "modules/accordion",
+    "behaviors": "behaviors/api",
+    "theming": "usage/theming",
+    "layout": "usage/layout"
+  },
+  "context_files": [
+    "docs/introduction/getting-started.md",
+    "docs/elements/button.md",
+    "docs/collections/breadcrumb.md",
+    "docs/views/card.md",
+    "docs/modules/accordion.md"
+  ],
+  "key_features": [
+    "semantic-naming",
+    "intuitive-javascript",
+    "responsive-design",
+    "theming-system",
+    "modular-components",
+    "jquery-integration",
+    "debug-mode",
+    "performance-logging",
+    "flexible-theming",
+    "natural-language"
+  ],
+  "common_patterns": [
+    "semantic-classes",
+    "component-initialization",
+    "behavior-definitions",
+    "theme-customization",
+    "responsive-grids",
+    "form-validation",
+    "modal-dialogs",
+    "dropdown-menus",
+    "progress-bars",
+    "sidebar-navigation"
+  ],
+  "priority": 76
+}

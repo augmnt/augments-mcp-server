@@ -1,0 +1,67 @@
+{
+  "name": "sequelize",
+  "display_name": "Sequelize",
+  "category": "database",
+  "type": "sql-orm",
+  "description": "Sequelize - Promise-based Node.js ORM for multiple SQL dialects",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "sequelize/sequelize",
+        "docs_path": "docs",
+        "branch": "main"
+      },
+      "website": "https://sequelize.org"
+    },
+    "examples": {
+      "github": {
+        "repo": "sequelize/sequelize",
+        "docs_path": "examples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "getting-started",
+    "models": "core-concepts/model-basics",
+    "queries": "core-concepts/model-querying-basics",
+    "associations": "core-concepts/assocs",
+    "validations": "core-concepts/validations-and-constraints",
+    "migrations": "other-topics/migrations",
+    "transactions": "other-topics/transactions",
+    "hooks": "other-topics/hooks"
+  },
+  "context_files": [
+    "docs/manual/getting-started.md",
+    "docs/manual/core-concepts/model-basics.md",
+    "docs/manual/core-concepts/model-querying-basics.md",
+    "docs/manual/core-concepts/assocs.md",
+    "docs/manual/other-topics/migrations.md"
+  ],
+  "key_features": [
+    "multi-dialect-support",
+    "model-definition",
+    "associations",
+    "migrations",
+    "validations",
+    "transactions",
+    "hooks",
+    "connection-pooling",
+    "eager-loading",
+    "raw-queries"
+  ],
+  "common_patterns": [
+    "model-definition",
+    "query-building",
+    "association-setup",
+    "migration-scripts",
+    "validation-rules",
+    "transaction-usage",
+    "hook-implementation",
+    "eager-loading-queries",
+    "connection-management",
+    "error-handling"
+  ],
+  "priority": 84
+}

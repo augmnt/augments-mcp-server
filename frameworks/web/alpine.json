@@ -1,0 +1,70 @@
+{
+  "name": "alpine",
+  "display_name": "Alpine.js",
+  "category": "web",
+  "type": "javascript-framework",
+  "description": "Alpine.js - Rugged, minimal framework for composing JavaScript behavior",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "alpinejs/alpine",
+        "docs_path": "packages/docs/src/en",
+        "branch": "main"
+      },
+      "website": "https://alpinejs.dev"
+    },
+    "examples": {
+      "github": {
+        "repo": "alpinejs/alpine",
+        "docs_path": "examples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "essentials/installation",
+    "directives": "essentials/state",
+    "components": "advanced/extending",
+    "plugins": "plugins/mask"
+  },
+  "context_files": [
+    "packages/docs/src/en/essentials/installation.md",
+    "packages/docs/src/en/essentials/state.md",
+    "packages/docs/src/en/directives/x-data.md",
+    "packages/docs/src/en/directives/x-show.md"
+  ],
+  "key_features": [
+    "minimal-footprint",
+    "no-build-step",
+    "declarative-syntax",
+    "reactive-data",
+    "event-handling",
+    "dom-manipulation",
+    "plugin-system",
+    "component-abstraction",
+    "transition-animations",
+    "form-handling",
+    "ajax-integration",
+    "progressive-enhancement",
+    "vanilla-javascript",
+    "cdn-ready"
+  ],
+  "common_patterns": [
+    "x-data-usage",
+    "x-show-hide",
+    "x-if-conditional",
+    "x-for-loops",
+    "x-on-events",
+    "x-bind-attributes",
+    "x-model-binding",
+    "x-transition-animations",
+    "component-composition",
+    "store-management",
+    "plugin-integration",
+    "form-validation",
+    "ajax-requests",
+    "progressive-enhancement"
+  ],
+  "priority": 70
+}

@@ -1,0 +1,66 @@
+{
+  "name": "react",
+  "display_name": "React",
+  "category": "web",
+  "type": "javascript-library",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "facebook/react",
+        "docs_path": "docs",
+        "branch": "main"
+      },
+      "website": "https://react.dev"
+    },
+    "examples": {
+      "github": {
+        "repo": "facebook/react",
+        "docs_path": "fixtures",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "learn": "learn",
+    "hooks": "reference/react/hooks",
+    "api": "reference/react",
+    "reference": "reference",
+    "tutorial": "learn/tutorial-tic-tac-toe",
+    "installation": "learn/installation",
+    "quick-start": "learn",
+    "thinking-in-react": "learn/thinking-in-react",
+    "describing-ui": "learn/describing-the-ui",
+    "adding-interactivity": "learn/adding-interactivity",
+    "managing-state": "learn/managing-state",
+    "escape-hatches": "learn/escape-hatches"
+  },
+  "context_files": [
+    "docs/Learn/installation.md",
+    "docs/Learn/thinking-in-react.md",
+    "docs/Learn/tutorial-tic-tac-toe.md",
+    "docs/Learn/describing-the-ui.md",
+    "docs/Reference/react/hooks.md"
+  ],
+  "key_features": [
+    "component-based",
+    "virtual-dom",
+    "jsx-syntax",
+    "hooks",
+    "state-management",
+    "event-handling",
+    "lifecycle-methods",
+    "props-system"
+  ],
+  "common_patterns": [
+    "functional-components",
+    "hook-patterns",
+    "state-lifting",
+    "component-composition",
+    "render-props",
+    "higher-order-components",
+    "context-api",
+    "error-boundaries"
+  ],
+  "priority": 95
+}

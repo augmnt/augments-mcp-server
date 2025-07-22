@@ -1,0 +1,67 @@
+{
+  "name": "axum",
+  "display_name": "Axum",
+  "category": "backend",
+  "type": "rust-framework",
+  "description": "Axum - Ergonomic and modular web framework built with Tokio, Tower, and Hyper",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "tokio-rs/axum",
+        "docs_path": "axum/src",
+        "branch": "main"
+      },
+      "website": "https://docs.rs/axum"
+    },
+    "examples": {
+      "github": {
+        "repo": "tokio-rs/axum",
+        "docs_path": "examples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "README",
+    "getting-started": "docs/getting_started.md",
+    "routing": "routing/index",
+    "handlers": "handlers/index",
+    "extractors": "extractors/index",
+    "responses": "responses/index",
+    "middleware": "middleware/index",
+    "state": "state/index"
+  },
+  "context_files": [
+    "README.md",
+    "axum/src/docs/routing/index.md",
+    "axum/src/docs/handlers/index.md",
+    "axum/src/docs/extractors/index.md",
+    "axum/src/docs/responses/index.md"
+  ],
+  "key_features": [
+    "type-safe-routing",
+    "async-handlers",
+    "extractors",
+    "tower-middleware",
+    "websocket-support",
+    "json-handling",
+    "form-handling",
+    "static-files",
+    "error-handling",
+    "testing-utilities"
+  ],
+  "common_patterns": [
+    "router-setup",
+    "handler-functions",
+    "extractor-usage",
+    "response-builders",
+    "middleware-layers",
+    "state-sharing",
+    "json-apis",
+    "websocket-handlers",
+    "error-responses",
+    "testing-routes"
+  ],
+  "priority": 83
+}

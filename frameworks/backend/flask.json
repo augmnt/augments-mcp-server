@@ -1,0 +1,70 @@
+{
+  "name": "flask",
+  "display_name": "Flask",
+  "category": "backend",
+  "type": "python-framework",
+  "description": "Flask - Lightweight WSGI web application framework",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "pallets/flask",
+        "docs_path": "docs",
+        "branch": "main"
+      },
+      "website": "https://flask.palletsprojects.com"
+    },
+    "examples": {
+      "github": {
+        "repo": "pallets/flask",
+        "docs_path": "examples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "installation",
+    "quickstart": "quickstart",
+    "routing": "quickstart#routing",
+    "templates": "quickstart#rendering-templates"
+  },
+  "context_files": [
+    "docs/installation.rst",
+    "docs/quickstart.rst",
+    "docs/templating.rst",
+    "docs/patterns/index.rst"
+  ],
+  "key_features": [
+    "lightweight-core",
+    "extensible-design",
+    "jinja2-templating",
+    "werkzeug-wsgi",
+    "url-routing",
+    "request-handling",
+    "session-management",
+    "blueprint-organization",
+    "application-factory",
+    "testing-support",
+    "debugging-tools",
+    "configuration-management",
+    "signal-support",
+    "extension-ecosystem"
+  ],
+  "common_patterns": [
+    "route-definition",
+    "view-functions",
+    "template-rendering",
+    "request-response-cycle",
+    "blueprint-registration",
+    "application-factory-pattern",
+    "configuration-loading",
+    "error-handling",
+    "middleware-integration",
+    "database-integration",
+    "form-handling",
+    "authentication-patterns",
+    "api-development",
+    "deployment-strategies"
+  ],
+  "priority": 85
+}

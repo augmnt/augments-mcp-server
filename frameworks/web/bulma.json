@@ -1,0 +1,67 @@
+{
+  "name": "bulma",
+  "display_name": "Bulma",
+  "category": "web",
+  "type": "css-framework",
+  "description": "Bulma - Modern CSS framework based on Flexbox",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "jgthms/bulma",
+        "docs_path": "docs",
+        "branch": "master"
+      },
+      "website": "https://bulma.io"
+    },
+    "examples": {
+      "github": {
+        "repo": "jgthms/bulma",
+        "docs_path": "docs/_sass",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "documentation/overview/start",
+    "columns": "documentation/columns/basics",
+    "layout": "documentation/layout/container",
+    "form": "documentation/form/general",
+    "elements": "documentation/elements/box",
+    "components": "documentation/components/breadcrumb",
+    "modifiers": "documentation/modifiers/syntax",
+    "customize": "documentation/customize/concepts"
+  },
+  "context_files": [
+    "docs/documentation/overview/start.md",
+    "docs/documentation/columns/basics.md",
+    "docs/documentation/layout/container.md",
+    "docs/documentation/form/general.md",
+    "docs/documentation/elements/button.md"
+  ],
+  "key_features": [
+    "flexbox-based",
+    "responsive-design",
+    "mobile-first",
+    "modular-design",
+    "no-javascript",
+    "modern-browsers",
+    "sass-powered",
+    "customizable",
+    "semantic-classes",
+    "component-library"
+  ],
+  "common_patterns": [
+    "column-layouts",
+    "responsive-grids",
+    "button-styling",
+    "form-controls",
+    "card-components",
+    "navigation-bars",
+    "hero-sections",
+    "modal-dialogs",
+    "message-boxes",
+    "modifier-classes"
+  ],
+  "priority": 79
+}

@@ -1,0 +1,70 @@
+{
+  "name": "pytorch",
+  "display_name": "PyTorch",
+  "category": "ai-ml",
+  "type": "machine-learning-framework",
+  "description": "PyTorch - Tensors and dynamic neural networks in Python",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "pytorch/pytorch",
+        "docs_path": "docs/source",
+        "branch": "main"
+      },
+      "website": "https://pytorch.org"
+    },
+    "examples": {
+      "github": {
+        "repo": "pytorch/examples",
+        "docs_path": "",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "get-started/locally",
+    "quickstart": "tutorials/beginner/basics/quickstart_tutorial",
+    "tensors": "tutorials/beginner/basics/tensorqs_tutorial",
+    "autograd": "tutorials/beginner/basics/autogradqs_tutorial"
+  },
+  "context_files": [
+    "docs/source/notes/installation.rst",
+    "tutorials/beginner/basics/quickstart_tutorial.py",
+    "tutorials/beginner/basics/tensorqs_tutorial.py",
+    "tutorials/beginner/basics/autogradqs_tutorial.py"
+  ],
+  "key_features": [
+    "dynamic-computation-graphs",
+    "eager-execution",
+    "automatic-differentiation",
+    "gpu-acceleration",
+    "distributed-training",
+    "torchvision-integration",
+    "torchtext-integration",
+    "torchaudio-integration",
+    "onnx-support",
+    "mobile-deployment",
+    "jit-compilation",
+    "tensorboard-integration",
+    "model-hub",
+    "research-friendly"
+  ],
+  "common_patterns": [
+    "tensor-operations",
+    "neural-network-modules",
+    "training-loops",
+    "loss-computation",
+    "optimizer-usage",
+    "data-loading",
+    "model-checkpointing",
+    "custom-datasets",
+    "model-evaluation",
+    "transfer-learning",
+    "gradient-computation",
+    "device-management",
+    "model-scripting",
+    "distributed-training"
+  ],
+  "priority": 88
+}

@@ -1,0 +1,67 @@
+{
+  "name": "fastify",
+  "display_name": "Fastify",
+  "category": "backend",
+  "type": "nodejs-framework",
+  "description": "Fastify - Fast and low overhead web framework for Node.js",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "fastify/fastify",
+        "docs_path": "docs",
+        "branch": "main"
+      },
+      "website": "https://www.fastify.io"
+    },
+    "examples": {
+      "github": {
+        "repo": "fastify/example",
+        "docs_path": "",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "Getting-Started",
+    "server": "Server",
+    "routes": "Routes",
+    "encapsulation": "Encapsulation",
+    "logging": "Logging",
+    "middleware": "Middleware",
+    "hooks": "Hooks",
+    "decorators": "Decorators"
+  },
+  "context_files": [
+    "docs/Getting-Started.md",
+    "docs/Server.md",
+    "docs/Routes.md",
+    "docs/Encapsulation.md",
+    "docs/Hooks.md"
+  ],
+  "key_features": [
+    "high-performance",
+    "low-overhead",
+    "json-schema-validation",
+    "serialization",
+    "typescript-support",
+    "plugin-architecture",
+    "logging-included",
+    "encapsulation",
+    "async-await",
+    "hooks-system"
+  ],
+  "common_patterns": [
+    "route-definition",
+    "schema-validation",
+    "plugin-registration",
+    "hook-usage",
+    "error-handling",
+    "request-validation",
+    "response-serialization",
+    "authentication-plugins",
+    "logging-configuration",
+    "decorators-usage"
+  ],
+  "priority": 83
+}

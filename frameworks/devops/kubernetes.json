@@ -1,0 +1,67 @@
+{
+  "name": "kubernetes",
+  "display_name": "Kubernetes",
+  "category": "devops",
+  "type": "container-orchestration",
+  "description": "Kubernetes - Production-Grade Container Orchestration",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "kubernetes/kubernetes",
+        "docs_path": "docs",
+        "branch": "master"
+      },
+      "website": "https://kubernetes.io/docs"
+    },
+    "examples": {
+      "github": {
+        "repo": "kubernetes/examples",
+        "docs_path": "",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "setup",
+    "concepts": "concepts",
+    "workloads": "concepts/workloads",
+    "services": "concepts/services-networking",
+    "storage": "concepts/storage",
+    "configuration": "concepts/configuration",
+    "security": "concepts/security",
+    "monitoring": "concepts/cluster-administration"
+  },
+  "context_files": [
+    "docs/setup/index.md",
+    "docs/concepts/index.md",
+    "docs/concepts/workloads/index.md",
+    "docs/concepts/services-networking/index.md",
+    "docs/concepts/storage/index.md"
+  ],
+  "key_features": [
+    "container-orchestration",
+    "service-discovery",
+    "load-balancing",
+    "storage-orchestration",
+    "automated-rollouts",
+    "self-healing",
+    "secret-management",
+    "horizontal-scaling",
+    "batch-execution",
+    "ipv4-ipv6-dual-stack"
+  ],
+  "common_patterns": [
+    "pod-definitions",
+    "deployment-manifests",
+    "service-configurations",
+    "ingress-setup",
+    "configmap-usage",
+    "secret-management",
+    "persistent-volumes",
+    "namespace-organization",
+    "resource-quotas",
+    "monitoring-setup"
+  ],
+  "priority": 90
+}

@@ -1,0 +1,67 @@
+{
+  "name": "phoenix",
+  "display_name": "Phoenix",
+  "category": "backend",
+  "type": "elixir-framework",
+  "description": "Phoenix - Productive. Reliable. Fast. A productive web framework that does not compromise speed or maintainability",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "phoenixframework/phoenix",
+        "docs_path": "guides",
+        "branch": "main"
+      },
+      "website": "https://phoenixframework.org"
+    },
+    "examples": {
+      "github": {
+        "repo": "phoenixframework/phoenix",
+        "docs_path": "installer/templates",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "installation",
+    "up-and-running": "up_and_running",
+    "routing": "routing",
+    "controllers": "controllers",
+    "views": "views",
+    "templates": "templates",
+    "channels": "channels",
+    "liveview": "live_view"
+  },
+  "context_files": [
+    "guides/installation.md",
+    "guides/up_and_running.md",
+    "guides/routing.md",
+    "guides/controllers.md",
+    "guides/views.md"
+  ],
+  "key_features": [
+    "real-time-features",
+    "fault-tolerance",
+    "live-view",
+    "channels-websockets",
+    "mvc-pattern",
+    "ecto-integration",
+    "pubsub-system",
+    "presence-tracking",
+    "hot-code-reloading",
+    "concurrent-connections"
+  ],
+  "common_patterns": [
+    "router-configuration",
+    "controller-actions",
+    "template-rendering",
+    "channel-setup",
+    "liveview-components",
+    "context-modules",
+    "schema-definitions",
+    "changesets",
+    "pubsub-broadcasting",
+    "presence-tracking"
+  ],
+  "priority": 81
+}

@@ -1,0 +1,67 @@
+{
+  "name": "recoil",
+  "display_name": "Recoil",
+  "category": "state-management",
+  "type": "react-state-library",
+  "description": "Recoil - A state management library for React",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "facebookexperimental/Recoil",
+        "docs_path": "docs",
+        "branch": "main"
+      },
+      "website": "https://recoiljs.org"
+    },
+    "examples": {
+      "github": {
+        "repo": "facebookexperimental/Recoil",
+        "docs_path": "packages/recoil/src/__tests__",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "introduction/installation",
+    "getting-started": "introduction/getting-started",
+    "core-concepts": "introduction/core-concepts",
+    "atoms": "api-reference/core/atom",
+    "selectors": "api-reference/core/selector",
+    "hooks": "api-reference/core/useRecoilState",
+    "utils": "api-reference/utils/atomFamily",
+    "guides": "guides/dev-tools"
+  },
+  "context_files": [
+    "docs/introduction/installation.md",
+    "docs/introduction/getting-started.md",
+    "docs/introduction/core-concepts.md",
+    "docs/api-reference/core/atom.md",
+    "docs/api-reference/core/selector.md"
+  ],
+  "key_features": [
+    "atomic-state",
+    "derived-state",
+    "async-queries",
+    "dependency-tracking",
+    "concurrent-mode",
+    "time-travel-debugging",
+    "persistence",
+    "error-boundaries",
+    "loadable-states",
+    "experimental-features"
+  ],
+  "common_patterns": [
+    "atom-definition",
+    "selector-usage",
+    "hook-patterns",
+    "async-selectors",
+    "atom-families",
+    "selector-families",
+    "error-handling",
+    "persistence-setup",
+    "loadable-handling",
+    "snapshot-usage"
+  ],
+  "priority": 80
+}

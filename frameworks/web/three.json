@@ -1,0 +1,67 @@
+{
+  "name": "three",
+  "display_name": "Three.js",
+  "category": "web",
+  "type": "3d-graphics-library",
+  "description": "Three.js - JavaScript 3D library",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "mrdoob/three.js",
+        "docs_path": "docs",
+        "branch": "dev"
+      },
+      "website": "https://threejs.org"
+    },
+    "examples": {
+      "github": {
+        "repo": "mrdoob/three.js",
+        "docs_path": "examples",
+        "branch": "dev"
+      }
+    }
+  },
+  "sections": {
+    "installation": "manual/en/introduction/Installation",
+    "creating-scene": "manual/en/introduction/Creating-a-scene",
+    "drawing-lines": "manual/en/introduction/Drawing-lines",
+    "creating-text": "manual/en/introduction/Creating-text",
+    "loading-3d-models": "manual/en/introduction/Loading-3D-models",
+    "libraries-plugins": "manual/en/introduction/Libraries-and-Plugins",
+    "webgl-compatibility": "manual/en/introduction/WebGL-compatibility-check",
+    "how-to-run-locally": "manual/en/introduction/How-to-run-things-locally"
+  },
+  "context_files": [
+    "docs/manual/en/introduction/Installation.html",
+    "docs/manual/en/introduction/Creating-a-scene.html",
+    "docs/manual/en/introduction/Drawing-lines.html",
+    "docs/manual/en/introduction/Creating-text.html",
+    "docs/manual/en/introduction/Loading-3D-models.html"
+  ],
+  "key_features": [
+    "webgl-rendering",
+    "3d-graphics",
+    "scene-management",
+    "camera-controls",
+    "lighting-system",
+    "material-shaders",
+    "geometry-creation",
+    "animation-system",
+    "model-loading",
+    "texture-mapping"
+  ],
+  "common_patterns": [
+    "scene-setup",
+    "camera-configuration",
+    "renderer-creation",
+    "geometry-materials",
+    "lighting-setup",
+    "animation-loops",
+    "model-loading",
+    "texture-application",
+    "shader-materials",
+    "interaction-raycasting"
+  ],
+  "priority": 86
+}

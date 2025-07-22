@@ -1,0 +1,67 @@
+{
+  "name": "ionic",
+  "display_name": "Ionic",
+  "category": "mobile",
+  "type": "hybrid-mobile-framework",
+  "description": "Ionic - Cross-platform mobile apps with web technologies",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "ionic-team/ionic-framework",
+        "docs_path": "docs",
+        "branch": "main"
+      },
+      "website": "https://ionicframework.com/docs"
+    },
+    "examples": {
+      "github": {
+        "repo": "ionic-team/ionic-framework",
+        "docs_path": "packages/angular/test",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "intro/cli",
+    "components": "components",
+    "angular": "angular/overview",
+    "react": "react/overview",
+    "vue": "vue/overview",
+    "layout": "layout/structure",
+    "theming": "theming/basics",
+    "native": "native/overview"
+  },
+  "context_files": [
+    "docs/intro/cli.md",
+    "docs/components.md",
+    "docs/angular/overview.md",
+    "docs/react/overview.md",
+    "docs/theming/basics.md"
+  ],
+  "key_features": [
+    "cross-platform",
+    "web-technologies",
+    "native-functionality",
+    "ui-components",
+    "framework-agnostic",
+    "capacitor-integration",
+    "theming-system",
+    "cli-tooling",
+    "live-reload",
+    "app-store-deployment"
+  ],
+  "common_patterns": [
+    "component-usage",
+    "navigation-setup",
+    "native-plugin-integration",
+    "theming-customization",
+    "page-routing",
+    "data-services",
+    "form-handling",
+    "camera-integration",
+    "storage-usage",
+    "push-notifications"
+  ],
+  "priority": 85
+}

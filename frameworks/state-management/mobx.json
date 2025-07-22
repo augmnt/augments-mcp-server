@@ -1,0 +1,67 @@
+{
+  "name": "mobx",
+  "display_name": "MobX",
+  "category": "state-management",
+  "type": "reactive-state-library",
+  "description": "MobX - Simple, scalable state management through reactive programming",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "mobxjs/mobx",
+        "docs_path": "docs",
+        "branch": "main"
+      },
+      "website": "https://mobx.js.org"
+    },
+    "examples": {
+      "github": {
+        "repo": "mobxjs/mobx",
+        "docs_path": "packages/mobx/examples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "README",
+    "concepts": "the-gist-of-mobx",
+    "observable": "observable-state",
+    "actions": "actions",
+    "computed": "computeds",
+    "reactions": "reactions",
+    "react": "react-integration",
+    "async": "async-actions"
+  },
+  "context_files": [
+    "README.md",
+    "docs/the-gist-of-mobx.md",
+    "docs/observable-state.md",
+    "docs/actions.md",
+    "docs/computeds.md"
+  ],
+  "key_features": [
+    "reactive-programming",
+    "observable-state",
+    "computed-values",
+    "automatic-updates",
+    "decorators-support",
+    "typescript-support",
+    "devtools-integration",
+    "performance-optimization",
+    "minimal-boilerplate",
+    "framework-agnostic"
+  ],
+  "common_patterns": [
+    "observable-objects",
+    "action-methods",
+    "computed-properties",
+    "observer-components",
+    "reaction-effects",
+    "async-actions",
+    "store-organization",
+    "class-based-stores",
+    "decorators-usage",
+    "state-tree-structure"
+  ],
+  "priority": 82
+}

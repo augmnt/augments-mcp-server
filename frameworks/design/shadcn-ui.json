@@ -1,0 +1,50 @@
+{
+  "name": "shadcn-ui",
+  "display_name": "shadcn/ui",
+  "category": "design",
+  "type": "component-library",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "shadcn-ui/ui",
+        "docs_path": "apps/www/content/docs",
+        "branch": "main"
+      },
+      "website": "https://ui.shadcn.com/docs"
+    },
+    "examples": {
+      "github": {
+        "repo": "shadcn-ui/ui",
+        "docs_path": "apps/www/registry",
+        "branch": "main"
+      }
+    }
+  },
+  "context_files": [
+    "apps/www/content/docs/installation.mdx",
+    "apps/www/content/docs/components.mdx",
+    "apps/www/content/docs/theming.mdx",
+    "apps/www/content/docs/dark-mode.mdx",
+    "apps/www/content/docs/typography.mdx"
+  ],
+  "key_features": [
+    "copy-paste-components",
+    "accessible",
+    "customizable",
+    "radix-ui-based",
+    "tailwind-styled",
+    "dark-mode-ready",
+    "typescript-support"
+  ],
+  "common_patterns": [
+    "component-composition",
+    "theme-customization",
+    "dark-mode-support",
+    "form-components",
+    "data-display",
+    "navigation-patterns",
+    "dialog-overlays"
+  ],
+  "priority": 85
+}

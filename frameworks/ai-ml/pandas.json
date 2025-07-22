@@ -1,0 +1,67 @@
+{
+  "name": "pandas",
+  "display_name": "Pandas",
+  "category": "ai-ml",
+  "type": "data-analysis-library",
+  "description": "Pandas - Powerful data structures and data analysis tools for Python",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "pandas-dev/pandas",
+        "docs_path": "doc/source",
+        "branch": "main"
+      },
+      "website": "https://pandas.pydata.org"
+    },
+    "examples": {
+      "github": {
+        "repo": "pandas-dev/pandas",
+        "docs_path": "doc/source/user_guide",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "getting_started/install",
+    "intro": "getting_started/intro_tutorials",
+    "data-structures": "user_guide/dsintro",
+    "indexing": "user_guide/indexing",
+    "merging": "user_guide/merging",
+    "groupby": "user_guide/groupby",
+    "time-series": "user_guide/timeseries",
+    "io": "user_guide/io"
+  },
+  "context_files": [
+    "doc/source/getting_started/install.rst",
+    "doc/source/getting_started/intro_tutorials/index.rst",
+    "doc/source/user_guide/dsintro.rst",
+    "doc/source/user_guide/indexing.rst",
+    "doc/source/user_guide/merging.rst"
+  ],
+  "key_features": [
+    "dataframes",
+    "series",
+    "data-cleaning",
+    "data-manipulation",
+    "file-io",
+    "time-series",
+    "groupby-operations",
+    "merging-joining",
+    "statistical-analysis",
+    "visualization"
+  ],
+  "common_patterns": [
+    "dataframe-creation",
+    "data-loading",
+    "data-cleaning",
+    "indexing-selection",
+    "groupby-aggregation",
+    "merging-datasets",
+    "time-series-analysis",
+    "statistical-operations",
+    "data-visualization",
+    "export-operations"
+  ],
+  "priority": 90
+}

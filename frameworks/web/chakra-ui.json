@@ -1,0 +1,67 @@
+{
+  "name": "chakra-ui",
+  "display_name": "Chakra UI",
+  "category": "web",
+  "type": "react-ui-library",
+  "description": "Chakra UI - Modular and accessible component library for React",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "chakra-ui/chakra-ui",
+        "docs_path": "website/content/docs",
+        "branch": "main"
+      },
+      "website": "https://chakra-ui.com"
+    },
+    "examples": {
+      "github": {
+        "repo": "chakra-ui/chakra-ui",
+        "docs_path": "packages",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "getting-started/installation",
+    "theming": "styled-system/theming",
+    "components": "components/overview",
+    "hooks": "hooks/use-boolean",
+    "layout": "components/layout/aspect-ratio",
+    "forms": "components/forms/button",
+    "feedback": "components/feedback/alert",
+    "styling": "styled-system/style-props"
+  },
+  "context_files": [
+    "website/content/docs/getting-started/installation.mdx",
+    "website/content/docs/styled-system/theming.mdx",
+    "website/content/docs/components/overview.mdx",
+    "website/content/docs/hooks/use-boolean.mdx",
+    "website/content/docs/styled-system/style-props.mdx"
+  ],
+  "key_features": [
+    "accessibility-first",
+    "themeable",
+    "composable",
+    "typescript-support",
+    "dark-mode",
+    "responsive-styles",
+    "emotion-powered",
+    "design-tokens",
+    "component-variants",
+    "style-props"
+  ],
+  "common_patterns": [
+    "component-composition",
+    "theme-customization",
+    "responsive-design",
+    "dark-mode-toggle",
+    "form-handling",
+    "layout-systems",
+    "style-props-usage",
+    "custom-components",
+    "accessibility-patterns",
+    "color-mode-management"
+  ],
+  "priority": 85
+}

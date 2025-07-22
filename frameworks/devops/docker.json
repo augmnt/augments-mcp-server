@@ -1,0 +1,70 @@
+{
+  "name": "docker",
+  "display_name": "Docker",
+  "category": "devops",
+  "type": "containerization-platform",
+  "description": "Docker - Containerization platform for developing, shipping, and running applications",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "docker/docs",
+        "docs_path": "content",
+        "branch": "main"
+      },
+      "website": "https://docs.docker.com"
+    },
+    "examples": {
+      "github": {
+        "repo": "docker/awesome-compose",
+        "docs_path": "",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "get-started",
+    "dockerfile": "engine/reference/builder",
+    "compose": "compose",
+    "swarm": "engine/swarm"
+  },
+  "context_files": [
+    "content/get-started/index.md",
+    "content/engine/reference/builder.md",
+    "content/compose/index.md",
+    "content/engine/swarm/index.md"
+  ],
+  "key_features": [
+    "application-containerization",
+    "image-management",
+    "container-orchestration",
+    "multi-platform-support",
+    "dockerfile-automation",
+    "compose-multi-container",
+    "volume-management",
+    "network-isolation",
+    "registry-integration",
+    "swarm-clustering",
+    "security-scanning",
+    "build-optimization",
+    "development-environments",
+    "ci-cd-integration"
+  ],
+  "common_patterns": [
+    "dockerfile-creation",
+    "image-building",
+    "container-running",
+    "compose-orchestration",
+    "volume-mounting",
+    "network-configuration",
+    "environment-variables",
+    "multi-stage-builds",
+    "health-checks",
+    "logging-configuration",
+    "security-practices",
+    "optimization-techniques",
+    "debugging-containers",
+    "production-deployment"
+  ],
+  "priority": 88
+}

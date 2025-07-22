@@ -1,0 +1,70 @@
+{
+  "name": "ruby-on-rails",
+  "display_name": "Ruby on Rails",
+  "category": "backend",
+  "type": "ruby-framework",
+  "description": "Ruby on Rails - Web application framework for the Ruby programming language",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "rails/rails",
+        "docs_path": "guides/source",
+        "branch": "main"
+      },
+      "website": "https://rubyonrails.org"
+    },
+    "examples": {
+      "github": {
+        "repo": "rails/rails",
+        "docs_path": "railties/lib/rails/generators/rails/app/templates",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "getting_started",
+    "routing": "routing",
+    "controllers": "action_controller_overview",
+    "models": "active_record_basics"
+  },
+  "context_files": [
+    "guides/source/getting_started.md",
+    "guides/source/routing.md",
+    "guides/source/action_controller_overview.md",
+    "guides/source/active_record_basics.md"
+  ],
+  "key_features": [
+    "mvc-architecture",
+    "active-record-orm",
+    "convention-over-configuration",
+    "rest-conventions",
+    "scaffolding",
+    "database-migrations",
+    "asset-pipeline",
+    "action-cable",
+    "active-job",
+    "action-mailer",
+    "internationalization",
+    "caching-support",
+    "testing-framework",
+    "security-features"
+  ],
+  "common_patterns": [
+    "mvc-structure",
+    "restful-routes",
+    "model-associations",
+    "controller-actions",
+    "view-templates",
+    "database-migrations",
+    "model-validations",
+    "callbacks",
+    "concerns",
+    "helpers",
+    "partials",
+    "layouts",
+    "authentication-patterns",
+    "deployment-strategies"
+  ],
+  "priority": 78
+}

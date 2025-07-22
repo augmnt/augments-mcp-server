@@ -1,0 +1,67 @@
+{
+  "name": "sqlalchemy",
+  "display_name": "SQLAlchemy",
+  "category": "database",
+  "type": "python-orm",
+  "description": "SQLAlchemy - The Database Toolkit for Python",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "sqlalchemy/sqlalchemy",
+        "docs_path": "doc/build",
+        "branch": "main"
+      },
+      "website": "https://docs.sqlalchemy.org"
+    },
+    "examples": {
+      "github": {
+        "repo": "sqlalchemy/sqlalchemy",
+        "docs_path": "examples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "intro",
+    "tutorial": "tutorial",
+    "orm": "orm",
+    "core": "core",
+    "engine": "core/engines",
+    "schema": "core/schema",
+    "types": "core/types",
+    "dialects": "dialects"
+  },
+  "context_files": [
+    "doc/build/intro.rst",
+    "doc/build/tutorial/index.rst",
+    "doc/build/orm/index.rst",
+    "doc/build/core/index.rst",
+    "doc/build/core/engines.rst"
+  ],
+  "key_features": [
+    "core-expression-language",
+    "orm-layer",
+    "connection-pooling",
+    "schema-reflection",
+    "migration-support",
+    "relationship-mapping",
+    "query-optimization",
+    "database-agnostic",
+    "transaction-support",
+    "event-system"
+  ],
+  "common_patterns": [
+    "model-definition",
+    "session-management",
+    "query-construction",
+    "relationship-definition",
+    "migration-scripts",
+    "connection-handling",
+    "transaction-usage",
+    "event-listening",
+    "schema-definition",
+    "bulk-operations"
+  ],
+  "priority": 88
+}

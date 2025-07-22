@@ -1,0 +1,67 @@
+{
+  "name": "turbo",
+  "display_name": "Turbo",
+  "category": "tools",
+  "type": "monorepo-build-system",
+  "description": "Turbo - The build system that makes ship happen",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "vercel/turbo",
+        "docs_path": "docs",
+        "branch": "main"
+      },
+      "website": "https://turbo.build"
+    },
+    "examples": {
+      "github": {
+        "repo": "vercel/turbo",
+        "docs_path": "examples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "getting-started",
+    "core-concepts": "core-concepts",
+    "configuration": "reference/configuration",
+    "running-tasks": "core-concepts/running-tasks",
+    "caching": "core-concepts/caching",
+    "remote-caching": "core-concepts/remote-caching",
+    "filtering": "core-concepts/filtering",
+    "ci-cd": "guides/ci-vendors"
+  },
+  "context_files": [
+    "docs/pages/repo/docs/getting-started.mdx",
+    "docs/pages/repo/docs/core-concepts/index.mdx",
+    "docs/pages/repo/docs/reference/configuration.mdx",
+    "docs/pages/repo/docs/core-concepts/running-tasks.mdx",
+    "docs/pages/repo/docs/core-concepts/caching.mdx"
+  ],
+  "key_features": [
+    "monorepo-builds",
+    "incremental-builds",
+    "remote-caching",
+    "task-orchestration",
+    "dependency-graph",
+    "parallel-execution",
+    "task-filtering",
+    "cache-optimization",
+    "ci-cd-integration",
+    "workspace-management"
+  ],
+  "common_patterns": [
+    "turbo-json-config",
+    "pipeline-definition",
+    "task-dependencies",
+    "cache-configuration",
+    "workspace-filtering",
+    "output-caching",
+    "remote-cache-setup",
+    "ci-configuration",
+    "environment-variables",
+    "script-organization"
+  ],
+  "priority": 86
+}

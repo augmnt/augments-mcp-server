@@ -1,0 +1,70 @@
+{
+  "name": "tensorflow",
+  "display_name": "TensorFlow",
+  "category": "ai-ml",
+  "type": "machine-learning-framework",
+  "description": "TensorFlow - Open source machine learning framework",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "tensorflow/docs",
+        "docs_path": "site/en",
+        "branch": "master"
+      },
+      "website": "https://tensorflow.org"
+    },
+    "examples": {
+      "github": {
+        "repo": "tensorflow/tensorflow",
+        "docs_path": "tensorflow/examples",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "install",
+    "quickstart": "tutorials/quickstart/beginner",
+    "keras": "guide/keras",
+    "datasets": "guide/data"
+  },
+  "context_files": [
+    "site/en/install/index.md",
+    "site/en/tutorials/quickstart/beginner.ipynb",
+    "site/en/guide/keras/overview.ipynb",
+    "site/en/guide/data.ipynb"
+  ],
+  "key_features": [
+    "neural-networks",
+    "deep-learning",
+    "keras-integration",
+    "eager-execution",
+    "tensorboard-visualization",
+    "distributed-training",
+    "model-deployment",
+    "mobile-inference",
+    "gpu-acceleration",
+    "automatic-differentiation",
+    "graph-computation",
+    "saved-models",
+    "tensorhub-models",
+    "production-ready"
+  ],
+  "common_patterns": [
+    "model-definition",
+    "training-loops",
+    "data-preprocessing",
+    "loss-functions",
+    "optimizer-usage",
+    "model-evaluation",
+    "checkpointing",
+    "tensorboard-logging",
+    "custom-layers",
+    "transfer-learning",
+    "model-saving",
+    "inference-patterns",
+    "distributed-strategies",
+    "performance-optimization"
+  ],
+  "priority": 90
+}

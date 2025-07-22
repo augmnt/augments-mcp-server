@@ -1,0 +1,67 @@
+{
+  "name": "fiber",
+  "display_name": "Fiber",
+  "category": "backend",
+  "type": "go-framework",
+  "description": "Fiber - Express inspired web framework built on top of Fasthttp",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "gofiber/fiber",
+        "docs_path": "docs",
+        "branch": "master"
+      },
+      "website": "https://docs.gofiber.io"
+    },
+    "examples": {
+      "github": {
+        "repo": "gofiber/recipes",
+        "docs_path": "",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "guide",
+    "routing": "guide/routing",
+    "middleware": "guide/middleware",
+    "context": "guide/context",
+    "error-handling": "guide/error-handling",
+    "validation": "guide/validation",
+    "templates": "guide/templates",
+    "testing": "guide/testing"
+  },
+  "context_files": [
+    "docs/guide/index.md",
+    "docs/guide/routing.md",
+    "docs/guide/middleware.md",
+    "docs/guide/context.md",
+    "docs/guide/error-handling.md"
+  ],
+  "key_features": [
+    "high-performance",
+    "express-like-api",
+    "zero-allocation-router",
+    "middleware-support",
+    "websocket-support",
+    "template-engines",
+    "static-files",
+    "compression",
+    "cors-support",
+    "rate-limiting"
+  ],
+  "common_patterns": [
+    "route-handlers",
+    "middleware-usage",
+    "context-methods",
+    "error-handling",
+    "json-responses",
+    "file-uploads",
+    "websocket-handlers",
+    "static-file-serving",
+    "template-rendering",
+    "authentication-middleware"
+  ],
+  "priority": 82
+}

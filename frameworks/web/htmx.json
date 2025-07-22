@@ -1,0 +1,67 @@
+{
+  "name": "htmx",
+  "display_name": "htmx",
+  "category": "web",
+  "type": "javascript-library",
+  "description": "htmx - High power tools for HTML",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "bigskysoftware/htmx",
+        "docs_path": "www/content",
+        "branch": "master"
+      },
+      "website": "https://htmx.org"
+    },
+    "examples": {
+      "github": {
+        "repo": "bigskysoftware/htmx",
+        "docs_path": "www/content/examples",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "docs",
+    "attributes": "attributes",
+    "ajax": "docs#ajax",
+    "css-transitions": "docs#css_transitions",
+    "websockets": "docs#websockets",
+    "server-sent-events": "docs#sse",
+    "history": "docs#history",
+    "requests": "docs#requests"
+  },
+  "context_files": [
+    "www/content/docs.md",
+    "www/content/attributes/hx-get.md",
+    "www/content/attributes/hx-post.md",
+    "www/content/attributes/hx-target.md",
+    "www/content/attributes/hx-swap.md"
+  ],
+  "key_features": [
+    "ajax-requests",
+    "css-transitions",
+    "websockets",
+    "server-sent-events",
+    "history-support",
+    "request-response-headers",
+    "validation",
+    "animations",
+    "progressive-enhancement",
+    "declarative-ajax"
+  ],
+  "common_patterns": [
+    "ajax-forms",
+    "dynamic-content-loading",
+    "infinite-scrolling",
+    "click-to-edit",
+    "bulk-updates",
+    "websocket-integration",
+    "server-sent-events",
+    "modal-dialogs",
+    "progressive-enhancement",
+    "htmx-extensions"
+  ],
+  "priority": 83
+}

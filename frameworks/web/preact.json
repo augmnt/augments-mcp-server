@@ -1,0 +1,67 @@
+{
+  "name": "preact",
+  "display_name": "Preact",
+  "category": "web",
+  "type": "javascript-library",
+  "description": "Preact - Fast 3kB alternative to React with the same modern API",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "preactjs/preact",
+        "docs_path": "",
+        "branch": "main"
+      },
+      "website": "https://preactjs.com"
+    },
+    "examples": {
+      "github": {
+        "repo": "preactjs/preact",
+        "docs_path": "demo",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "guide/v10/getting-started",
+    "tutorial": "tutorial",
+    "components": "guide/v10/components",
+    "hooks": "guide/v10/hooks",
+    "context": "guide/v10/context",
+    "refs": "guide/v10/refs",
+    "forms": "guide/v10/forms",
+    "typescript": "guide/v10/typescript"
+  },
+  "context_files": [
+    "docs/getting-started.md",
+    "docs/tutorial.md",
+    "docs/components.md",
+    "docs/hooks.md",
+    "docs/context.md"
+  ],
+  "key_features": [
+    "lightweight",
+    "react-compatible",
+    "fast-rendering",
+    "hooks-support",
+    "jsx-syntax",
+    "component-based",
+    "virtual-dom",
+    "typescript-support",
+    "devtools-support",
+    "tree-shaking"
+  ],
+  "common_patterns": [
+    "functional-components",
+    "hook-patterns",
+    "state-management",
+    "component-composition",
+    "event-handling",
+    "context-usage",
+    "ref-handling",
+    "form-handling",
+    "conditional-rendering",
+    "list-rendering"
+  ],
+  "priority": 82
+}

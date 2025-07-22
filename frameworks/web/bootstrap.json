@@ -1,0 +1,70 @@
+{
+  "name": "bootstrap",
+  "display_name": "Bootstrap",
+  "category": "web",
+  "type": "css-framework",
+  "description": "Bootstrap - The world's most popular front-end open source toolkit",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "twbs/bootstrap",
+        "docs_path": "site/content/docs",
+        "branch": "main"
+      },
+      "website": "https://getbootstrap.com"
+    },
+    "examples": {
+      "github": {
+        "repo": "twbs/bootstrap",
+        "docs_path": "site/content/docs/examples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "getting-started/introduction",
+    "layout": "layout/grid",
+    "components": "components/alerts",
+    "utilities": "utilities/api"
+  },
+  "context_files": [
+    "site/content/docs/5.3/getting-started/introduction.md",
+    "site/content/docs/5.3/layout/grid.md",
+    "site/content/docs/5.3/components/buttons.md",
+    "site/content/docs/5.3/utilities/spacing.md"
+  ],
+  "key_features": [
+    "responsive-grid",
+    "pre-built-components",
+    "utility-classes",
+    "customizable-scss",
+    "javascript-components",
+    "accessibility-features",
+    "mobile-first-approach",
+    "flexbox-support",
+    "css-variables",
+    "dark-mode-support",
+    "icon-library",
+    "theme-customization",
+    "rtl-support",
+    "browser-compatibility"
+  ],
+  "common_patterns": [
+    "grid-system-usage",
+    "component-styling",
+    "utility-class-application",
+    "responsive-breakpoints",
+    "form-styling",
+    "navigation-patterns",
+    "modal-implementation",
+    "carousel-usage",
+    "tooltip-popover",
+    "accordion-collapse",
+    "dropdown-menus",
+    "button-groups",
+    "card-layouts",
+    "customization-techniques"
+  ],
+  "priority": 85
+}

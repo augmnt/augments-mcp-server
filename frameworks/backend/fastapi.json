@@ -1,0 +1,53 @@
+{
+  "name": "fastapi",
+  "display_name": "FastAPI",
+  "category": "backend",
+  "type": "python-framework",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "tiangolo/fastapi",
+        "docs_path": "docs/en/docs",
+        "branch": "master"
+      },
+      "website": "https://fastapi.tiangolo.com"
+    },
+    "examples": {
+      "github": {
+        "repo": "tiangolo/fastapi",
+        "docs_path": "docs/en/docs/tutorial",
+        "branch": "master"
+      }
+    }
+  },
+  "context_files": [
+    "docs/en/docs/tutorial/first-steps.md",
+    "docs/en/docs/tutorial/path-params.md",
+    "docs/en/docs/tutorial/query-params.md",
+    "docs/en/docs/tutorial/body.md",
+    "docs/en/docs/tutorial/dependencies.md"
+  ],
+  "key_features": [
+    "automatic-api-docs",
+    "type-hints",
+    "async-support",
+    "dependency-injection",
+    "request-validation",
+    "response-models",
+    "openapi-integration",
+    "high-performance",
+    "oauth2-support"
+  ],
+  "common_patterns": [
+    "dependency-injection",
+    "request-response-models",
+    "middleware-patterns",
+    "authentication-flows",
+    "background-tasks",
+    "websocket-handling",
+    "database-integration",
+    "testing-patterns"
+  ],
+  "priority": 80
+}

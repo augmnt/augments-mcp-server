@@ -1,0 +1,67 @@
+{
+  "name": "xamarin",
+  "display_name": "Xamarin",
+  "category": "mobile",
+  "type": "cross-platform-framework",
+  "description": "Xamarin - Cross-platform mobile development with .NET",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "xamarin/xamarin-forms",
+        "docs_path": "docs",
+        "branch": "5.0.0"
+      },
+      "website": "https://docs.microsoft.com/xamarin"
+    },
+    "examples": {
+      "github": {
+        "repo": "xamarin/xamarin-forms-samples",
+        "docs_path": "",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "get-started/installation",
+    "xamarin-forms": "xamarin-forms",
+    "xamarin-android": "android",
+    "xamarin-ios": "ios",
+    "xaml": "xamarin-forms/xaml",
+    "data-binding": "xamarin-forms/app-fundamentals/data-binding",
+    "navigation": "xamarin-forms/app-fundamentals/navigation",
+    "deployment": "deploy-test"
+  },
+  "context_files": [
+    "docs/get-started/installation.md",
+    "docs/xamarin-forms/index.md",
+    "docs/xamarin-forms/xaml/index.md",
+    "docs/xamarin-forms/app-fundamentals/data-binding/index.md",
+    "docs/xamarin-forms/app-fundamentals/navigation/index.md"
+  ],
+  "key_features": [
+    "cross-platform",
+    "native-performance",
+    "shared-codebase",
+    "xaml-ui",
+    "data-binding",
+    "mvvm-pattern",
+    "native-api-access",
+    "visual-studio-integration",
+    "hot-reload",
+    "app-store-deployment"
+  ],
+  "common_patterns": [
+    "xaml-layouts",
+    "data-binding-patterns",
+    "mvvm-architecture",
+    "navigation-patterns",
+    "dependency-injection",
+    "custom-renderers",
+    "platform-specific-code",
+    "messaging-center",
+    "local-storage",
+    "web-service-integration"
+  ],
+  "priority": 77
+}

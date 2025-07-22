@@ -1,0 +1,70 @@
+{
+  "name": "django",
+  "display_name": "Django",
+  "category": "backend",
+  "type": "python-framework",
+  "description": "Django - The web framework for perfectionists with deadlines",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "django/django",
+        "docs_path": "docs",
+        "branch": "main"
+      },
+      "website": "https://djangoproject.com"
+    },
+    "examples": {
+      "github": {
+        "repo": "django/django",
+        "docs_path": "tests",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "intro/install",
+    "tutorial": "intro/tutorial01",
+    "models": "topics/db/models",
+    "views": "topics/http/views"
+  },
+  "context_files": [
+    "docs/intro/install.txt",
+    "docs/intro/tutorial01.txt",
+    "docs/topics/db/models.txt",
+    "docs/topics/http/views.txt"
+  ],
+  "key_features": [
+    "mvc-architecture",
+    "orm-included",
+    "admin-interface",
+    "authentication-system",
+    "template-engine",
+    "url-routing",
+    "middleware-support",
+    "form-handling",
+    "internationalization",
+    "security-features",
+    "database-migrations",
+    "testing-framework",
+    "caching-framework",
+    "rest-api-support"
+  ],
+  "common_patterns": [
+    "model-definition",
+    "view-classes",
+    "template-rendering",
+    "url-configuration",
+    "form-validation",
+    "middleware-usage",
+    "authentication-views",
+    "database-queries",
+    "admin-customization",
+    "signal-handling",
+    "custom-management-commands",
+    "rest-api-development",
+    "deployment-configuration",
+    "performance-optimization"
+  ],
+  "priority": 88
+}

@@ -1,0 +1,67 @@
+{
+  "name": "d3",
+  "display_name": "D3.js",
+  "category": "web",
+  "type": "data-visualization-library",
+  "description": "D3.js - Data-Driven Documents",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "d3/d3",
+        "docs_path": "docs",
+        "branch": "main"
+      },
+      "website": "https://d3js.org"
+    },
+    "examples": {
+      "github": {
+        "repo": "d3/d3",
+        "docs_path": "test",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "getting-started",
+    "selections": "d3-selection",
+    "scales": "d3-scale",
+    "shapes": "d3-shape",
+    "axes": "d3-axis",
+    "transitions": "d3-transition",
+    "interactions": "d3-drag",
+    "geography": "d3-geo"
+  },
+  "context_files": [
+    "docs/getting-started.md",
+    "docs/d3-selection.md",
+    "docs/d3-scale.md",
+    "docs/d3-shape.md",
+    "docs/d3-axis.md"
+  ],
+  "key_features": [
+    "data-binding",
+    "dom-manipulation",
+    "svg-generation",
+    "transitions-animations",
+    "scales-domains",
+    "shape-generators",
+    "geographic-projections",
+    "interaction-handling",
+    "modular-design",
+    "performance-optimization"
+  ],
+  "common_patterns": [
+    "data-joins",
+    "enter-update-exit",
+    "scale-mapping",
+    "svg-path-generation",
+    "axis-creation",
+    "transition-chaining",
+    "event-handling",
+    "brush-interaction",
+    "zoom-behavior",
+    "geographic-mapping"
+  ],
+  "priority": 87
+}

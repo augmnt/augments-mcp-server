@@ -1,0 +1,67 @@
+{
+  "name": "streamlit",
+  "display_name": "Streamlit",
+  "category": "ai-ml",
+  "type": "web-app-framework",
+  "description": "Streamlit - The fastest way to build and share data apps",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "streamlit/streamlit",
+        "docs_path": "docs",
+        "branch": "develop"
+      },
+      "website": "https://docs.streamlit.io"
+    },
+    "examples": {
+      "github": {
+        "repo": "streamlit/streamlit",
+        "docs_path": "examples",
+        "branch": "develop"
+      }
+    }
+  },
+  "sections": {
+    "installation": "get-started/installation",
+    "fundamentals": "get-started/fundamentals",
+    "tutorials": "tutorials",
+    "api-reference": "api-reference",
+    "components": "components",
+    "deployment": "deploy",
+    "caching": "concepts/architecture/caching",
+    "session-state": "concepts/architecture/session-state"
+  },
+  "context_files": [
+    "docs/get-started/installation.md",
+    "docs/get-started/fundamentals.md",
+    "docs/tutorials/get-started.md",
+    "docs/api-reference.md",
+    "docs/concepts/architecture/caching.md"
+  ],
+  "key_features": [
+    "rapid-prototyping",
+    "interactive-widgets",
+    "data-visualization",
+    "machine-learning-integration",
+    "caching-system",
+    "session-state",
+    "component-system",
+    "deployment-options",
+    "real-time-updates",
+    "theming-support"
+  ],
+  "common_patterns": [
+    "app-structure",
+    "widget-usage",
+    "data-display",
+    "chart-creation",
+    "file-uploads",
+    "form-handling",
+    "caching-functions",
+    "session-state-management",
+    "sidebar-usage",
+    "multipage-apps"
+  ],
+  "priority": 84
+}

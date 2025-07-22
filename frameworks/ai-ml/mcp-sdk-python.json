@@ -1,0 +1,53 @@
+{
+  "name": "mcp-sdk-python",
+  "display_name": "MCP SDK Python",
+  "category": "ai-ml",
+  "type": "sdk",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "modelcontextprotocol/python-sdk",
+        "docs_path": "docs",
+        "branch": "main"
+      },
+      "website": "https://modelcontextprotocol.io"
+    },
+    "examples": {
+      "github": {
+        "repo": "modelcontextprotocol/python-sdk",
+        "docs_path": "examples",
+        "branch": "main"
+      }
+    }
+  },
+  "context_files": [
+    "README.md",
+    "docs/quickstart.md",
+    "docs/server.md",
+    "docs/client.md",
+    "examples/servers/basic.py"
+  ],
+  "key_features": [
+    "fastmcp-framework",
+    "server-implementation",
+    "client-implementation", 
+    "resource-management",
+    "tool-integration",
+    "prompt-templates",
+    "structured-output",
+    "async-support",
+    "transport-layers"
+  ],
+  "common_patterns": [
+    "server-setup",
+    "tool-definition",
+    "resource-exposure",
+    "prompt-creation",
+    "client-integration",
+    "error-handling",
+    "context-management",
+    "lifecycle-hooks"
+  ],
+  "priority": 85
+}

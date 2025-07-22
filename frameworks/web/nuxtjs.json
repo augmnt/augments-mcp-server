@@ -1,0 +1,70 @@
+{
+  "name": "nuxtjs",
+  "display_name": "Nuxt.js",
+  "category": "web",
+  "type": "vue-framework",
+  "description": "Nuxt.js - The Intuitive Vue Framework",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "nuxt/nuxt",
+        "docs_path": "docs",
+        "branch": "main"
+      },
+      "website": "https://nuxt.com"
+    },
+    "examples": {
+      "github": {
+        "repo": "nuxt/nuxt",
+        "docs_path": "examples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "getting-started/installation",
+    "routing": "guide/directory-structure/pages",
+    "data-fetching": "getting-started/data-fetching",
+    "deployment": "getting-started/deployment"
+  },
+  "context_files": [
+    "docs/1.getting-started/1.installation.md",
+    "docs/1.getting-started/2.routing.md",
+    "docs/1.getting-started/4.data-fetching.md",
+    "docs/2.guide/2.directory-structure/1.pages.md"
+  ],
+  "key_features": [
+    "auto-routing",
+    "server-side-rendering",
+    "static-site-generation",
+    "hybrid-rendering",
+    "zero-configuration",
+    "typescript-support",
+    "auto-imports",
+    "file-based-routing",
+    "middleware-system",
+    "plugin-system",
+    "module-ecosystem",
+    "nitro-engine",
+    "universal-deployment",
+    "devtools-integration"
+  ],
+  "common_patterns": [
+    "pages-routing",
+    "layouts-structure",
+    "components-auto-import",
+    "composables-usage",
+    "middleware-guards",
+    "plugin-registration",
+    "data-fetching-patterns",
+    "error-handling",
+    "meta-management",
+    "asset-optimization",
+    "state-management",
+    "api-routes",
+    "deployment-targets",
+    "performance-optimization"
+  ],
+  "priority": 85
+}

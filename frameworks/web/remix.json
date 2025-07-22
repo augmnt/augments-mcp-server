@@ -1,0 +1,70 @@
+{
+  "name": "remix",
+  "display_name": "Remix",
+  "category": "web",
+  "type": "react-framework",
+  "description": "Remix - Full-stack web framework focused on web fundamentals",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "remix-run/remix",
+        "docs_path": "docs",
+        "branch": "main"
+      },
+      "website": "https://remix.run"
+    },
+    "examples": {
+      "github": {
+        "repo": "remix-run/examples",
+        "docs_path": "",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "tutorials/blog",
+    "routing": "file-conventions/routes",
+    "data-loading": "route/loader",
+    "forms": "route/action"
+  },
+  "context_files": [
+    "docs/tutorials/blog.md",
+    "docs/file-conventions/routes.md",
+    "docs/route/loader.md",
+    "docs/route/action.md"
+  ],
+  "key_features": [
+    "nested-routing",
+    "server-side-rendering",
+    "progressive-enhancement",
+    "error-boundaries",
+    "optimistic-ui",
+    "form-mutations",
+    "loader-functions",
+    "action-functions",
+    "typescript-support",
+    "streaming",
+    "prefetching",
+    "code-splitting",
+    "web-standards",
+    "full-stack-framework"
+  ],
+  "common_patterns": [
+    "file-based-routing",
+    "nested-route-layouts",
+    "data-loading-patterns",
+    "form-handling",
+    "error-boundary-patterns",
+    "optimistic-ui-updates",
+    "resource-routes",
+    "catch-boundaries",
+    "meta-function-usage",
+    "links-function-usage",
+    "session-management",
+    "authentication-patterns",
+    "deployment-strategies",
+    "performance-optimization"
+  ],
+  "priority": 80
+}

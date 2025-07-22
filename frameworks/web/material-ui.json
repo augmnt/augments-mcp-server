@@ -1,0 +1,67 @@
+{
+  "name": "material-ui",
+  "display_name": "Material-UI (MUI)",
+  "category": "web",
+  "type": "react-ui-library",
+  "description": "MUI - React components implementing Google's Material Design",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "mui/material-ui",
+        "docs_path": "docs",
+        "branch": "master"
+      },
+      "website": "https://mui.com"
+    },
+    "examples": {
+      "github": {
+        "repo": "mui/material-ui",
+        "docs_path": "docs/data",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "getting-started/installation",
+    "usage": "getting-started/usage",
+    "theming": "customization/theming",
+    "components": "components/accordion",
+    "styling": "system/basics",
+    "icons": "components/material-icons",
+    "lab": "components/about-the-lab",
+    "templates": "getting-started/templates"
+  },
+  "context_files": [
+    "docs/data/getting-started/installation/installation.md",
+    "docs/data/getting-started/usage/usage.md",
+    "docs/data/customization/theming/theming.md",
+    "docs/data/components/button/button.md",
+    "docs/data/system/basics/basics.md"
+  ],
+  "key_features": [
+    "material-design",
+    "comprehensive-components",
+    "theming-system",
+    "typescript-support",
+    "accessibility",
+    "responsive-design",
+    "customizable",
+    "icon-library",
+    "data-grid",
+    "date-pickers"
+  ],
+  "common_patterns": [
+    "theme-provider-usage",
+    "component-customization",
+    "responsive-breakpoints",
+    "style-overrides",
+    "form-components",
+    "layout-components",
+    "navigation-patterns",
+    "data-display",
+    "feedback-components",
+    "surface-components"
+  ],
+  "priority": 89
+}

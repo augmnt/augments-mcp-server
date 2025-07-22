@@ -1,0 +1,45 @@
+{
+  "name": "anthropic-sdk",
+  "display_name": "Anthropic SDK",
+  "category": "ai-ml",
+  "type": "sdk",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "anthropics/anthropic-sdk-python",
+        "docs_path": "README.md",
+        "branch": "main"
+      },
+      "website": "https://docs.anthropic.com/en/api"
+    }
+  },
+  "context_files": [
+    "README.md",
+    "examples/basic_completion.py",
+    "examples/streaming.py",
+    "examples/function_calling.py"
+  ],
+  "key_features": [
+    "claude-integration",
+    "message-api",
+    "streaming-responses",
+    "function-calling",
+    "async-support",
+    "rate-limiting",
+    "error-handling",
+    "token-counting",
+    "vision-support"
+  ],
+  "common_patterns": [
+    "message-construction",
+    "streaming-responses",
+    "function-definitions",
+    "error-handling",
+    "async-operations",
+    "context-management",
+    "prompt-engineering",
+    "response-parsing"
+  ],
+  "priority": 75
+}

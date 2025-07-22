@@ -1,0 +1,70 @@
+{
+  "name": "sveltekit",
+  "display_name": "SvelteKit",
+  "category": "web",
+  "type": "svelte-framework",
+  "description": "SvelteKit - Web development framework built on Svelte",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "sveltejs/kit",
+        "docs_path": "documentation/docs",
+        "branch": "main"
+      },
+      "website": "https://kit.svelte.dev"
+    },
+    "examples": {
+      "github": {
+        "repo": "sveltejs/kit",
+        "docs_path": "examples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "docs/creating-a-project",
+    "routing": "docs/routing",
+    "loading": "docs/load",
+    "forms": "docs/form-actions"
+  },
+  "context_files": [
+    "documentation/docs/10-getting-started/10-creating-a-project.md",
+    "documentation/docs/20-core-concepts/10-routing.md",
+    "documentation/docs/20-core-concepts/20-load.md",
+    "documentation/docs/20-core-concepts/30-form-actions.md"
+  ],
+  "key_features": [
+    "file-based-routing",
+    "server-side-rendering",
+    "static-site-generation",
+    "progressive-enhancement",
+    "zero-config-setup",
+    "hot-module-reloading",
+    "typescript-support",
+    "adapter-system",
+    "load-functions",
+    "form-actions",
+    "page-endpoints",
+    "prerendering",
+    "service-workers",
+    "deployment-adapters"
+  ],
+  "common_patterns": [
+    "route-parameters",
+    "layout-inheritance",
+    "load-data-fetching",
+    "form-progressive-enhancement",
+    "error-handling",
+    "redirect-patterns",
+    "page-options",
+    "server-load",
+    "client-load",
+    "form-validation",
+    "api-routes",
+    "static-prerendering",
+    "adapter-deployment",
+    "service-worker-integration"
+  ],
+  "priority": 82
+}

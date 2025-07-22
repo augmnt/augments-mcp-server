@@ -1,0 +1,67 @@
+{
+  "name": "parcel",
+  "display_name": "Parcel",
+  "category": "tools",
+  "type": "bundler",
+  "description": "Parcel - The zero configuration build tool for the web",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "parcel-bundler/parcel",
+        "docs_path": "packages/parcel/docs",
+        "branch": "v2"
+      },
+      "website": "https://parceljs.org"
+    },
+    "examples": {
+      "github": {
+        "repo": "parcel-bundler/parcel",
+        "docs_path": "packages/examples",
+        "branch": "v2"
+      }
+    }
+  },
+  "sections": {
+    "getting-started": "getting-started/webapp",
+    "features": "features/development",
+    "recipes": "recipes/react",
+    "plugins": "plugin-system/overview",
+    "configuration": "configuration/package-json",
+    "production": "features/production",
+    "migration": "getting-started/migration",
+    "cli": "features/cli"
+  },
+  "context_files": [
+    "packages/parcel/docs/getting-started/webapp.md",
+    "packages/parcel/docs/features/development.md",
+    "packages/parcel/docs/recipes/react.md",
+    "packages/parcel/docs/plugin-system/overview.md",
+    "packages/parcel/docs/features/production.md"
+  ],
+  "key_features": [
+    "zero-configuration",
+    "fast-builds",
+    "hot-reloading",
+    "code-splitting",
+    "tree-shaking",
+    "source-maps",
+    "asset-processing",
+    "plugin-system",
+    "multi-core-processing",
+    "lazy-dev-builds"
+  ],
+  "common_patterns": [
+    "entry-points",
+    "asset-imports",
+    "configuration-files",
+    "plugin-usage",
+    "environment-variables",
+    "code-splitting",
+    "production-optimization",
+    "source-map-configuration",
+    "custom-transformers",
+    "build-scripts"
+  ],
+  "priority": 82
+}

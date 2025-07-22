@@ -1,0 +1,67 @@
+{
+  "name": "zustand",
+  "display_name": "Zustand",
+  "category": "state-management",
+  "type": "react-state-library",
+  "description": "Zustand - A small, fast and scalable bearbones state-management solution",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "pmndrs/zustand",
+        "docs_path": "docs",
+        "branch": "main"
+      },
+      "website": "https://zustand-demo.pmnd.rs"
+    },
+    "examples": {
+      "github": {
+        "repo": "pmndrs/zustand",
+        "docs_path": "examples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "README",
+    "getting-started": "getting-started/introduction",
+    "typescript": "guides/typescript",
+    "recipes": "recipes/recipes",
+    "integrations": "integrations/integrations",
+    "migrations": "migrations/zustand-v3-v4",
+    "comparisons": "guides/event-handler-in-pre-zustand-v4.2.0",
+    "performance": "guides/performance"
+  },
+  "context_files": [
+    "README.md",
+    "docs/getting-started/introduction.md",
+    "docs/guides/typescript.md",
+    "docs/recipes/recipes.md",
+    "docs/integrations/integrations.md"
+  ],
+  "key_features": [
+    "lightweight",
+    "typescript-support",
+    "no-boilerplate",
+    "flexible-api",
+    "devtools-integration",
+    "persistence",
+    "immer-integration",
+    "subscriptions",
+    "selector-optimization",
+    "framework-agnostic"
+  ],
+  "common_patterns": [
+    "store-creation",
+    "state-updates",
+    "computed-values",
+    "async-actions",
+    "subscriptions",
+    "selectors",
+    "persistence-middleware",
+    "immer-usage",
+    "devtools-setup",
+    "store-slicing"
+  ],
+  "priority": 84
+}

@@ -1,0 +1,70 @@
+{
+  "name": "laravel",
+  "display_name": "Laravel",
+  "category": "backend",
+  "type": "php-framework",
+  "description": "Laravel - The PHP Framework for Web Artisans",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "laravel/docs",
+        "docs_path": "",
+        "branch": "11.x"
+      },
+      "website": "https://laravel.com"
+    },
+    "examples": {
+      "github": {
+        "repo": "laravel/laravel",
+        "docs_path": "app",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "installation",
+    "routing": "routing",
+    "controllers": "controllers",
+    "eloquent": "eloquent"
+  },
+  "context_files": [
+    "installation.md",
+    "routing.md",
+    "controllers.md",
+    "eloquent.md"
+  ],
+  "key_features": [
+    "eloquent-orm",
+    "artisan-cli",
+    "blade-templating",
+    "migration-system",
+    "middleware-support",
+    "authentication-system",
+    "routing-system",
+    "service-container",
+    "task-scheduling",
+    "queue-system",
+    "broadcasting",
+    "validation-system",
+    "file-storage",
+    "testing-support"
+  ],
+  "common_patterns": [
+    "mvc-architecture",
+    "route-definition",
+    "controller-actions",
+    "eloquent-models",
+    "blade-components",
+    "middleware-usage",
+    "service-providers",
+    "dependency-injection",
+    "form-requests",
+    "resource-controllers",
+    "database-migrations",
+    "seeders-factories",
+    "job-queues",
+    "event-listeners"
+  ],
+  "priority": 82
+}

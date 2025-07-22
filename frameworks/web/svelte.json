@@ -1,0 +1,71 @@
+{
+  "name": "svelte",
+  "display_name": "Svelte",
+  "category": "web",
+  "type": "javascript-compiler",
+  "description": "Svelte - Cybernetically enhanced web apps",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "sveltejs/svelte",
+        "docs_path": "documentation/docs",
+        "branch": "main"
+      },
+      "website": "https://svelte.dev"
+    },
+    "examples": {
+      "github": {
+        "repo": "sveltejs/svelte",
+        "docs_path": "documentation/examples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "introduction",
+    "tutorial": "tutorial",
+    "components": "docs/basic-markup",
+    "reactivity": "docs/reactivity"
+  },
+  "context_files": [
+    "documentation/docs/01-introduction.md",
+    "documentation/docs/02-template-syntax.md",
+    "documentation/docs/03-runes.md",
+    "documentation/docs/04-component-directives.md"
+  ],
+  "key_features": [
+    "compile-time-optimization",
+    "no-virtual-dom",
+    "reactive-assignments",
+    "built-in-state-management",
+    "scoped-css",
+    "component-composition",
+    "stores",
+    "actions",
+    "transitions",
+    "animations",
+    "slots",
+    "context-api",
+    "lifecycle-functions",
+    "runes",
+    "snippets"
+  ],
+  "common_patterns": [
+    "reactive-declarations",
+    "component-props",
+    "event-handling",
+    "two-way-binding",
+    "conditional-blocks",
+    "each-blocks",
+    "await-blocks",
+    "component-events",
+    "slot-patterns",
+    "store-subscriptions",
+    "context-usage",
+    "action-functions",
+    "transition-animations",
+    "component-lifecycle"
+  ],
+  "priority": 85
+}

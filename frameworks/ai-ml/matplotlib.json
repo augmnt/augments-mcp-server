@@ -1,0 +1,67 @@
+{
+  "name": "matplotlib",
+  "display_name": "Matplotlib",
+  "category": "ai-ml",
+  "type": "data-visualization-library",
+  "description": "Matplotlib - Python plotting library for creating static, animated, and interactive visualizations",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "matplotlib/matplotlib",
+        "docs_path": "doc",
+        "branch": "main"
+      },
+      "website": "https://matplotlib.org"
+    },
+    "examples": {
+      "github": {
+        "repo": "matplotlib/matplotlib",
+        "docs_path": "examples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "users/installing/index",
+    "tutorials": "tutorials/index",
+    "gallery": "gallery/index",
+    "api": "api/index",
+    "faq": "faq/index",
+    "users-guide": "users/index",
+    "developers": "devel/index",
+    "release-notes": "users/release_notes"
+  },
+  "context_files": [
+    "doc/users/installing/index.rst",
+    "doc/tutorials/index.rst",
+    "doc/tutorials/introductory/pyplot.rst",
+    "doc/tutorials/introductory/quick_start.rst",
+    "doc/gallery/index.rst"
+  ],
+  "key_features": [
+    "static-plots",
+    "interactive-plots",
+    "publication-quality",
+    "multiple-backends",
+    "customizable-styles",
+    "animation-support",
+    "3d-plotting",
+    "widget-integration",
+    "export-formats",
+    "theme-support"
+  ],
+  "common_patterns": [
+    "figure-creation",
+    "subplot-layouts",
+    "plot-customization",
+    "axis-configuration",
+    "legend-handling",
+    "color-mapping",
+    "annotation-adding",
+    "style-sheets",
+    "animation-creation",
+    "interactive-widgets"
+  ],
+  "priority": 89
+}

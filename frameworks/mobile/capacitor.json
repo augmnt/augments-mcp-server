@@ -1,0 +1,67 @@
+{
+  "name": "capacitor",
+  "display_name": "Capacitor",
+  "category": "mobile",
+  "type": "native-runtime",
+  "description": "Capacitor - Build cross-platform Native Progressive Web Apps for iOS, Android, and the Web",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "ionic-team/capacitor",
+        "docs_path": "site/docs",
+        "branch": "main"
+      },
+      "website": "https://capacitorjs.com/docs"
+    },
+    "examples": {
+      "github": {
+        "repo": "ionic-team/capacitor",
+        "docs_path": "example",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "getting-started",
+    "basics": "basics/workflow",
+    "guides": "guides/environment-setup",
+    "apis": "apis",
+    "plugins": "plugins",
+    "ios": "ios",
+    "android": "android",
+    "web": "web"
+  },
+  "context_files": [
+    "site/docs/getting-started.md",
+    "site/docs/basics/workflow.md",
+    "site/docs/guides/environment-setup.md",
+    "site/docs/apis/index.md",
+    "site/docs/plugins/index.md"
+  ],
+  "key_features": [
+    "web-to-native",
+    "progressive-web-apps",
+    "native-api-access",
+    "plugin-system",
+    "live-reload",
+    "native-ui",
+    "cross-platform",
+    "typescript-support",
+    "cli-tooling",
+    "community-plugins"
+  ],
+  "common_patterns": [
+    "plugin-installation",
+    "native-api-usage",
+    "platform-detection",
+    "device-features",
+    "file-system-access",
+    "camera-integration",
+    "push-notifications",
+    "storage-apis",
+    "network-requests",
+    "custom-plugins"
+  ],
+  "priority": 82
+}

@@ -1,0 +1,70 @@
+{
+  "name": "jest",
+  "display_name": "Jest",
+  "category": "testing",
+  "type": "testing-framework",
+  "description": "Jest - Delightful JavaScript testing framework",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "jestjs/jest",
+        "docs_path": "docs",
+        "branch": "main"
+      },
+      "website": "https://jestjs.io"
+    },
+    "examples": {
+      "github": {
+        "repo": "jestjs/jest",
+        "docs_path": "examples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "getting-started",
+    "matchers": "using-matchers",
+    "mocking": "mock-functions",
+    "async": "asynchronous"
+  },
+  "context_files": [
+    "docs/GettingStarted.md",
+    "docs/UsingMatchers.md",
+    "docs/MockFunctions.md",
+    "docs/Asynchronous.md"
+  ],
+  "key_features": [
+    "zero-configuration",
+    "snapshot-testing",
+    "isolated-tests",
+    "powerful-matchers",
+    "mock-functions",
+    "code-coverage",
+    "parallel-testing",
+    "watch-mode",
+    "custom-reporters",
+    "babel-integration",
+    "typescript-support",
+    "async-testing",
+    "setup-teardown",
+    "cli-runner"
+  ],
+  "common_patterns": [
+    "test-suite-organization",
+    "assertion-patterns",
+    "mock-implementation",
+    "async-test-handling",
+    "snapshot-testing",
+    "setup-teardown-hooks",
+    "test-configuration",
+    "code-coverage-reporting",
+    "custom-matchers",
+    "test-utilities",
+    "integration-testing",
+    "performance-testing",
+    "continuous-integration",
+    "debugging-tests"
+  ],
+  "priority": 85
+}

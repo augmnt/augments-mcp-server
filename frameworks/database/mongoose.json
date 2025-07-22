@@ -1,0 +1,67 @@
+{
+  "name": "mongoose",
+  "display_name": "Mongoose",
+  "category": "database",
+  "type": "mongodb-odm",
+  "description": "Mongoose - Elegant MongoDB object modeling for Node.js",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "Automattic/mongoose",
+        "docs_path": "docs",
+        "branch": "master"
+      },
+      "website": "https://mongoosejs.com"
+    },
+    "examples": {
+      "github": {
+        "repo": "Automattic/mongoose",
+        "docs_path": "examples",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "index",
+    "guide": "guide",
+    "schemas": "guide#definition",
+    "models": "models",
+    "documents": "documents",
+    "queries": "queries",
+    "validation": "validation",
+    "middleware": "middleware"
+  },
+  "context_files": [
+    "docs/index.md",
+    "docs/guide.md",
+    "docs/models.md",
+    "docs/documents.md",
+    "docs/queries.md"
+  ],
+  "key_features": [
+    "schema-definition",
+    "model-creation",
+    "validation",
+    "middleware-hooks",
+    "query-building",
+    "population",
+    "virtuals",
+    "plugins",
+    "connection-management",
+    "aggregation"
+  ],
+  "common_patterns": [
+    "schema-modeling",
+    "model-methods",
+    "query-execution",
+    "validation-rules",
+    "middleware-usage",
+    "population-queries",
+    "aggregation-pipelines",
+    "connection-handling",
+    "error-handling",
+    "virtual-properties"
+  ],
+  "priority": 87
+}

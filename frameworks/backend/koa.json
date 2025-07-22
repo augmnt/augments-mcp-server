@@ -1,0 +1,66 @@
+{
+  "name": "koa",
+  "display_name": "Koa",
+  "category": "backend",
+  "type": "nodejs-framework",
+  "description": "Koa - Expressive middleware for Node.js using ES2017 async functions",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "koajs/koa",
+        "docs_path": "docs",
+        "branch": "master"
+      },
+      "website": "https://koajs.com"
+    },
+    "examples": {
+      "github": {
+        "repo": "koajs/examples",
+        "docs_path": "",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "readme",
+    "application": "api/index",
+    "context": "api/context",
+    "request": "api/request",
+    "response": "api/response",
+    "middleware": "guide",
+    "error-handling": "error-handling"
+  },
+  "context_files": [
+    "docs/api/index.md",
+    "docs/api/context.md",
+    "docs/api/request.md",
+    "docs/api/response.md",
+    "docs/guide.md"
+  ],
+  "key_features": [
+    "async-await",
+    "lightweight",
+    "middleware-based",
+    "error-handling",
+    "context-object",
+    "http-utilities",
+    "generator-support",
+    "content-negotiation",
+    "cascading-middleware",
+    "expressive-api"
+  ],
+  "common_patterns": [
+    "middleware-composition",
+    "async-middleware",
+    "error-handling-middleware",
+    "routing-setup",
+    "request-parsing",
+    "response-formatting",
+    "context-usage",
+    "authentication-middleware",
+    "logging-middleware",
+    "cors-handling"
+  ],
+  "priority": 81
+}

@@ -1,0 +1,53 @@
+{
+  "name": "nextjs",
+  "display_name": "Next.js",
+  "category": "web",
+  "type": "react-framework",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "vercel/next.js",
+        "docs_path": "docs",
+        "branch": "canary"
+      },
+      "website": "https://nextjs.org/docs"
+    },
+    "examples": {
+      "github": {
+        "repo": "vercel/next.js",
+        "docs_path": "examples",
+        "branch": "canary"
+      }
+    }
+  },
+  "context_files": [
+    "docs/getting-started/installation.mdx",
+    "docs/app/building-your-application/routing.mdx",
+    "docs/app/building-your-application/data-fetching.mdx",
+    "docs/app/building-your-application/rendering.mdx",
+    "docs/app/api-reference/components.mdx"
+  ],
+  "key_features": [
+    "app-router",
+    "server-side-rendering",
+    "static-site-generation",
+    "api-routes",
+    "image-optimization",
+    "automatic-code-splitting",
+    "hot-reload",
+    "typescript-support",
+    "middleware"
+  ],
+  "common_patterns": [
+    "file-based-routing",
+    "server-components",
+    "client-components",
+    "data-fetching",
+    "layout-patterns",
+    "api-integration",
+    "deployment-optimization",
+    "performance-optimization"
+  ],
+  "priority": 90
+}

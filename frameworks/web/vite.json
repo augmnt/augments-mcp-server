@@ -1,0 +1,70 @@
+{
+  "name": "vite",
+  "display_name": "Vite",
+  "category": "web",
+  "type": "build-tool",
+  "description": "Vite - Next generation frontend tooling",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "vitejs/vite",
+        "docs_path": "docs",
+        "branch": "main"
+      },
+      "website": "https://vitejs.dev"
+    },
+    "examples": {
+      "github": {
+        "repo": "vitejs/vite",
+        "docs_path": "playground",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "guide",
+    "configuration": "config",
+    "plugins": "guide/using-plugins",
+    "building": "guide/build"
+  },
+  "context_files": [
+    "docs/guide/index.md",
+    "docs/config/index.md",
+    "docs/guide/using-plugins.md",
+    "docs/guide/build.md"
+  ],
+  "key_features": [
+    "instant-server-start",
+    "lightning-fast-hmr",
+    "rich-features",
+    "optimized-build",
+    "universal-plugins",
+    "fully-typed-apis",
+    "framework-agnostic",
+    "rollup-based",
+    "dev-server",
+    "build-optimization",
+    "typescript-support",
+    "css-preprocessing",
+    "asset-handling",
+    "plugin-ecosystem"
+  ],
+  "common_patterns": [
+    "project-setup",
+    "configuration-files",
+    "plugin-usage",
+    "development-server",
+    "build-process",
+    "asset-imports",
+    "css-modules",
+    "typescript-setup",
+    "environment-variables",
+    "proxy-configuration",
+    "build-optimization",
+    "deployment-preparation",
+    "plugin-development",
+    "framework-integration"
+  ],
+  "priority": 85
+}

@@ -1,0 +1,67 @@
+{
+  "name": "huggingface",
+  "display_name": "Hugging Face Transformers",
+  "category": "ai-ml",
+  "type": "machine-learning-library",
+  "description": "Hugging Face - State-of-the-art Natural Language Processing for PyTorch, TensorFlow, and JAX",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "huggingface/transformers",
+        "docs_path": "docs/source",
+        "branch": "main"
+      },
+      "website": "https://huggingface.co/docs/transformers"
+    },
+    "examples": {
+      "github": {
+        "repo": "huggingface/transformers",
+        "docs_path": "examples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "installation",
+    "quickstart": "quicktour",
+    "models": "model_doc/auto",
+    "tokenizers": "main_classes/tokenizer",
+    "pipelines": "main_classes/pipelines",
+    "training": "training",
+    "fine-tuning": "tasks/sequence_classification",
+    "inference": "main_classes/model"
+  },
+  "context_files": [
+    "docs/source/installation.md",
+    "docs/source/quicktour.md",
+    "docs/source/main_classes/pipelines.md",
+    "docs/source/main_classes/tokenizer.md",
+    "docs/source/training.md"
+  ],
+  "key_features": [
+    "pretrained-models",
+    "transformer-architectures",
+    "multi-framework-support",
+    "tokenization",
+    "pipelines",
+    "model-hub",
+    "fine-tuning",
+    "inference-optimization",
+    "multi-modal-support",
+    "distributed-training"
+  ],
+  "common_patterns": [
+    "pipeline-usage",
+    "model-loading",
+    "tokenizer-usage",
+    "fine-tuning-scripts",
+    "inference-optimization",
+    "custom-datasets",
+    "trainer-usage",
+    "model-evaluation",
+    "text-generation",
+    "classification-tasks"
+  ],
+  "priority": 88
+}

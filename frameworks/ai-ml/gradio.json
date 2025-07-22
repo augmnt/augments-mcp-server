@@ -1,0 +1,67 @@
+{
+  "name": "gradio",
+  "display_name": "Gradio",
+  "category": "ai-ml",
+  "type": "ml-interface-library",
+  "description": "Gradio - Build and share delightful machine learning apps",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "gradio-app/gradio",
+        "docs_path": "guides",
+        "branch": "main"
+      },
+      "website": "https://gradio.app/docs"
+    },
+    "examples": {
+      "github": {
+        "repo": "gradio-app/gradio",
+        "docs_path": "demo",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "quickstart",
+    "interface": "creating-a-chatbot",
+    "blocks": "blocks-and-event-listeners",
+    "components": "the-interface-class",
+    "sharing": "sharing-your-app",
+    "custom-components": "custom-components-in-five-minutes",
+    "theming": "theming-guide",
+    "deployment": "deploying-gradio-apps"
+  },
+  "context_files": [
+    "guides/quickstart.md",
+    "guides/creating-a-chatbot.md",
+    "guides/blocks-and-event-listeners.md",
+    "guides/the-interface-class.md",
+    "guides/sharing-your-app.md"
+  ],
+  "key_features": [
+    "rapid-ui-creation",
+    "ml-model-demos",
+    "custom-components",
+    "sharing-capabilities",
+    "chatbot-support",
+    "file-handling",
+    "real-time-inference",
+    "theming-options",
+    "flagging-system",
+    "authentication"
+  ],
+  "common_patterns": [
+    "interface-creation",
+    "blocks-usage",
+    "component-composition",
+    "event-handling",
+    "model-integration",
+    "file-upload-handling",
+    "chatbot-implementation",
+    "custom-css-theming",
+    "sharing-deployment",
+    "authentication-setup"
+  ],
+  "priority": 83
+}

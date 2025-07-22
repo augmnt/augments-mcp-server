@@ -1,0 +1,67 @@
+{
+  "name": "opencv",
+  "display_name": "OpenCV",
+  "category": "ai-ml",
+  "type": "computer-vision-library",
+  "description": "OpenCV - Open Source Computer Vision Library",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "opencv/opencv",
+        "docs_path": "doc",
+        "branch": "4.x"
+      },
+      "website": "https://docs.opencv.org"
+    },
+    "examples": {
+      "github": {
+        "repo": "opencv/opencv",
+        "docs_path": "samples",
+        "branch": "4.x"
+      }
+    }
+  },
+  "sections": {
+    "installation": "d0/de3/tutorial_py_intro.html",
+    "basics": "d6/d00/tutorial_py_root.html",
+    "gui": "dc/d4d/tutorial_py_table_of_contents_gui.html",
+    "image-processing": "d2/d96/tutorial_py_table_of_contents_imgproc.html",
+    "feature-detection": "db/d27/tutorial_py_table_of_contents_feature2d.html",
+    "video-analysis": "da/dd0/tutorial_py_table_of_contents_video.html",
+    "machine-learning": "d6/de2/tutorial_py_table_of_contents_ml.html",
+    "deep-learning": "d2/d58/tutorial_table_of_content_dnn.html"
+  },
+  "context_files": [
+    "doc/tutorials/introduction/table_of_content_introduction/table_of_content_introduction.md",
+    "doc/tutorials/imgproc/table_of_content_imgproc/table_of_content_imgproc.md",
+    "doc/tutorials/features2d/table_of_content_features2d/table_of_content_features2d.md",
+    "doc/tutorials/video/table_of_content_video/table_of_content_video.md",
+    "doc/tutorials/ml/table_of_content_ml/table_of_content_ml.md"
+  ],
+  "key_features": [
+    "image-processing",
+    "computer-vision",
+    "video-analysis",
+    "machine-learning",
+    "feature-detection",
+    "object-tracking",
+    "face-recognition",
+    "deep-learning-integration",
+    "real-time-processing",
+    "cross-platform"
+  ],
+  "common_patterns": [
+    "image-loading",
+    "filtering-operations",
+    "geometric-transformations",
+    "contour-detection",
+    "feature-matching",
+    "video-capture",
+    "object-detection",
+    "face-detection",
+    "template-matching",
+    "camera-calibration"
+  ],
+  "priority": 87
+}

@@ -1,0 +1,70 @@
+{
+  "name": "react-native",
+  "display_name": "React Native",
+  "category": "mobile",
+  "type": "mobile-framework",
+  "description": "React Native - Create native apps for Android and iOS using React",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "facebook/react-native-website",
+        "docs_path": "docs",
+        "branch": "main"
+      },
+      "website": "https://reactnative.dev"
+    },
+    "examples": {
+      "github": {
+        "repo": "facebook/react-native",
+        "docs_path": "packages/rn-tester",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "environment-setup",
+    "tutorial": "tutorial",
+    "components": "components-and-apis",
+    "navigation": "navigation"
+  },
+  "context_files": [
+    "docs/environment-setup.md",
+    "docs/tutorial.md",
+    "docs/components-and-apis.md",
+    "docs/navigation.md"
+  ],
+  "key_features": [
+    "cross-platform-development",
+    "native-performance",
+    "hot-reloading",
+    "javascript-bridge",
+    "native-modules",
+    "flexbox-layout",
+    "component-based",
+    "platform-specific-code",
+    "third-party-libraries",
+    "debugging-tools",
+    "metro-bundler",
+    "hermes-engine",
+    "codepush-support",
+    "expo-integration"
+  ],
+  "common_patterns": [
+    "component-creation",
+    "navigation-setup",
+    "state-management",
+    "styling-components",
+    "handling-user-input",
+    "networking-requests",
+    "platform-specific-styling",
+    "native-module-integration",
+    "navigation-patterns",
+    "data-persistence",
+    "push-notifications",
+    "image-handling",
+    "performance-optimization",
+    "testing-strategies"
+  ],
+  "priority": 90
+}

@@ -1,0 +1,67 @@
+{
+  "name": "nx",
+  "display_name": "Nx",
+  "category": "tools",
+  "type": "monorepo-toolkit",
+  "description": "Nx - Smart, fast and extensible build system",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "nrwl/nx",
+        "docs_path": "docs",
+        "branch": "master"
+      },
+      "website": "https://nx.dev"
+    },
+    "examples": {
+      "github": {
+        "repo": "nrwl/nx-examples",
+        "docs_path": "",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "getting-started/intro",
+    "concepts": "concepts/mental-model",
+    "workspace": "concepts/integrated-vs-package-based",
+    "generators": "concepts/generators",
+    "executors": "concepts/executors",
+    "caching": "concepts/how-caching-works",
+    "plugins": "concepts/nx-plugins",
+    "ci": "concepts/dte"
+  },
+  "context_files": [
+    "docs/shared/getting-started/intro.md",
+    "docs/shared/concepts/mental-model.md",
+    "docs/shared/concepts/integrated-vs-package-based.md",
+    "docs/shared/concepts/generators.md",
+    "docs/shared/concepts/executors.md"
+  ],
+  "key_features": [
+    "monorepo-management",
+    "smart-rebuilds",
+    "distributed-caching",
+    "code-generation",
+    "dependency-graph",
+    "affected-commands",
+    "plugin-ecosystem",
+    "workspace-analysis",
+    "ci-optimization",
+    "task-orchestration"
+  ],
+  "common_patterns": [
+    "workspace-configuration",
+    "project-generation",
+    "executor-usage",
+    "generator-usage",
+    "cache-configuration",
+    "affected-testing",
+    "plugin-installation",
+    "build-optimization",
+    "ci-setup",
+    "dependency-management"
+  ],
+  "priority": 87
+}

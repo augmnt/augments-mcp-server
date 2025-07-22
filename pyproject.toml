@@ -1,0 +1,44 @@
+[project]
+name = "augments-mcp-server"
+version = "1.0.0"
+description = "Augments MCP Server - A comprehensive framework documentation provider for Claude Code"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastmcp>=0.1.0",
+    "httpx>=0.25.0",
+    "beautifulsoup4>=4.12.0",
+    "pydantic>=2.0.0",
+    "aiofiles>=23.0.0",
+    "diskcache>=5.6.0",
+    "markdownify>=0.11.0",
+    "python-dotenv>=1.0.0",
+    "structlog>=24.0.0",
+    "rich>=13.0.0",
+    "click>=8.1.0",
+    "watchdog>=3.0.0",
+]
+
+[project.scripts]
+augments-mcp-server = "augments_mcp.server:main"
+
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.uv]
+package = true
+dev-dependencies = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.11.0",
+    "black>=23.7.0",
+    "ruff>=0.0.287",
+    "mypy>=1.5.0",
+    "types-beautifulsoup4>=4.12.0",
+    "types-aiofiles>=23.0.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

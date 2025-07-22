@@ -1,0 +1,68 @@
+{
+  "name": "gin",
+  "display_name": "Gin",
+  "category": "backend",
+  "type": "go-framework",
+  "description": "Gin - HTTP web framework written in Go",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "gin-gonic/gin",
+        "docs_path": "docs",
+        "branch": "master"
+      },
+      "website": "https://gin-gonic.com"
+    },
+    "examples": {
+      "github": {
+        "repo": "gin-gonic/examples",
+        "docs_path": "",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "doc/doc.md",
+    "quickstart": "README.md",
+    "routing": "docs/doc.md",
+    "middleware": "docs/doc.md"
+  },
+  "context_files": [
+    "README.md",
+    "docs/doc.md"
+  ],
+  "key_features": [
+    "fast-performance",
+    "middleware-support",
+    "json-validation",
+    "route-grouping",
+    "error-management",
+    "render-built-in",
+    "extensible",
+    "crash-free",
+    "json-binding",
+    "multipart-form",
+    "query-parameters",
+    "cookie-handling",
+    "testing-support",
+    "minimal-memory-footprint"
+  ],
+  "common_patterns": [
+    "route-definition",
+    "handler-functions",
+    "middleware-usage",
+    "route-grouping",
+    "request-binding",
+    "response-rendering",
+    "error-handling",
+    "authentication-middleware",
+    "cors-handling",
+    "logging-middleware",
+    "recovery-middleware",
+    "custom-validators",
+    "file-upload-handling",
+    "api-development"
+  ],
+  "priority": 75
+}

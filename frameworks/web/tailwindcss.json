@@ -1,0 +1,40 @@
+{
+  "name": "tailwindcss",
+  "display_name": "Tailwind CSS",
+  "category": "web",
+  "type": "css-framework",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "tailwindlabs/tailwindcss",
+        "docs_path": "docs",
+        "branch": "main"
+      },
+      "website": "https://tailwindcss.com/docs"
+    }
+  },
+  "context_files": [
+    "docs/installation.md",
+    "docs/configuration.md",
+    "docs/utility-first.md",
+    "docs/responsive-design.md",
+    "docs/hover-focus-and-other-states.md"
+  ],
+  "key_features": [
+    "utility-first",
+    "responsive-design",
+    "customization",
+    "component-friendly",
+    "mobile-first",
+    "dark-mode-support"
+  ],
+  "common_patterns": [
+    "component-composition",
+    "responsive-utilities",
+    "state-variants",
+    "custom-components",
+    "design-systems"
+  ],
+  "priority": 90
+}

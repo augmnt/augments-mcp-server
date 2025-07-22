@@ -1,0 +1,67 @@
+{
+  "name": "mantine",
+  "display_name": "Mantine",
+  "category": "web",
+  "type": "react-ui-library",
+  "description": "Mantine - Build fully functional accessible web applications faster than ever",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "mantinedev/mantine",
+        "docs_path": "docs",
+        "branch": "master"
+      },
+      "website": "https://mantine.dev"
+    },
+    "examples": {
+      "github": {
+        "repo": "mantinedev/mantine",
+        "docs_path": "packages/@docs/demos/src/demos",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "getting-started",
+    "theming": "theming/theme-object",
+    "components": "core/action-icon",
+    "hooks": "hooks/use-boolean",
+    "forms": "form/use-form",
+    "dates": "dates/getting-started",
+    "charts": "charts/getting-started",
+    "styling": "styles/style-props"
+  },
+  "context_files": [
+    "docs/src/pages/getting-started.mdx",
+    "docs/src/pages/theming/theme-object.mdx",
+    "docs/src/pages/core/action-icon.mdx",
+    "docs/src/pages/hooks/use-boolean.mdx",
+    "docs/src/pages/form/use-form.mdx"
+  ],
+  "key_features": [
+    "typescript-support",
+    "dark-theme",
+    "accessibility",
+    "customizable-components",
+    "hooks-library",
+    "form-management",
+    "date-picker",
+    "charts-integration",
+    "rich-text-editor",
+    "notifications-system"
+  ],
+  "common_patterns": [
+    "component-usage",
+    "theme-customization",
+    "form-handling",
+    "hook-patterns",
+    "styling-props",
+    "layout-components",
+    "navigation-components",
+    "data-display",
+    "feedback-components",
+    "overlay-components"
+  ],
+  "priority": 84
+}

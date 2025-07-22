@@ -1,0 +1,67 @@
+{
+  "name": "vitest",
+  "display_name": "Vitest",
+  "category": "testing",
+  "type": "unit-testing-framework",
+  "description": "Vitest - A blazing fast unit test framework powered by Vite",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "vitest-dev/vitest",
+        "docs_path": "docs",
+        "branch": "main"
+      },
+      "website": "https://vitest.dev"
+    },
+    "examples": {
+      "github": {
+        "repo": "vitest-dev/vitest",
+        "docs_path": "examples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "guide",
+    "features": "guide/features",
+    "configuration": "config",
+    "api": "api",
+    "cli": "guide/cli",
+    "mocking": "guide/mocking",
+    "coverage": "guide/coverage",
+    "ui": "guide/ui"
+  },
+  "context_files": [
+    "docs/guide/index.md",
+    "docs/guide/features.md",
+    "docs/config/index.md",
+    "docs/api/index.md",
+    "docs/guide/mocking.md"
+  ],
+  "key_features": [
+    "vite-powered",
+    "jest-compatible",
+    "fast-execution",
+    "hot-module-replacement",
+    "typescript-support",
+    "snapshot-testing",
+    "coverage-reports",
+    "watch-mode",
+    "ui-mode",
+    "worker-threads"
+  ],
+  "common_patterns": [
+    "test-structure",
+    "assertions",
+    "mocking-modules",
+    "snapshot-testing",
+    "async-testing",
+    "setup-teardown",
+    "test-utilities",
+    "coverage-configuration",
+    "watch-mode-usage",
+    "custom-matchers"
+  ],
+  "priority": 85
+}

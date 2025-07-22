@@ -1,0 +1,70 @@
+{
+  "name": "qwik",
+  "display_name": "Qwik",
+  "category": "web",
+  "type": "javascript-framework",
+  "description": "Qwik - Resumable framework for instant loading web apps",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "QwikDev/qwik",
+        "docs_path": "packages/docs/src/content/docs",
+        "branch": "main"
+      },
+      "website": "https://qwik.dev"
+    },
+    "examples": {
+      "github": {
+        "repo": "QwikDev/qwik",
+        "docs_path": "packages/docs/src/content/examples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "getting-started",
+    "components": "components/overview",
+    "routing": "qwikcity/routing",
+    "optimization": "concepts/resumable"
+  },
+  "context_files": [
+    "packages/docs/src/content/docs/getting-started/index.mdx",
+    "packages/docs/src/content/docs/components/overview/index.mdx",
+    "packages/docs/src/content/docs/concepts/resumable/index.mdx",
+    "packages/docs/src/content/docs/qwikcity/routing/index.mdx"
+  ],
+  "key_features": [
+    "resumable-execution",
+    "zero-hydration",
+    "streaming",
+    "progressive-loading",
+    "instant-on",
+    "jsx-support",
+    "typescript-first",
+    "server-rendering",
+    "edge-optimized",
+    "minimal-javascript",
+    "lazy-loading",
+    "fine-grained-loading",
+    "prefetching",
+    "optimization-focused"
+  ],
+  "common_patterns": [
+    "component-definition",
+    "event-handling",
+    "state-management",
+    "routing-patterns",
+    "data-fetching",
+    "lazy-loading",
+    "progressive-enhancement",
+    "streaming-patterns",
+    "optimization-techniques",
+    "server-functions",
+    "middleware-usage",
+    "deployment-strategies",
+    "performance-monitoring",
+    "seo-optimization"
+  ],
+  "priority": 75
+}

@@ -1,0 +1,67 @@
+{
+  "name": "ansible",
+  "display_name": "Ansible",
+  "category": "devops",
+  "type": "automation-platform",
+  "description": "Ansible - Simple, agentless automation that anyone can use",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "ansible/ansible",
+        "docs_path": "docs",
+        "branch": "devel"
+      },
+      "website": "https://docs.ansible.com"
+    },
+    "examples": {
+      "github": {
+        "repo": "ansible/ansible-examples",
+        "docs_path": "",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "installation_guide/intro_installation",
+    "user-guide": "user_guide/index",
+    "playbooks": "user_guide/playbooks_intro",
+    "modules": "collections/index",
+    "inventory": "user_guide/intro_inventory",
+    "variables": "user_guide/playbooks_variables",
+    "templates": "user_guide/playbooks_templating",
+    "roles": "user_guide/playbooks_reuse_roles"
+  },
+  "context_files": [
+    "docs/docsite/rst/installation_guide/intro_installation.rst",
+    "docs/docsite/rst/user_guide/index.rst",
+    "docs/docsite/rst/user_guide/playbooks_intro.rst",
+    "docs/docsite/rst/user_guide/intro_inventory.rst",
+    "docs/docsite/rst/user_guide/playbooks_variables.rst"
+  ],
+  "key_features": [
+    "agentless-automation",
+    "yaml-playbooks",
+    "idempotent-operations",
+    "inventory-management",
+    "module-system",
+    "role-based-organization",
+    "template-engine",
+    "variable-management",
+    "conditional-execution",
+    "loop-constructs"
+  ],
+  "common_patterns": [
+    "playbook-structure",
+    "task-definitions",
+    "inventory-files",
+    "variable-files",
+    "template-usage",
+    "role-organization",
+    "handler-usage",
+    "conditional-tasks",
+    "loop-patterns",
+    "error-handling"
+  ],
+  "priority": 87
+}

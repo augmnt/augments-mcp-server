@@ -1,0 +1,67 @@
+{
+  "name": "playwright",
+  "display_name": "Playwright",
+  "category": "testing",
+  "type": "e2e-testing-framework",
+  "description": "Playwright - Fast and reliable end-to-end testing for modern web apps",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "microsoft/playwright",
+        "docs_path": "docs/src",
+        "branch": "main"
+      },
+      "website": "https://playwright.dev"
+    },
+    "examples": {
+      "github": {
+        "repo": "microsoft/playwright",
+        "docs_path": "tests",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "intro",
+    "writing-tests": "writing-tests",
+    "running-tests": "running-tests",
+    "debugging": "debug",
+    "locators": "locators",
+    "assertions": "test-assertions",
+    "api-testing": "api-testing",
+    "configuration": "test-configuration"
+  },
+  "context_files": [
+    "docs/src/intro.md",
+    "docs/src/writing-tests.md",
+    "docs/src/running-tests.md",
+    "docs/src/locators.md",
+    "docs/src/test-assertions.md"
+  ],
+  "key_features": [
+    "cross-browser-testing",
+    "mobile-testing",
+    "api-testing",
+    "auto-wait",
+    "network-interception",
+    "visual-comparisons",
+    "parallel-execution",
+    "test-generation",
+    "debugging-tools",
+    "ci-integration"
+  ],
+  "common_patterns": [
+    "test-structure",
+    "locator-strategies",
+    "page-interactions",
+    "assertions",
+    "api-testing",
+    "network-mocking",
+    "screenshot-testing",
+    "parallel-testing",
+    "test-fixtures",
+    "custom-matchers"
+  ],
+  "priority": 89
+}

@@ -1,0 +1,70 @@
+{
+  "name": "gatsby",
+  "display_name": "Gatsby",
+  "category": "web",
+  "type": "react-framework",
+  "description": "Gatsby - Static site generator for React",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "gatsbyjs/gatsby",
+        "docs_path": "docs",
+        "branch": "master"
+      },
+      "website": "https://gatsbyjs.com"
+    },
+    "examples": {
+      "github": {
+        "repo": "gatsbyjs/gatsby",
+        "docs_path": "examples",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "tutorial/getting-started",
+    "graphql": "conceptual/graphql-concepts",
+    "plugins": "plugins",
+    "deployment": "how-to/previews-deploys-hosting"
+  },
+  "context_files": [
+    "docs/tutorial/getting-started/index.md",
+    "docs/conceptual/graphql-concepts.md",
+    "docs/reference/config-files/gatsby-config.md",
+    "docs/how-to/sourcing-data/index.md"
+  ],
+  "key_features": [
+    "static-site-generation",
+    "graphql-data-layer",
+    "plugin-ecosystem",
+    "image-optimization",
+    "progressive-web-app",
+    "code-splitting",
+    "prefetching",
+    "hot-reloading",
+    "typescript-support",
+    "markdown-support",
+    "cms-integration",
+    "performance-optimization",
+    "seo-optimization",
+    "accessibility-features"
+  ],
+  "common_patterns": [
+    "page-creation",
+    "graphql-queries",
+    "static-queries",
+    "page-queries",
+    "plugin-configuration",
+    "data-sourcing",
+    "image-processing",
+    "markdown-processing",
+    "programmatic-page-creation",
+    "theme-development",
+    "plugin-development",
+    "build-optimization",
+    "deployment-strategies",
+    "performance-tuning"
+  ],
+  "priority": 78
+}

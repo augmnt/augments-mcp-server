@@ -1,0 +1,67 @@
+{
+  "name": "eslint",
+  "display_name": "ESLint",
+  "category": "tools",
+  "type": "linter",
+  "description": "ESLint - Find and fix problems in your JavaScript code",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "eslint/eslint",
+        "docs_path": "docs",
+        "branch": "main"
+      },
+      "website": "https://eslint.org"
+    },
+    "examples": {
+      "github": {
+        "repo": "eslint/eslint",
+        "docs_path": "docs/src/use",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "getting-started",
+    "configuration": "configure",
+    "rules": "rules",
+    "plugins": "plugins",
+    "shareable-configs": "shareable-configs",
+    "formatters": "formatters",
+    "integrations": "integrations",
+    "command-line": "command-line-interface"
+  },
+  "context_files": [
+    "docs/src/use/getting-started.md",
+    "docs/src/use/configure/index.md",
+    "docs/src/use/configure/rules.md",
+    "docs/src/use/configure/plugins.md",
+    "docs/src/use/command-line-interface.md"
+  ],
+  "key_features": [
+    "static-analysis",
+    "code-quality",
+    "style-enforcement",
+    "custom-rules",
+    "plugin-system",
+    "configuration-files",
+    "auto-fixing",
+    "editor-integration",
+    "shareable-configs",
+    "typescript-support"
+  ],
+  "common_patterns": [
+    "configuration-files",
+    "rule-configuration",
+    "plugin-usage",
+    "extends-configs",
+    "ignore-patterns",
+    "custom-rules",
+    "override-configs",
+    "environment-settings",
+    "parser-options",
+    "auto-fix-usage"
+  ],
+  "priority": 86
+}

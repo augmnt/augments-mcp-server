@@ -1,0 +1,67 @@
+{
+  "name": "echo",
+  "display_name": "Echo",
+  "category": "backend",
+  "type": "go-framework",
+  "description": "Echo - High performance, minimalist Go web framework",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "labstack/echo",
+        "docs_path": "website/content",
+        "branch": "master"
+      },
+      "website": "https://echo.labstack.com"
+    },
+    "examples": {
+      "github": {
+        "repo": "labstack/echo",
+        "docs_path": "_example",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "guide/installation",
+    "routing": "guide/routing",
+    "middleware": "guide/middleware",
+    "context": "guide/context",
+    "request": "guide/request",
+    "response": "guide/response",
+    "error-handling": "guide/error-handling",
+    "testing": "guide/testing"
+  },
+  "context_files": [
+    "website/content/guide/installation.md",
+    "website/content/guide/routing.md",
+    "website/content/guide/middleware.md",
+    "website/content/guide/context.md",
+    "website/content/guide/request.md"
+  ],
+  "key_features": [
+    "high-performance",
+    "lightweight",
+    "middleware-support",
+    "data-binding",
+    "json-validation",
+    "template-rendering",
+    "static-files",
+    "http2-support",
+    "websocket-support",
+    "auto-tls"
+  ],
+  "common_patterns": [
+    "route-handlers",
+    "middleware-chains",
+    "context-usage",
+    "request-binding",
+    "response-rendering",
+    "error-handling",
+    "group-routing",
+    "authentication-middleware",
+    "logging-middleware",
+    "cors-middleware"
+  ],
+  "priority": 80
+}

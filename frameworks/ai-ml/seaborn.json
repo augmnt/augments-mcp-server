@@ -1,0 +1,67 @@
+{
+  "name": "seaborn",
+  "display_name": "Seaborn",
+  "category": "ai-ml",
+  "type": "data-visualization-library",
+  "description": "Seaborn - Statistical data visualization library built on matplotlib",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "mwaskom/seaborn",
+        "docs_path": "doc",
+        "branch": "master"
+      },
+      "website": "https://seaborn.pydata.org"
+    },
+    "examples": {
+      "github": {
+        "repo": "mwaskom/seaborn",
+        "docs_path": "examples",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "installing",
+    "tutorial": "tutorial",
+    "examples": "examples",
+    "api": "api",
+    "aesthetics": "tutorial/aesthetics",
+    "categorical": "tutorial/categorical",
+    "distributions": "tutorial/distributions",
+    "regression": "tutorial/regression"
+  },
+  "context_files": [
+    "doc/installing.rst",
+    "doc/tutorial.rst",
+    "doc/tutorial/aesthetics.ipynb",
+    "doc/tutorial/categorical.ipynb",
+    "doc/tutorial/distributions.ipynb"
+  ],
+  "key_features": [
+    "statistical-plotting",
+    "beautiful-defaults",
+    "built-in-themes",
+    "color-palettes",
+    "statistical-functions",
+    "pandas-integration",
+    "figure-level-functions",
+    "axes-level-functions",
+    "multi-plot-grids",
+    "regression-plots"
+  ],
+  "common_patterns": [
+    "distribution-plots",
+    "categorical-plots",
+    "regression-plots",
+    "matrix-plots",
+    "multi-plot-grids",
+    "color-palettes",
+    "theme-settings",
+    "statistical-annotations",
+    "figure-aesthetics",
+    "plot-customization"
+  ],
+  "priority": 85
+}

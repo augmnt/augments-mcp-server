@@ -1,0 +1,67 @@
+{
+  "name": "prettier",
+  "display_name": "Prettier",
+  "category": "tools",
+  "type": "code-formatter",
+  "description": "Prettier - An opinionated code formatter",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "prettier/prettier",
+        "docs_path": "docs",
+        "branch": "main"
+      },
+      "website": "https://prettier.io"
+    },
+    "examples": {
+      "github": {
+        "repo": "prettier/prettier",
+        "docs_path": "tests",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "install",
+    "configuration": "configuration",
+    "options": "options",
+    "cli": "cli",
+    "integrations": "editors",
+    "ignore": "ignore",
+    "api": "api",
+    "plugins": "plugins"
+  },
+  "context_files": [
+    "docs/install.md",
+    "docs/configuration.md",
+    "docs/options.md",
+    "docs/cli.md",
+    "docs/editors.md"
+  ],
+  "key_features": [
+    "opinionated-formatting",
+    "language-support",
+    "editor-integration",
+    "configuration-options",
+    "plugin-system",
+    "cli-tool",
+    "pre-commit-hooks",
+    "api-usage",
+    "ignore-files",
+    "consistent-style"
+  ],
+  "common_patterns": [
+    "configuration-files",
+    "cli-usage",
+    "editor-integration",
+    "pre-commit-setup",
+    "ignore-patterns",
+    "option-overrides",
+    "plugin-usage",
+    "api-integration",
+    "script-integration",
+    "format-on-save"
+  ],
+  "priority": 85
+}

@@ -1,0 +1,67 @@
+{
+  "name": "sanic",
+  "display_name": "Sanic",
+  "category": "backend",
+  "type": "python-framework",
+  "description": "Sanic - Async Python web server and framework built for speed",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "sanic-org/sanic",
+        "docs_path": "docs",
+        "branch": "main"
+      },
+      "website": "https://sanic.dev"
+    },
+    "examples": {
+      "github": {
+        "repo": "sanic-org/sanic",
+        "docs_path": "examples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "guide/getting-started",
+    "basics": "guide/basics/app",
+    "routing": "guide/basics/routing",
+    "middleware": "guide/basics/middleware",
+    "listeners": "guide/basics/listeners",
+    "handlers": "guide/basics/handlers",
+    "request": "guide/basics/request",
+    "response": "guide/basics/response"
+  },
+  "context_files": [
+    "docs/guide/getting-started.md",
+    "docs/guide/basics/app.md",
+    "docs/guide/basics/routing.md",
+    "docs/guide/basics/middleware.md",
+    "docs/guide/basics/handlers.md"
+  ],
+  "key_features": [
+    "async-await",
+    "high-performance",
+    "fast-routing",
+    "websocket-support",
+    "middleware-support",
+    "blueprint-system",
+    "request-streaming",
+    "response-streaming",
+    "background-tasks",
+    "testing-client"
+  ],
+  "common_patterns": [
+    "route-handlers",
+    "async-handlers",
+    "middleware-functions",
+    "blueprint-usage",
+    "websocket-handlers",
+    "request-parsing",
+    "response-formatting",
+    "error-handling",
+    "background-tasks",
+    "streaming-responses"
+  ],
+  "priority": 79
+}

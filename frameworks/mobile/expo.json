@@ -1,0 +1,67 @@
+{
+  "name": "expo",
+  "display_name": "Expo",
+  "category": "mobile",
+  "type": "react-native-platform",
+  "description": "Expo - An open-source platform for making universal native apps",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "expo/expo",
+        "docs_path": "docs",
+        "branch": "main"
+      },
+      "website": "https://docs.expo.dev"
+    },
+    "examples": {
+      "github": {
+        "repo": "expo/examples",
+        "docs_path": "",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "get-started/installation",
+    "tutorial": "tutorial/introduction",
+    "development": "develop/development-builds",
+    "workflow": "develop/development-builds",
+    "routing": "router/introduction",
+    "deployment": "deploy/build-project",
+    "eas": "build/introduction",
+    "sdk": "versions"
+  },
+  "context_files": [
+    "docs/get-started/installation.md",
+    "docs/tutorial/introduction.md",
+    "docs/develop/development-builds.md",
+    "docs/router/introduction.md",
+    "docs/deploy/build-project.md"
+  ],
+  "key_features": [
+    "managed-workflow",
+    "bare-workflow",
+    "over-the-air-updates",
+    "universal-apps",
+    "native-apis",
+    "development-builds",
+    "eas-services",
+    "expo-router",
+    "expo-cli",
+    "web-support"
+  ],
+  "common_patterns": [
+    "app-configuration",
+    "navigation-setup",
+    "native-api-usage",
+    "asset-handling",
+    "push-notifications",
+    "authentication-flows",
+    "data-persistence",
+    "camera-functionality",
+    "location-services",
+    "publishing-workflow"
+  ],
+  "priority": 86
+}

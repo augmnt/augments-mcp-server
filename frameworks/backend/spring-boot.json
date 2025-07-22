@@ -1,0 +1,70 @@
+{
+  "name": "spring-boot",
+  "display_name": "Spring Boot",
+  "category": "backend",
+  "type": "java-framework",
+  "description": "Spring Boot - Create production-grade Spring applications with ease",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "spring-projects/spring-boot",
+        "docs_path": "spring-boot-project/spring-boot-docs/src/docs/asciidoc",
+        "branch": "main"
+      },
+      "website": "https://spring.io/projects/spring-boot"
+    },
+    "examples": {
+      "github": {
+        "repo": "spring-projects/spring-boot",
+        "docs_path": "spring-boot-samples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "getting-started",
+    "configuration": "features/external-config",
+    "web": "web",
+    "data": "data"
+  },
+  "context_files": [
+    "spring-boot-project/spring-boot-docs/src/docs/asciidoc/getting-started.adoc",
+    "spring-boot-project/spring-boot-docs/src/docs/asciidoc/web.adoc",
+    "spring-boot-project/spring-boot-docs/src/docs/asciidoc/data.adoc",
+    "spring-boot-project/spring-boot-docs/src/docs/asciidoc/features.adoc"
+  ],
+  "key_features": [
+    "auto-configuration",
+    "standalone-applications",
+    "embedded-servers",
+    "production-ready",
+    "no-xml-configuration",
+    "spring-ecosystem",
+    "microservices-ready",
+    "actuator-monitoring",
+    "security-integration",
+    "data-access-support",
+    "testing-support",
+    "configuration-management",
+    "cli-support",
+    "cloud-native"
+  ],
+  "common_patterns": [
+    "application-configuration",
+    "rest-controller-definition",
+    "service-layer-patterns",
+    "repository-pattern",
+    "dependency-injection",
+    "configuration-properties",
+    "profile-management",
+    "exception-handling",
+    "security-configuration",
+    "database-integration",
+    "testing-strategies",
+    "actuator-endpoints",
+    "microservice-patterns",
+    "deployment-strategies"
+  ],
+  "priority": 85
+}

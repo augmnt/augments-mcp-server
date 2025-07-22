@@ -1,0 +1,67 @@
+{
+  "name": "numpy",
+  "display_name": "NumPy",
+  "category": "ai-ml",
+  "type": "scientific-computing-library",
+  "description": "NumPy - The fundamental package for scientific computing with Python",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "numpy/numpy",
+        "docs_path": "doc/source",
+        "branch": "main"
+      },
+      "website": "https://numpy.org/doc"
+    },
+    "examples": {
+      "github": {
+        "repo": "numpy/numpy",
+        "docs_path": "doc/source/user",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "user/install",
+    "quickstart": "user/quickstart",
+    "basics": "user/basics",
+    "arrays": "user/basics.creation",
+    "indexing": "user/basics.indexing",
+    "broadcasting": "user/basics.broadcasting",
+    "linear-algebra": "reference/routines.linalg",
+    "random": "reference/random"
+  },
+  "context_files": [
+    "doc/source/user/install.rst",
+    "doc/source/user/quickstart.rst",
+    "doc/source/user/basics.rst",
+    "doc/source/user/basics.creation.rst",
+    "doc/source/user/basics.indexing.rst"
+  ],
+  "key_features": [
+    "n-dimensional-arrays",
+    "mathematical-functions",
+    "broadcasting",
+    "linear-algebra",
+    "fourier-transforms",
+    "random-sampling",
+    "indexing-slicing",
+    "array-manipulation",
+    "performance-optimization",
+    "c-integration"
+  ],
+  "common_patterns": [
+    "array-creation",
+    "array-indexing",
+    "mathematical-operations",
+    "broadcasting-operations",
+    "linear-algebra-operations",
+    "array-reshaping",
+    "statistical-functions",
+    "random-number-generation",
+    "array-concatenation",
+    "performance-optimization"
+  ],
+  "priority": 92
+}

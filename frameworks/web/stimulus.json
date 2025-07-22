@@ -1,0 +1,67 @@
+{
+  "name": "stimulus",
+  "display_name": "Stimulus",
+  "category": "web",
+  "type": "javascript-framework",
+  "description": "Stimulus - A modest JavaScript framework for the HTML you already have",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "hotwired/stimulus",
+        "docs_path": "docs",
+        "branch": "main"
+      },
+      "website": "https://stimulus.hotwired.dev"
+    },
+    "examples": {
+      "github": {
+        "repo": "hotwired/stimulus",
+        "docs_path": "examples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "installing",
+    "handbook": "handbook/introduction",
+    "controllers": "handbook/hello-stimulus",
+    "targets": "handbook/building-something-real",
+    "actions": "handbook/working-with-external-resources",
+    "values": "reference/values",
+    "classes": "reference/classes",
+    "lifecycle": "reference/lifecycle-callbacks"
+  },
+  "context_files": [
+    "docs/installing.md",
+    "docs/handbook/introduction.md",
+    "docs/handbook/hello-stimulus.md",
+    "docs/handbook/building-something-real.md",
+    "docs/reference/controllers.md"
+  ],
+  "key_features": [
+    "html-first",
+    "progressive-enhancement",
+    "controller-based",
+    "data-attributes",
+    "typescript-support",
+    "lightweight",
+    "no-build-required",
+    "action-handling",
+    "target-management",
+    "value-binding"
+  ],
+  "common_patterns": [
+    "controller-definition",
+    "target-declarations",
+    "action-binding",
+    "value-properties",
+    "lifecycle-callbacks",
+    "event-handling",
+    "dom-manipulation",
+    "data-attribute-usage",
+    "form-interactions",
+    "ajax-requests"
+  ],
+  "priority": 75
+}

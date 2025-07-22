@@ -1,0 +1,72 @@
+{
+  "name": "angular",
+  "display_name": "Angular",
+  "category": "web",
+  "type": "typescript-framework",
+  "description": "Angular - Platform for building mobile and desktop web applications",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "angular/angular",
+        "docs_path": "adev/src/content/docs",
+        "branch": "main"
+      },
+      "website": "https://angular.dev"
+    },
+    "examples": {
+      "github": {
+        "repo": "angular/angular",
+        "docs_path": "adev/src/content/examples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "installation",
+    "components": "essentials/components",
+    "templates": "essentials/templates",
+    "routing": "essentials/routing",
+    "forms": "essentials/forms"
+  },
+  "context_files": [
+    "adev/src/content/docs/installation.md",
+    "adev/src/content/docs/essentials/components.md",
+    "adev/src/content/docs/essentials/templates.md",
+    "adev/src/content/docs/essentials/routing.md"
+  ],
+  "key_features": [
+    "typescript-first",
+    "component-architecture",
+    "dependency-injection",
+    "rxjs-reactive-programming",
+    "angular-cli",
+    "change-detection",
+    "directives",
+    "pipes",
+    "services",
+    "routing",
+    "forms-reactive",
+    "forms-template-driven",
+    "http-client",
+    "testing-utilities",
+    "standalone-components"
+  ],
+  "common_patterns": [
+    "component-lifecycle",
+    "data-binding",
+    "event-binding",
+    "property-binding",
+    "two-way-binding",
+    "structural-directives",
+    "attribute-directives",
+    "service-injection",
+    "observable-streams",
+    "reactive-forms",
+    "template-driven-forms",
+    "route-guards",
+    "lazy-loading",
+    "interceptors"
+  ],
+  "priority": 88
+}

@@ -1,0 +1,70 @@
+{
+  "name": "express",
+  "display_name": "Express.js",
+  "category": "backend",
+  "type": "nodejs-framework",
+  "description": "Express.js - Fast, unopinionated, minimalist web framework for Node.js",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "expressjs/expressjs.com",
+        "docs_path": "_includes",
+        "branch": "master"
+      },
+      "website": "https://expressjs.com"
+    },
+    "examples": {
+      "github": {
+        "repo": "expressjs/express",
+        "docs_path": "examples",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "starter/installing",
+    "routing": "guide/routing",
+    "middleware": "guide/using-middleware",
+    "templates": "guide/using-template-engines"
+  },
+  "context_files": [
+    "_includes/api/en/4x/express.md",
+    "_includes/api/en/4x/app.md",
+    "_includes/api/en/4x/req.md",
+    "_includes/api/en/4x/res.md"
+  ],
+  "key_features": [
+    "minimal-framework",
+    "middleware-architecture",
+    "routing-system",
+    "template-engines",
+    "static-file-serving",
+    "request-response-objects",
+    "error-handling",
+    "application-generator",
+    "performance-optimized",
+    "extensive-ecosystem",
+    "http-utility-methods",
+    "content-negotiation",
+    "focus-on-performance",
+    "robust-routing"
+  ],
+  "common_patterns": [
+    "route-handlers",
+    "middleware-usage",
+    "error-middleware",
+    "router-modules",
+    "application-structure",
+    "request-validation",
+    "response-formatting",
+    "authentication-middleware",
+    "cors-handling",
+    "body-parsing",
+    "session-management",
+    "static-asset-serving",
+    "api-development",
+    "deployment-patterns"
+  ],
+  "priority": 88
+}

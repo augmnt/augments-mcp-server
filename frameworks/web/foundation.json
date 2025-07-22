@@ -1,0 +1,67 @@
+{
+  "name": "foundation",
+  "display_name": "Foundation",
+  "category": "web",
+  "type": "css-framework",
+  "description": "Foundation - The most advanced responsive front-end framework in the world",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "foundation/foundation-sites",
+        "docs_path": "docs",
+        "branch": "develop"
+      },
+      "website": "https://get.foundation"
+    },
+    "examples": {
+      "github": {
+        "repo": "foundation/foundation-sites",
+        "docs_path": "docs/assets/partials",
+        "branch": "develop"
+      }
+    }
+  },
+  "sections": {
+    "installation": "installation",
+    "grid": "xy-grid",
+    "typography": "typography-base",
+    "buttons": "button",
+    "forms": "forms",
+    "navigation": "top-bar",
+    "media": "responsive-embed",
+    "javascript": "javascript"
+  },
+  "context_files": [
+    "docs/pages/installation.md",
+    "docs/pages/xy-grid.md",
+    "docs/pages/typography-base.md",
+    "docs/pages/button.md",
+    "docs/pages/forms.md"
+  ],
+  "key_features": [
+    "responsive-design",
+    "mobile-first",
+    "flexible-grid",
+    "sass-powered",
+    "modular-architecture",
+    "accessibility-ready",
+    "customizable",
+    "javascript-plugins",
+    "email-framework",
+    "professional-support"
+  ],
+  "common_patterns": [
+    "grid-layouts",
+    "responsive-breakpoints",
+    "button-groups",
+    "form-validation",
+    "navigation-menus",
+    "modal-dialogs",
+    "accordion-panels",
+    "dropdown-menus",
+    "tooltip-usage",
+    "reveal-modals"
+  ],
+  "priority": 74
+}

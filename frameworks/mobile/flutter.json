@@ -1,0 +1,70 @@
+{
+  "name": "flutter",
+  "display_name": "Flutter",
+  "category": "mobile",
+  "type": "mobile-framework",
+  "description": "Flutter - Google's portable UI toolkit for beautiful native applications",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "flutter/website",
+        "docs_path": "src/content",
+        "branch": "main"
+      },
+      "website": "https://flutter.dev"
+    },
+    "examples": {
+      "github": {
+        "repo": "flutter/samples",
+        "docs_path": "",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "get-started/install",
+    "tutorial": "get-started/codelab",
+    "widgets": "ui/widgets",
+    "layouts": "ui/layout"
+  },
+  "context_files": [
+    "src/content/get-started/install/index.md",
+    "src/content/get-started/codelab.md",
+    "src/content/ui/widgets/index.md",
+    "src/content/ui/layout/index.md"
+  ],
+  "key_features": [
+    "cross-platform-development",
+    "single-codebase",
+    "hot-reload",
+    "widget-based-ui",
+    "dart-language",
+    "material-design",
+    "cupertino-design",
+    "custom-rendering",
+    "high-performance",
+    "platform-channels",
+    "package-ecosystem",
+    "testing-framework",
+    "debugging-tools",
+    "web-desktop-support"
+  ],
+  "common_patterns": [
+    "widget-composition",
+    "stateful-stateless-widgets",
+    "layout-patterns",
+    "navigation-routing",
+    "state-management",
+    "theme-customization",
+    "animation-patterns",
+    "form-handling",
+    "http-requests",
+    "data-persistence",
+    "platform-integration",
+    "custom-widgets",
+    "performance-optimization",
+    "testing-patterns"
+  ],
+  "priority": 88
+}

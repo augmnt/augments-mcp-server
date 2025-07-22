@@ -1,0 +1,67 @@
+{
+  "name": "pyramid",
+  "display_name": "Pyramid",
+  "category": "backend",
+  "type": "python-framework",
+  "description": "Pyramid - The Start Small, Finish Big, Stay Finished Framework",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "Pylons/pyramid",
+        "docs_path": "docs",
+        "branch": "main"
+      },
+      "website": "https://trypyramid.com"
+    },
+    "examples": {
+      "github": {
+        "repo": "Pylons/pyramid",
+        "docs_path": "docs/tutorials",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "quick_tutorial/index",
+    "configuration": "narr/configuration",
+    "views": "narr/views",
+    "routing": "narr/urldispatch",
+    "templates": "narr/templates",
+    "security": "narr/security",
+    "testing": "narr/testing",
+    "deployment": "narr/deployment"
+  },
+  "context_files": [
+    "docs/quick_tutorial/index.rst",
+    "docs/narr/configuration.rst",
+    "docs/narr/views.rst",
+    "docs/narr/urldispatch.rst",
+    "docs/narr/security.rst"
+  ],
+  "key_features": [
+    "minimalist",
+    "flexible-configuration",
+    "url-dispatch",
+    "traversal-routing",
+    "security-framework",
+    "view-predicates",
+    "resource-based",
+    "testing-support",
+    "extensible",
+    "wsgi-compliant"
+  ],
+  "common_patterns": [
+    "view-configuration",
+    "route-configuration",
+    "security-policies",
+    "resource-classes",
+    "template-rendering",
+    "request-handling",
+    "response-objects",
+    "authentication-authorization",
+    "configuration-directives",
+    "custom-predicates"
+  ],
+  "priority": 76
+}

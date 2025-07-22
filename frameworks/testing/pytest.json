@@ -1,0 +1,67 @@
+{
+  "name": "pytest",
+  "display_name": "pytest",
+  "category": "testing",
+  "type": "python-testing-framework",
+  "description": "pytest - Simple, scalable testing with Python",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "pytest-dev/pytest",
+        "docs_path": "doc/en",
+        "branch": "main"
+      },
+      "website": "https://docs.pytest.org"
+    },
+    "examples": {
+      "github": {
+        "repo": "pytest-dev/pytest",
+        "docs_path": "testing",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "getting-started",
+    "usage": "usage",
+    "fixtures": "fixture",
+    "parametrize": "parametrize",
+    "marks": "mark",
+    "plugins": "plugins",
+    "configuration": "customize",
+    "debugging": "failures"
+  },
+  "context_files": [
+    "doc/en/getting-started.rst",
+    "doc/en/usage.rst",
+    "doc/en/fixture.rst",
+    "doc/en/parametrize.rst",
+    "doc/en/mark.rst"
+  ],
+  "key_features": [
+    "simple-assertions",
+    "fixtures",
+    "parametrization",
+    "markers",
+    "plugin-system",
+    "test-discovery",
+    "detailed-failures",
+    "coverage-integration",
+    "parallel-execution",
+    "mocking-support"
+  ],
+  "common_patterns": [
+    "test-functions",
+    "fixture-usage",
+    "parametrized-tests",
+    "test-markers",
+    "conftest-files",
+    "mock-objects",
+    "test-organization",
+    "custom-assertions",
+    "setup-teardown",
+    "plugin-development"
+  ],
+  "priority": 86
+}

@@ -1,0 +1,70 @@
+{
+  "name": "redux",
+  "display_name": "Redux",
+  "category": "state-management",
+  "type": "state-management-library",
+  "description": "Redux - Predictable state container for JavaScript apps",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "reduxjs/redux",
+        "docs_path": "docs",
+        "branch": "master"
+      },
+      "website": "https://redux.js.org"
+    },
+    "examples": {
+      "github": {
+        "repo": "reduxjs/redux",
+        "docs_path": "examples",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "introduction/installation",
+    "basics": "basics/basic-tutorial",
+    "advanced": "advanced/advanced-tutorial",
+    "recipes": "recipes/recipe-index"
+  },
+  "context_files": [
+    "docs/introduction/Installation.md",
+    "docs/basics/BasicTutorial.md",
+    "docs/advanced/AdvancedTutorial.md",
+    "docs/recipes/index.md"
+  ],
+  "key_features": [
+    "predictable-state-updates",
+    "centralized-state",
+    "time-travel-debugging",
+    "action-dispatching",
+    "reducer-composition",
+    "middleware-support",
+    "dev-tools-integration",
+    "immutable-updates",
+    "hot-reloading",
+    "undo-redo",
+    "state-persistence",
+    "server-rendering",
+    "framework-agnostic",
+    "testing-utilities"
+  ],
+  "common_patterns": [
+    "action-creation",
+    "reducer-definition",
+    "store-configuration",
+    "component-connection",
+    "middleware-usage",
+    "async-action-handling",
+    "state-normalization",
+    "selector-patterns",
+    "error-handling",
+    "optimistic-updates",
+    "code-splitting",
+    "testing-strategies",
+    "performance-optimization",
+    "devtools-setup"
+  ],
+  "priority": 82
+}

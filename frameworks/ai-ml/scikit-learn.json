@@ -1,0 +1,70 @@
+{
+  "name": "scikit-learn",
+  "display_name": "Scikit-learn",
+  "category": "ai-ml",
+  "type": "machine-learning-library",
+  "description": "Scikit-learn - Machine learning in Python",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "scikit-learn/scikit-learn",
+        "docs_path": "doc",
+        "branch": "main"
+      },
+      "website": "https://scikit-learn.org"
+    },
+    "examples": {
+      "github": {
+        "repo": "scikit-learn/scikit-learn",
+        "docs_path": "examples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "install",
+    "tutorial": "tutorial/index",
+    "user-guide": "user_guide",
+    "examples": "auto_examples/index"
+  },
+  "context_files": [
+    "doc/install.rst",
+    "doc/tutorial/basic/tutorial.rst",
+    "doc/user_guide.rst",
+    "examples/README.txt"
+  ],
+  "key_features": [
+    "supervised-learning",
+    "unsupervised-learning",
+    "model-selection",
+    "preprocessing",
+    "feature-extraction",
+    "ensemble-methods",
+    "clustering",
+    "dimensionality-reduction",
+    "regression",
+    "classification",
+    "cross-validation",
+    "pipeline-support",
+    "metrics-evaluation",
+    "hyperparameter-tuning"
+  ],
+  "common_patterns": [
+    "train-test-split",
+    "model-fitting",
+    "prediction-making",
+    "cross-validation",
+    "pipeline-creation",
+    "feature-scaling",
+    "hyperparameter-search",
+    "model-evaluation",
+    "ensemble-methods",
+    "clustering-analysis",
+    "dimensionality-reduction",
+    "feature-selection",
+    "model-persistence",
+    "performance-metrics"
+  ],
+  "priority": 82
+}

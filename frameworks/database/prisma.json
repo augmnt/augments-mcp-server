@@ -1,0 +1,70 @@
+{
+  "name": "prisma",
+  "display_name": "Prisma",
+  "category": "database",
+  "type": "orm-framework",
+  "description": "Prisma - Next-generation Node.js and TypeScript ORM",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "prisma/docs",
+        "docs_path": "content",
+        "branch": "main"
+      },
+      "website": "https://prisma.io"
+    },
+    "examples": {
+      "github": {
+        "repo": "prisma/prisma-examples",
+        "docs_path": "",
+        "branch": "latest"
+      }
+    }
+  },
+  "sections": {
+    "installation": "getting-started/quickstart",
+    "schema": "orm/prisma-schema",
+    "client": "orm/prisma-client",
+    "migrate": "orm/prisma-migrate"
+  },
+  "context_files": [
+    "content/100-getting-started/01-quickstart.mdx",
+    "content/200-orm/100-prisma-schema/index.mdx",
+    "content/200-orm/200-prisma-client/index.mdx",
+    "content/200-orm/300-prisma-migrate/index.mdx"
+  ],
+  "key_features": [
+    "type-safe-database-client",
+    "auto-generated-types",
+    "database-migrations",
+    "schema-first-development",
+    "query-engine",
+    "introspection",
+    "studio-gui",
+    "multi-database-support",
+    "connection-pooling",
+    "transaction-support",
+    "real-time-subscriptions",
+    "database-seeding",
+    "performance-monitoring",
+    "edge-ready"
+  ],
+  "common_patterns": [
+    "schema-definition",
+    "model-relationships",
+    "client-generation",
+    "crud-operations",
+    "query-composition",
+    "transaction-usage",
+    "migration-workflow",
+    "seeding-data",
+    "error-handling",
+    "connection-management",
+    "performance-optimization",
+    "testing-strategies",
+    "deployment-patterns",
+    "monitoring-setup"
+  ],
+  "priority": 85
+}

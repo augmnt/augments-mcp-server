@@ -1,0 +1,71 @@
+{
+  "name": "vuejs",
+  "display_name": "Vue.js",
+  "category": "web",
+  "type": "javascript-framework",
+  "description": "Vue.js - Progressive JavaScript framework for building user interfaces",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "vuejs/docs",
+        "docs_path": "src",
+        "branch": "main"
+      },
+      "website": "https://vuejs.org"
+    },
+    "examples": {
+      "github": {
+        "repo": "vuejs/vue",
+        "docs_path": "examples",
+        "branch": "main"
+      }
+    }
+  },
+  "sections": {
+    "installation": "guide/quick-start",
+    "components": "guide/essentials/component-basics",
+    "routing": "guide/scaling-up/routing",
+    "state-management": "guide/scaling-up/state-management"
+  },
+  "context_files": [
+    "src/guide/quick-start.md",
+    "src/guide/essentials/component-basics.md",
+    "src/guide/essentials/reactivity-fundamentals.md",
+    "src/guide/components/registration.md"
+  ],
+  "key_features": [
+    "reactive-data-binding",
+    "component-system",
+    "virtual-dom",
+    "single-file-components",
+    "composition-api",
+    "options-api",
+    "template-syntax",
+    "computed-properties",
+    "watchers",
+    "lifecycle-hooks",
+    "event-handling",
+    "form-handling",
+    "transitions-animations",
+    "slots",
+    "provide-inject"
+  ],
+  "common_patterns": [
+    "component-composition",
+    "props-down-events-up",
+    "computed-vs-methods",
+    "reactive-refs",
+    "template-refs",
+    "conditional-rendering",
+    "list-rendering",
+    "event-modifiers",
+    "form-input-bindings",
+    "component-lifecycle",
+    "custom-directives",
+    "mixins",
+    "composables",
+    "state-management-patterns"
+  ],
+  "priority": 90
+}

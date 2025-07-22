@@ -1,0 +1,70 @@
+{
+  "name": "nestjs",
+  "display_name": "NestJS",
+  "category": "backend",
+  "type": "nodejs-framework",
+  "description": "NestJS - Progressive Node.js framework for building scalable server-side applications",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "nestjs/docs.nestjs.com",
+        "docs_path": "content",
+        "branch": "master"
+      },
+      "website": "https://nestjs.com"
+    },
+    "examples": {
+      "github": {
+        "repo": "nestjs/nest",
+        "docs_path": "sample",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "first-steps",
+    "controllers": "controllers",
+    "providers": "providers",
+    "modules": "modules"
+  },
+  "context_files": [
+    "content/first-steps.md",
+    "content/controllers.md",
+    "content/providers.md",
+    "content/modules.md"
+  ],
+  "key_features": [
+    "typescript-first",
+    "decorator-based",
+    "dependency-injection",
+    "modular-architecture",
+    "microservices-support",
+    "graphql-integration",
+    "websockets-support",
+    "testing-utilities",
+    "cli-tooling",
+    "middleware-support",
+    "guards-interceptors",
+    "pipes-validation",
+    "swagger-integration",
+    "database-integration"
+  ],
+  "common_patterns": [
+    "controller-definition",
+    "service-providers",
+    "module-organization",
+    "dependency-injection-usage",
+    "decorator-patterns",
+    "middleware-implementation",
+    "guard-authorization",
+    "interceptor-usage",
+    "pipe-validation",
+    "dto-patterns",
+    "exception-filters",
+    "microservice-communication",
+    "database-orm-integration",
+    "testing-strategies"
+  ],
+  "priority": 82
+}

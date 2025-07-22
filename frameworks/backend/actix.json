@@ -1,0 +1,67 @@
+{
+  "name": "actix",
+  "display_name": "Actix Web",
+  "category": "backend",
+  "type": "rust-framework",
+  "description": "Actix Web - A powerful, pragmatic, and extremely fast web framework for Rust",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "actix/actix-web",
+        "docs_path": "docs",
+        "branch": "master"
+      },
+      "website": "https://actix.rs"
+    },
+    "examples": {
+      "github": {
+        "repo": "actix/examples",
+        "docs_path": "",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "getting-started",
+    "application": "application",
+    "server": "server",
+    "handlers": "handlers",
+    "extractors": "extractors",
+    "responses": "responses",
+    "middleware": "middleware",
+    "testing": "testing"
+  },
+  "context_files": [
+    "docs/getting-started.md",
+    "docs/application.md",
+    "docs/server.md",
+    "docs/handlers.md",
+    "docs/extractors.md"
+  ],
+  "key_features": [
+    "high-performance",
+    "type-safe",
+    "async-await",
+    "actor-model",
+    "middleware-support",
+    "websocket-support",
+    "http2-support",
+    "streaming",
+    "json-handling",
+    "form-handling"
+  ],
+  "common_patterns": [
+    "handler-functions",
+    "extractor-usage",
+    "response-builders",
+    "middleware-implementation",
+    "application-state",
+    "route-configuration",
+    "json-responses",
+    "error-handling",
+    "websocket-handlers",
+    "async-handlers"
+  ],
+  "priority": 81
+}

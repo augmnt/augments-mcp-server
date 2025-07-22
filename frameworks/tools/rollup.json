@@ -1,0 +1,67 @@
+{
+  "name": "rollup",
+  "display_name": "Rollup",
+  "category": "tools",
+  "type": "bundler",
+  "description": "Rollup - Next-generation ES module bundler",
+  "version": "latest",
+  "sources": {
+    "documentation": {
+      "github": {
+        "repo": "rollup/rollup",
+        "docs_path": "docs",
+        "branch": "master"
+      },
+      "website": "https://rollupjs.org"
+    },
+    "examples": {
+      "github": {
+        "repo": "rollup/rollup",
+        "docs_path": "docs/repl",
+        "branch": "master"
+      }
+    }
+  },
+  "sections": {
+    "installation": "introduction",
+    "tutorial": "tutorial",
+    "javascript-api": "javascript-api",
+    "command-line": "command-line-interface",
+    "configuration": "configuration-files",
+    "plugins": "plugin-development",
+    "troubleshooting": "troubleshooting",
+    "migration": "migration"
+  },
+  "context_files": [
+    "docs/introduction/index.md",
+    "docs/tutorial/index.md",
+    "docs/javascript-api/index.md",
+    "docs/configuration-files/index.md",
+    "docs/plugin-development/index.md"
+  ],
+  "key_features": [
+    "es-modules",
+    "tree-shaking",
+    "code-splitting",
+    "plugin-system",
+    "multiple-formats",
+    "small-bundles",
+    "scope-hoisting",
+    "watch-mode",
+    "source-maps",
+    "library-bundling"
+  ],
+  "common_patterns": [
+    "config-files",
+    "input-output-options",
+    "plugin-usage",
+    "external-dependencies",
+    "code-splitting",
+    "output-formats",
+    "watch-mode",
+    "source-map-generation",
+    "library-builds",
+    "custom-plugins"
+  ],
+  "priority": 84
+}
