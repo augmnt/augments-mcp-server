@@ -138,30 +138,15 @@ LOG_LEVEL=INFO
 
 ## 🚀 Usage
 
-### **Starting the Server**
+### **Option 1: Hosted MCP Server (Recommended)**
+
+For the easiest setup, connect directly to our hosted MCP server at `mcp.augments.dev`. No installation required!
+
+#### **Using Claude Code CLI**
 
 ```bash
-# Run with uv (recommended)
-uv run augments-mcp-server
-
-# Or run directly
-python -m augments_mcp.server
-
-# Development mode with auto-reload
-uv run fastmcp dev src/augments_mcp/server.py
-```
-
-### **Claude Code Integration**
-
-Augments MCP Server integrates seamlessly with Claude Code via the Model Context Protocol. Choose from multiple integration methods based on your needs.
-
-#### **Method 1: Using Claude Code CLI (Recommended)**
-
-The easiest way to add the server to Claude Code:
-
-```bash
-# Add the MCP server with environment variables
-claude mcp add augments -e AUGMENTS_CACHE_DIR="~/.cache/augments-mcp-server" -e GITHUB_TOKEN="your_github_token" -- uv run augments-mcp-server
+# Add the hosted MCP server
+claude mcp add augments http://mcp.augments.dev
 
 # Verify the server is configured
 claude mcp list
@@ -170,7 +155,7 @@ claude mcp list
 claude mcp get augments
 ```
 
-#### **Method 2: Manual Configuration**
+#### **Manual Configuration**
 
 Add to your Claude Desktop MCP configuration file:
 
@@ -183,30 +168,15 @@ Add to your Claude Desktop MCP configuration file:
 {
   "mcpServers": {
     "augments": {
-      "command": "uv",
-      "args": ["run", "augments-mcp-server"],
-      "cwd": "/path/to/augments-mcp-server",
-      "env": {
-        "AUGMENTS_CACHE_DIR": "~/.cache/augments-mcp-server",
-        "GITHUB_TOKEN": "your_github_token"
-      }
+      "url": "http://mcp.augments.dev"
     }
   }
 }
 ```
 
-#### **Method 3: Global Configuration**
+#### **Using the Hosted Server**
 
-For system-wide access without global installation:
-
-```bash
-# Add with full path to project directory
-claude mcp add augments -e GITHUB_TOKEN="your_github_token" -- uv run --directory /path/to/augments-mcp-server augments-mcp-server
-```
-
-#### **Using the Server in Claude Code**
-
-Once configured, you can:
+Once configured, you can access all framework documentation directly:
 
 1. **Access Framework Documentation**:
    ```
@@ -231,6 +201,70 @@ Once configured, you can:
    @augments search nextjs documentation for "app router"
    ```
 
+The hosted server provides:
+- ✅ **No installation required** - Works immediately
+- ✅ **Always up-to-date** - Latest framework documentation
+- ✅ **High availability** - Reliable uptime with smart caching
+- ✅ **No authentication** - Completely frictionless access
+- ✅ **Rate limiting protection** - Intelligent abuse prevention
+
+### **Option 2: Local Installation**
+
+For development, customization, or offline use, you can run the server locally.
+
+#### **Starting the Local Server**
+
+```bash
+# Run with uv (recommended)
+uv run augments-mcp-server
+
+# Or run directly
+python -m augments_mcp.server
+
+# Development mode with auto-reload
+uv run fastmcp dev src/augments_mcp/server.py
+```
+
+#### **Claude Code Integration (Local)**
+
+##### **Method 1: Using Claude Code CLI (Recommended)**
+
+```bash
+# Add the local MCP server with environment variables
+claude mcp add augments-local -e AUGMENTS_CACHE_DIR="~/.cache/augments-mcp-server" -e GITHUB_TOKEN="your_github_token" -- uv run augments-mcp-server
+
+# Verify the server is configured
+claude mcp list
+
+# Get server details
+claude mcp get augments-local
+```
+
+##### **Method 2: Manual Configuration**
+
+```json
+{
+  "mcpServers": {
+    "augments-local": {
+      "command": "uv",
+      "args": ["run", "augments-mcp-server"],
+      "cwd": "/path/to/augments-mcp-server",
+      "env": {
+        "AUGMENTS_CACHE_DIR": "~/.cache/augments-mcp-server",
+        "GITHUB_TOKEN": "your_github_token"
+      }
+    }
+  }
+}
+```
+
+##### **Method 3: Global Configuration**
+
+```bash
+# Add with full path to project directory
+claude mcp add augments-local -e GITHUB_TOKEN="your_github_token" -- uv run --directory /path/to/augments-mcp-server augments-mcp-server
+```
+
 #### **Server Management**
 
 ```bash
@@ -245,15 +279,15 @@ claude mcp remove augments
 
 # Update server configuration (remove and re-add)
 claude mcp remove augments
-claude mcp add augments -e GITHUB_TOKEN="your_token" -- uv run augments-mcp-server
+claude mcp add augments http://mcp.augments.dev
 ```
 
 #### **Troubleshooting**
 
 - **Server not appearing**: Restart Claude Code after configuration
-- **Connection errors**: Check the server path and ensure dependencies are installed
-- **Environment issues**: Verify environment variables are set correctly
-- **Permission errors**: Ensure Claude Code has access to the server directory
+- **Connection errors**: For hosted server, check internet connection. For local server, verify installation
+- **Environment issues**: Only applies to local installations
+- **Permission errors**: Ensure Claude Code has network access (hosted) or file access (local)
 
 ## 🔧 MCP Tools
 
