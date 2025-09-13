@@ -233,10 +233,15 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # Health check endpoints
+@app.get("/")
+async def root():
+    """Root endpoint - simplest possible check"""
+    return {"message": "Augments MCP Server is running"}
+
 @app.get("/health")
 async def health_check():
-    """Basic health check"""
-    return {"status": "healthy", "timestamp": datetime.utcnow().isoformat()}
+    """Basic health check - always responds if server is running"""
+    return {"status": "healthy", "timestamp": datetime.utcnow().isoformat(), "server": "augments-mcp"}
 
 @app.get("/health/detailed")
 @limiter.limit("10 per minute")
