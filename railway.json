@@ -39,8 +39,7 @@
         "ENABLE_CLOUDFLARE_PROTECTION": "true",
         "ABUSE_SENSITIVITY": "medium",
         "GITHUB_TOKEN": "${{GITHUB_TOKEN}}",
-        "MASTER_API_KEY": "${{MASTER_API_KEY}}",
-        "REDIS_URL": "${{REDIS_URL}}"
+        "MASTER_API_KEY": "${{MASTER_API_KEY}}"
       },
       "scaling": {
         "minReplicas": 1,
@@ -52,27 +51,6 @@
         "memoryLimit": "2Gi",
         "cpuLimit": "2000m"
       }
-    },
-    {
-      "name": "redis",
-      "image": "redis:7-alpine",
-      "volumes": [
-        {
-          "mountPath": "/data",
-          "name": "redis-data"
-        }
-      ],
-      "envVars": {
-        "REDIS_MAXMEMORY": "512mb",
-        "REDIS_MAXMEMORY_POLICY": "allkeys-lru"
-      },
-      "command": [
-        "redis-server",
-        "--maxmemory", "$REDIS_MAXMEMORY",
-        "--maxmemory-policy", "$REDIS_MAXMEMORY_POLICY",
-        "--appendonly", "yes",
-        "--save", "60", "1000"
-      ]
     }
   ]
 }
