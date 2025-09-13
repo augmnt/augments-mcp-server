@@ -38,7 +38,6 @@ from .tools import (
 from .middleware.request_coalescer import coalesce_endpoint, RequestCoalescer
 from .middleware.smart_limiter import SmartRateLimiter
 from .middleware.abuse_detector import AbuseDetector
-from .middleware.cloudflare import CloudflareProtection
 
 # Configure logging
 logger = structlog.get_logger(__name__)
@@ -88,7 +87,6 @@ website_provider: Optional[WebsiteProvider] = None
 # Global middleware components
 smart_limiter: Optional[SmartRateLimiter] = None
 abuse_detector: Optional[AbuseDetector] = None
-cloudflare_protection: Optional[CloudflareProtection] = None
 request_coalescer: Optional['RequestCoalescer'] = None
 
 # Rate limiting
@@ -174,7 +172,7 @@ async def add_request_id(request: Request, call_next):
 async def lifespan(app: FastAPI):
     """Manage application lifecycle"""
     global redis_client, registry_manager, doc_cache, github_provider, website_provider
-    global smart_limiter, abuse_detector, cloudflare_protection, request_coalescer
+    global smart_limiter, abuse_detector, request_coalescer
     
     logger.info("Starting Augments Web API Server")
     
@@ -227,7 +225,6 @@ async def lifespan(app: FastAPI):
         # Initialize middleware components (non-ASGI ones only)
         smart_limiter = SmartRateLimiter(redis_client)
         abuse_detector = AbuseDetector(redis_client)
-        cloudflare_protection = CloudflareProtection()
         request_coalescer = RequestCoalescer(ttl=10)
         
         # Store redis_client for middleware use
@@ -352,10 +349,6 @@ async def get_protection_stats(
         # Smart rate limiting stats
         if smart_limiter:
             stats["rate_limiting"] = await smart_limiter.get_stats() if hasattr(smart_limiter, 'get_stats') else {}
-        
-        # CloudFlare protection stats
-        if cloudflare_protection:
-            stats["cloudflare"] = await cloudflare_protection.get_protection_stats(redis_client)
         
         # Request coalescing stats
         if request_coalescer:
