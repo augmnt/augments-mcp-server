@@ -685,8 +685,8 @@ def main():
     
     # Check for transport argument
     if len(sys.argv) > 1 and sys.argv[1] == "streamable-http":
-        # Run with streamable HTTP transport for web deployment
-        mcp.run(transport="streamable-http")
+        # Run with HTTP transport for web deployment (defaults to /mcp mount)
+        mcp.run(transport="http", host="0.0.0.0", port=8080)
     else:
         # Default to stdio transport for local MCP usage
         mcp.run()
