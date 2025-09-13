@@ -333,6 +333,21 @@ async def debug_frameworks_raw(request: Request):
         import traceback
         return {"error": str(e), "traceback": traceback.format_exc()}
 
+@app.get("/debug/frameworks-discovery")
+async def debug_frameworks_discovery(request: Request):
+    """Test the framework discovery function directly"""
+    try:
+        from .tools.framework_discovery import list_available_frameworks
+        frameworks = await list_available_frameworks(
+            registry=request.app.state.registry_manager,
+            category=None
+        )
+        
+        return {"frameworks": frameworks[:3], "count": len(frameworks), "type": str(type(frameworks))}
+    except Exception as e:
+        import traceback
+        return {"error": str(e), "traceback": traceback.format_exc()}
+
 @app.get("/health/detailed")
 @limiter.limit("10 per minute")
 async def detailed_health(request: Request):
