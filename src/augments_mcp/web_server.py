@@ -151,14 +151,27 @@ async def lifespan(app: FastAPI):
     logger.info("Starting Augments Web API Server")
     
     try:
-        # Initialize Redis
-        redis_client = await redis.from_url(
-            get_redis_url(),
-            encoding="utf-8",
-            decode_responses=True
-        )
-        await redis_client.ping()
-        logger.info("Connected to Redis")
+        # Initialize Redis with retry logic
+        redis_url = get_redis_url()
+        logger.info(f"Connecting to Redis at: {redis_url}")
+        
+        for attempt in range(10):  # Try 10 times
+            try:
+                redis_client = await redis.from_url(
+                    redis_url,
+                    encoding="utf-8",
+                    decode_responses=True,
+                    socket_timeout=5,
+                    socket_connect_timeout=5
+                )
+                await redis_client.ping()
+                logger.info("Connected to Redis successfully")
+                break
+            except Exception as e:
+                logger.warning(f"Redis connection attempt {attempt + 1}/10 failed: {e}")
+                if attempt == 9:  # Last attempt
+                    raise
+                await asyncio.sleep(2)  # Wait 2 seconds before retry
         
         # Initialize components
         cache_dir = os.getenv("AUGMENTS_CACHE_DIR", "/tmp/augments-cache")

@@ -5,6 +5,9 @@ echo "Starting Augments MCP Server..."
 echo "Environment: $ENV"
 echo "Port: ${PORT:-8080}"
 echo "Redis URL: ${REDIS_URL:-'Not set'}"
+echo "GitHub Token: ${GITHUB_TOKEN:+Set}"
+echo "Master API Key: ${MASTER_API_KEY:+Set}"
+echo "Workers: ${WORKERS:-2}"
 
 # Wait for Redis to be available
 if [ -n "$REDIS_URL" ]; then
