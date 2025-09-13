@@ -233,7 +233,7 @@ async def lifespan(app: FastAPI):
         # Store redis_client for middleware use
         app.state.redis_client = redis_client
         
-        logger.info("All components initialized successfully")
+        logger.info("All components initialized successfully - v2")
         
         yield
         
