@@ -495,7 +495,7 @@ async def clear_cache(
 
 # API endpoints
 @app.get("/api/v1/frameworks", response_model=SuccessResponse)
-@coalesce_endpoint(key_prefix="list_frameworks", key_params=["category"])
+# @coalesce_endpoint(key_prefix="list_frameworks", key_params=["category"])  # Temporary disable
 async def list_frameworks(
     request: Request,
     category: Optional[str] = None,
