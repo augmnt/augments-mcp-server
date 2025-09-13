@@ -37,7 +37,6 @@ from .tools import (
 )
 from .middleware.request_coalescer import coalesce_endpoint, RequestCoalescer
 from .middleware.smart_limiter import SmartRateLimiter
-from .middleware.edge_cache import EdgeCacheMiddleware
 from .middleware.abuse_detector import AbuseDetector
 from .middleware.cloudflare import CloudflareProtection
 
@@ -88,7 +87,6 @@ website_provider: Optional[WebsiteProvider] = None
 
 # Global middleware components
 smart_limiter: Optional[SmartRateLimiter] = None
-edge_cache: Optional[EdgeCacheMiddleware] = None
 abuse_detector: Optional[AbuseDetector] = None
 cloudflare_protection: Optional[CloudflareProtection] = None
 request_coalescer: Optional['RequestCoalescer'] = None
@@ -176,7 +174,7 @@ async def add_request_id(request: Request, call_next):
 async def lifespan(app: FastAPI):
     """Manage application lifecycle"""
     global redis_client, registry_manager, doc_cache, github_provider, website_provider
-    global smart_limiter, edge_cache, abuse_detector, cloudflare_protection, request_coalescer
+    global smart_limiter, abuse_detector, cloudflare_protection, request_coalescer
     
     logger.info("Starting Augments Web API Server")
     
@@ -226,12 +224,14 @@ async def lifespan(app: FastAPI):
         github_provider = GitHubProvider(github_token)
         website_provider = WebsiteProvider()
         
-        # Initialize middleware components
+        # Initialize middleware components (non-ASGI ones only)
         smart_limiter = SmartRateLimiter(redis_client)
-        edge_cache = EdgeCacheMiddleware(redis_client)
         abuse_detector = AbuseDetector(redis_client)
         cloudflare_protection = CloudflareProtection()
         request_coalescer = RequestCoalescer(ttl=10)
+        
+        # Store redis_client for middleware use
+        app.state.redis_client = redis_client
         
         logger.info("All components initialized successfully")
         
@@ -353,10 +353,6 @@ async def get_protection_stats(
         if smart_limiter:
             stats["rate_limiting"] = await smart_limiter.get_stats() if hasattr(smart_limiter, 'get_stats') else {}
         
-        # Edge cache stats
-        if edge_cache:
-            stats["edge_cache"] = await edge_cache.get_cache_stats()
-        
         # CloudFlare protection stats
         if cloudflare_protection:
             stats["cloudflare"] = await cloudflare_protection.get_protection_stats(redis_client)
@@ -401,8 +397,7 @@ async def clear_cache(
     
     try:
         cleared = 0
-        if edge_cache:
-            cleared = await edge_cache.clear_cache(pattern)
+        # Edge cache clearing would be handled by the middleware directly
         
         return {
             "success": True,
