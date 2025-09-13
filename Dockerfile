@@ -30,9 +30,8 @@ COPY frameworks/ ./frameworks/
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel \
     && pip install --no-cache-dir .
 
-# Make start script executable and change ownership
-RUN chmod +x /app/start.sh && \
-    mkdir -p /app/cache /app/logs && \
+# Create directories and set ownership
+RUN mkdir -p /app/cache /app/logs && \
     chown -R augments:augments /app
 
 # Switch to non-root user
