@@ -285,6 +285,31 @@ async def health_check():
     """Basic health check - always responds if server is running"""
     return {"status": "healthy", "timestamp": datetime.utcnow().isoformat(), "server": "augments-mcp"}
 
+@app.get("/debug/state")
+async def debug_state(request: Request):
+    """Debug endpoint to check app state"""
+    try:
+        state_info = {
+            "has_redis_client": hasattr(request.app.state, 'redis_client'),
+            "has_registry_manager": hasattr(request.app.state, 'registry_manager'),
+            "has_doc_cache": hasattr(request.app.state, 'doc_cache'),
+            "has_github_provider": hasattr(request.app.state, 'github_provider'),
+            "has_website_provider": hasattr(request.app.state, 'website_provider'),
+        }
+        
+        # Test registry access
+        if hasattr(request.app.state, 'registry_manager') and request.app.state.registry_manager:
+            try:
+                frameworks = await request.app.state.registry_manager.list_frameworks()
+                state_info["registry_framework_count"] = len(frameworks)
+                state_info["sample_frameworks"] = [f.get('name', 'unknown') for f in frameworks[:3]]
+            except Exception as e:
+                state_info["registry_error"] = str(e)
+        
+        return {"debug": state_info}
+    except Exception as e:
+        return {"debug_error": str(e), "type": str(type(e))}
+
 @app.get("/health/detailed")
 @limiter.limit("10 per minute")
 async def detailed_health(request: Request):
