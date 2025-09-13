@@ -188,12 +188,6 @@ mcp = FastMCP(
     port=8080,       # Match Railway configuration
 )
 
-# Add health check endpoint for Railway
-@mcp.get("/health")
-async def health_check():
-    """Health check endpoint for Railway deployment."""
-    return {"status": "healthy", "service": "augments-mcp-server"}
-
 
 # Framework Discovery Tools
 
