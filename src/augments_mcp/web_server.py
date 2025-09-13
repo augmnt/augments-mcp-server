@@ -173,9 +173,19 @@ async def lifespan(app: FastAPI):
                     raise
                 await asyncio.sleep(2)  # Wait 2 seconds before retry
         
-        # Initialize components
-        cache_dir = os.getenv("AUGMENTS_CACHE_DIR", "/tmp/augments-cache")
-        os.makedirs(cache_dir, exist_ok=True)
+        # Initialize components with safe cache directory
+        cache_dir = os.getenv("AUGMENTS_CACHE_DIR", "/app/cache")
+        logger.info(f"Cache directory: {cache_dir}")
+        
+        try:
+            os.makedirs(cache_dir, exist_ok=True, mode=0o755)
+            logger.info(f"Cache directory created/verified: {cache_dir}")
+        except Exception as e:
+            logger.error(f"Failed to create cache directory {cache_dir}: {e}")
+            # Fall back to /tmp if the specified directory fails
+            cache_dir = "/tmp/augments-cache"
+            os.makedirs(cache_dir, exist_ok=True, mode=0o755)
+            logger.warning(f"Using fallback cache directory: {cache_dir}")
         
         registry_manager = FrameworkRegistryManager()
         await registry_manager.initialize()
