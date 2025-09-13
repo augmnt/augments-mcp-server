@@ -51,7 +51,8 @@ ENV PYTHONUNBUFFERED=1 \
     REDIS_POOL_SIZE=20 \
     WORKERS=2 \
     LOG_LEVEL=INFO \
-    HOST=0.0.0.0
+    HOST=0.0.0.0 \
+    REBUILD_TRIGGER=v2
 
 # Railway handles healthchecks via railway.json
 # No HEALTHCHECK needed in Dockerfile
@@ -59,5 +60,5 @@ ENV PYTHONUNBUFFERED=1 \
 # Expose port (Railway uses $PORT env var)
 EXPOSE 8080
 
-# Use startup script for better error handling
-CMD ["./start.sh"]
+# Start the full MCP server directly
+CMD ["python", "-m", "augments_mcp.web_server"]
