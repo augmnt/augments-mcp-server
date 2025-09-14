@@ -43,7 +43,6 @@ ENV PYTHONPATH="/app/src:$PYTHONPATH"
 # Production environment variables
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONWARNINGS="ignore::DeprecationWarning" \
     ENV=production \
     AUGMENTS_CACHE_DIR=/app/cache \
     REDIS_POOL_SIZE=20 \

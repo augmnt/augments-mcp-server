@@ -36,7 +36,6 @@
         "ENFORCE_CLOUDFLARE": "true",
         "ENABLE_CLOUDFLARE_PROTECTION": "true",
         "ABUSE_SENSITIVITY": "medium",
-        "PYTHONWARNINGS": "ignore::DeprecationWarning",
         "GITHUB_TOKEN": "${{GITHUB_TOKEN}}",
         "MASTER_API_KEY": "${{MASTER_API_KEY}}"
       },

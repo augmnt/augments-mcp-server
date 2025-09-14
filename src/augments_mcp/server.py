@@ -5,13 +5,6 @@ A comprehensive MCP server that provides real-time access to framework documenta
 and context to enhance Claude Code's ability to generate accurate, up-to-date code.
 """
 
-# Suppress deprecation warnings BEFORE any other imports
-import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning, module="websockets.*")
-warnings.filterwarnings("ignore", category=DeprecationWarning, module="uvicorn.*")
-warnings.filterwarnings("ignore", message=".*websockets.legacy is deprecated.*")
-warnings.filterwarnings("ignore", message=".*WebSocketServerProtocol is deprecated.*")
-
 import os
 import asyncio
 from typing import List, Dict, Any, Optional
@@ -694,11 +687,19 @@ async def get_registry_stats(
 def main():
     """Main entry point."""
     import sys
+    import os
+    
+    # Configure uvicorn to use wsproto instead of deprecated websockets
+    os.environ.setdefault("UVICORN_WS", "wsproto")
     
     # Check for transport argument
     if len(sys.argv) > 1 and sys.argv[1] == "streamable-http":
         # Run with streamable-http transport for web deployment
-        mcp.run(transport="streamable-http")
+        # Configure uvicorn options for wsproto
+        uvicorn_config = {
+            "ws": "wsproto"  # Use wsproto instead of deprecated websockets
+        }
+        mcp.run(transport="streamable-http", **uvicorn_config)
     else:
         # Default to stdio transport for local MCP usage
         mcp.run()
