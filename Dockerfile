@@ -57,4 +57,4 @@ ENV PYTHONUNBUFFERED=1 \
 EXPOSE 8080
 
 # Start the MCP-compliant server (Railway startCommand will override this)
-CMD ["python", "-m", "augments_mcp.mcp_web_server"]
+CMD ["python", "-m", "augments_mcp.main", "streamable-http"]

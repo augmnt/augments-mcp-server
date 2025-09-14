@@ -24,12 +24,13 @@ dependencies = [
     # Core MCP and web framework
     "fastmcp>=0.1.0",
     "fastapi>=0.109.0",
-    "uvicorn[standard]>=0.25.0",
+    "uvicorn[standard]>=0.27.0",  # Updated to fix websockets deprecation
     "gunicorn>=21.2.0",
     
     # HTTP and async
     "httpx[http2]>=0.25.0",  # HTTP/2 support for better performance
     "aiofiles>=23.0.0",
+    "websockets>=12.0",  # Updated to fix deprecation warnings
     
     # Data processing
     "beautifulsoup4>=4.12.0",

@@ -77,6 +77,7 @@ dependencies = [
     { name = "structlog" },
     { name = "uvicorn", extra = ["standard"] },
     { name = "watchdog" },
+    { name = "websockets" },
 ]
 
 [package.dev-dependencies]
@@ -112,8 +113,9 @@ requires-dist = [
     { name = "rich", specifier = ">=13.0.0" },
     { name = "slowapi", specifier = ">=0.1.9" },
     { name = "structlog", specifier = ">=24.0.0" },
-    { name = "uvicorn", extras = ["standard"], specifier = ">=0.25.0" },
+    { name = "uvicorn", extras = ["standard"], specifier = ">=0.27.0" },
     { name = "watchdog", specifier = ">=3.0.0" },
+    { name = "websockets", specifier = ">=12.0" },
 ]
 
 [package.metadata.requires-dev]

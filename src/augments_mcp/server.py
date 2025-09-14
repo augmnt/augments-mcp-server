@@ -7,6 +7,11 @@ and context to enhance Claude Code's ability to generate accurate, up-to-date co
 
 import os
 import asyncio
+import warnings
+
+# Suppress known deprecation warnings from dependencies
+warnings.filterwarnings("ignore", category=DeprecationWarning, module="websockets.*")
+warnings.filterwarnings("ignore", category=DeprecationWarning, module="uvicorn.*")
 from typing import List, Dict, Any, Optional
 from contextlib import asynccontextmanager
 import sys

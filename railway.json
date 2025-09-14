@@ -7,7 +7,7 @@
   },
   "deploy": {
     "numReplicas": 1,
-    "startCommand": "python -m augments_mcp.server streamable-http",
+    "startCommand": "python -m augments_mcp.main streamable-http",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 3,
     "sleepCommand": null,

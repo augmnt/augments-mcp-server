@@ -2,6 +2,12 @@
 
 __version__ = "1.0.0"
 
-from .server import mcp
+# Remove the direct import that causes the RuntimeWarning
+# from .server import mcp
 
-__all__ = ["mcp", "__version__"]
+__all__ = ["__version__"]
+
+def get_mcp():
+    """Lazy import to avoid circular import issues."""
+    from .server import mcp
+    return mcp
