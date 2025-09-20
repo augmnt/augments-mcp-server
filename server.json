@@ -7,13 +7,13 @@
     "url": "https://github.com/augmnt/augments-mcp-server",
     "source": "github"
   },
-  "version": "2.0.4",
+  "version": "2.0.5",
   "packages": [
     {
       "registry_type": "pypi",
       "registry_base_url": "https://pypi.org",
       "identifier": "augments-mcp-server",
-      "version": "2.0.4",
+      "version": "2.0.5",
       "transport": {
         "type": "stdio"
       }
