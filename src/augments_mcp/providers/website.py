@@ -29,9 +29,9 @@ class WebsiteProvider(BaseProvider):
                 },
                 follow_redirects=True,
                 limits=httpx.Limits(
-                    max_keepalive_connections=3,
-                    max_connections=5,
-                    keepalive_expiry=5.0
+                    max_keepalive_connections=5,
+                    max_connections=10,
+                    keepalive_expiry=30.0  # Increased from 5s to reduce connection churn
                 )
             )
         return self._client

@@ -187,8 +187,10 @@ async def lifespan(app: FastAPI):
                     redis_url,
                     encoding="utf-8",
                     decode_responses=True,
-                    socket_timeout=5,
-                    socket_connect_timeout=5
+                    socket_timeout=30,  # Increased from 5s to prevent premature timeouts
+                    socket_connect_timeout=10,  # Increased from 5s
+                    socket_keepalive=True,  # Enable TCP keepalive
+                    retry_on_timeout=True  # Retry on timeout
                 )
                 await redis_client.ping()
                 logger.info("Connected to Redis successfully")
@@ -241,8 +243,29 @@ async def lifespan(app: FastAPI):
     finally:
         # Cleanup
         logger.info("Shutting down Augments Web API Server")
+
+        # Close providers to prevent httpx client leaks
+        if github_provider:
+            try:
+                await github_provider.close()
+                logger.info("GitHub provider closed")
+            except Exception as e:
+                logger.warning("Error closing github provider", error=str(e))
+
+        if website_provider:
+            try:
+                await website_provider.close()
+                logger.info("Website provider closed")
+            except Exception as e:
+                logger.warning("Error closing website provider", error=str(e))
+
+        # Close Redis connection
         if redis_client:
-            await redis_client.aclose()
+            try:
+                await redis_client.aclose()
+                logger.info("Redis client closed")
+            except Exception as e:
+                logger.warning("Error closing redis client", error=str(e))
 
 # Create FastAPI app
 app = FastAPI(
