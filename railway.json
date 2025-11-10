@@ -38,6 +38,7 @@
         "ABUSE_SENSITIVITY": "medium",
         "UVICORN_WS": "wsproto",
         "ENABLE_AUTO_CACHE": "false",
+        "ENABLE_HOT_RELOAD": "false",
         "GITHUB_TOKEN": "${{GITHUB_TOKEN}}",
         "MASTER_API_KEY": "${{MASTER_API_KEY}}"
       },

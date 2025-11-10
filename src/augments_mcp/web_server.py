@@ -244,6 +244,14 @@ async def lifespan(app: FastAPI):
         # Cleanup
         logger.info("Shutting down Augments Web API Server")
 
+        # Stop registry manager file watcher (if enabled)
+        if registry_manager:
+            try:
+                await registry_manager.shutdown()
+                logger.info("Registry manager shutdown")
+            except Exception as e:
+                logger.warning("Error shutting down registry manager", error=str(e))
+
         # Close providers to prevent httpx client leaks
         if github_provider:
             try:

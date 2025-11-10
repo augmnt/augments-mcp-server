@@ -1,5 +1,6 @@
 """Framework registry management."""
 
+import os
 import json
 import asyncio
 from pathlib import Path
@@ -16,15 +17,26 @@ logger = structlog.get_logger(__name__)
 
 class FrameworkRegistryHandler(FileSystemEventHandler):
     """File system event handler for hot-reloading framework configs."""
-    
+
     def __init__(self, registry_manager):
         self.registry_manager = registry_manager
-    
+
     def on_modified(self, event):
         if event.is_directory or not event.src_path.endswith('.json'):
             return
-        
-        asyncio.create_task(self.registry_manager.reload_framework_config(event.src_path))
+
+        # Schedule reload in the event loop (watchdog runs in separate thread)
+        try:
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                asyncio.run_coroutine_threadsafe(
+                    self.registry_manager.reload_framework_config(event.src_path),
+                    loop
+                )
+            else:
+                logger.warning("Event loop not running, skipping hot-reload", file=event.src_path)
+        except RuntimeError as e:
+            logger.error("Failed to schedule hot-reload", file=event.src_path, error=str(e))
 
 
 class FrameworkRegistryManager:
@@ -39,7 +51,15 @@ class FrameworkRegistryManager:
     async def initialize(self) -> None:
         """Initialize the registry and start file watching."""
         await self.load_all_frameworks()
-        self.start_watching()
+
+        # Only enable file watching in development (disabled in production to prevent thread exhaustion)
+        enable_hot_reload = os.getenv("ENABLE_HOT_RELOAD", "false").lower() == "true"
+        if enable_hot_reload:
+            self.start_watching()
+            logger.info("Hot-reload enabled for framework configs")
+        else:
+            logger.info("Hot-reload disabled (set ENABLE_HOT_RELOAD=true to enable)")
+
         self._loaded = True
         logger.info("Framework registry initialized", framework_count=len(self.frameworks))
     
