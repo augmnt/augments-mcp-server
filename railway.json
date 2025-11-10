@@ -28,7 +28,7 @@
       ],
       "envVars": {
         "ENV": "production",
-        "WORKERS": 6,
+        "WORKERS": 2,
         "LOG_LEVEL": "INFO",
         "CACHE_TTL": "600",
         "AUGMENTS_CACHE_DIR": "/app/cache",
@@ -37,6 +37,7 @@
         "ENABLE_CLOUDFLARE_PROTECTION": "true",
         "ABUSE_SENSITIVITY": "medium",
         "UVICORN_WS": "wsproto",
+        "ENABLE_AUTO_CACHE": "false",
         "GITHUB_TOKEN": "${{GITHUB_TOKEN}}",
         "MASTER_API_KEY": "${{MASTER_API_KEY}}"
       },

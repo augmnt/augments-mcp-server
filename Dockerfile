@@ -49,7 +49,8 @@ ENV PYTHONUNBUFFERED=1 \
     WORKERS=2 \
     LOG_LEVEL=INFO \
     HOST=0.0.0.0 \
-    UVICORN_WS=wsproto
+    UVICORN_WS=wsproto \
+    ENABLE_AUTO_CACHE=false
 
 # Railway handles healthchecks via railway.json
 # No HEALTHCHECK needed in Dockerfile

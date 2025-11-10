@@ -212,15 +212,20 @@ async def app_lifespan(server: FastMCP):
         website_provider = WebsiteProvider()
         logger.info("Providers initialized")
         
-        # Auto-cache popular frameworks in background
-        popular_frameworks = ["nextjs", "react", "tailwindcss", "typescript", "shadcn-ui"]
-        cache_task = asyncio.create_task(_auto_cache_popular_frameworks(
-            popular_frameworks, registry_manager, doc_cache, github_provider, website_provider
-        ))
-        background_tasks.add(cache_task)
-        
-        # Remove task from set when it completes
-        cache_task.add_done_callback(background_tasks.discard)
+        # Auto-cache popular frameworks in background (disabled in production to prevent thread exhaustion)
+        enable_auto_cache = os.getenv("ENABLE_AUTO_CACHE", "false").lower() == "true"
+        if enable_auto_cache:
+            logger.info("Auto-cache enabled, warming popular frameworks")
+            popular_frameworks = ["nextjs", "react", "tailwindcss", "typescript", "shadcn-ui"]
+            cache_task = asyncio.create_task(_auto_cache_popular_frameworks(
+                popular_frameworks, registry_manager, doc_cache, github_provider, website_provider
+            ))
+            background_tasks.add(cache_task)
+
+            # Remove task from set when it completes
+            cache_task.add_done_callback(background_tasks.discard)
+        else:
+            logger.info("Auto-cache disabled (set ENABLE_AUTO_CACHE=true to enable)")
         
         logger.info("Augments MCP Server initialized successfully", 
                    frameworks=registry_manager.get_framework_count())
@@ -232,6 +237,22 @@ async def app_lifespan(server: FastMCP):
             "website_provider": website_provider
         }
         
+    except RuntimeError as e:
+        if "can't start new thread" in str(e):
+            logger.critical(
+                "Thread exhaustion detected during initialization. "
+                "This is likely due to too many workers or background tasks. "
+                "Try reducing WORKERS env var or disabling ENABLE_AUTO_CACHE.",
+                error=str(e)
+            )
+        else:
+            logger.error("Failed to initialize Augments MCP Server", error=str(e))
+        # Set global variables to None so tools can detect initialization failure
+        registry_manager = None
+        doc_cache = None
+        github_provider = None
+        website_provider = None
+        raise
     except Exception as e:
         logger.error("Failed to initialize Augments MCP Server", error=str(e))
         # Set global variables to None so tools can detect initialization failure
