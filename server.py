@@ -6,4 +6,9 @@ import sys
 os.environ["FASTMCP_CLOUD"] = "true"
 
 sys.path.insert(0, "src")
-from augments_mcp.server import mcp
+
+
+def create_server():
+    """Factory function to create the MCP server instance."""
+    from augments_mcp.server import mcp
+    return mcp
