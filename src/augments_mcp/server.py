@@ -332,16 +332,12 @@ async def app_lifespan(server: FastMCP):
 
 
 # Initialize FastMCP server with web deployment configuration
-# Skip host/port for fastmcp.cloud (it manages its own runtime)
-if os.getenv("FASTMCP_CLOUD"):
-    mcp = FastMCP("augments-mcp-server", lifespan=app_lifespan)
-else:
-    mcp = FastMCP(
-        "augments-mcp-server",
-        lifespan=app_lifespan,
-        host=os.getenv("HOST", "0.0.0.0"),  # Bind to all interfaces for Railway
-        port=int(os.getenv("PORT", "8080")), # Match Railway configuration
-    )
+mcp = FastMCP(
+    "augments-mcp-server",
+    lifespan=app_lifespan,
+    host=os.getenv("HOST", "0.0.0.0"),  # Bind to all interfaces for Railway
+    port=int(os.getenv("PORT", "8080")), # Match Railway configuration
+)
 
 
 # Framework Discovery Tools
