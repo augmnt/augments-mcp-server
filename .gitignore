@@ -39,52 +39,13 @@ Thumbs.db
 
 # Testing
 coverage/
-.coverage
-.pytest_cache/
-htmlcov/
-.tox/
-.nox/
-.hypothesis/
 
 # TypeScript
 *.tsbuildinfo
 
-# Python (legacy)
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-develop-eggs/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-.venv/
-venv/
-ENV/
-env/
-.mypy_cache/
-.dmypy.json
-dmypy.json
-.ruff_cache/
-.uv/
-
 # Cache
 .cache/
 *.cache
-.diskcache/
-~/.cache/
 
 # Logs
 *.log
@@ -93,3 +54,6 @@ logs/
 # Project specific
 frameworks/*.json.bak
 test_output/
+
+# Claude Code local settings
+.claude/

@@ -5,88 +5,51 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2026-01-23
+
+### Changed
+- **Complete TypeScript Rewrite**: Migrated from Python to TypeScript for better Vercel compatibility
+- **Serverless Architecture**: Optimized for Vercel edge deployment
+- **Cache System**: Switched from diskcache to Upstash Redis for serverless environments
+- **Rate Limiting**: Implemented with Upstash Ratelimit for distributed rate limiting
+
+### Added
+- Next.js 14 App Router for API routes
+- Zod schema validation for all inputs/outputs
+- 12 MCP tools (expanded from 9)
+- Upstash Redis integration for caching and rate limiting
+- CORS headers for cross-origin requests
+- Health check endpoint at `/mcp`
+
+### Removed
+- Python implementation (available in git history)
+- Railway deployment configuration
+- Docker deployment support
+- diskcache, FastMCP, httpx dependencies
+
+### Technical Stack
+- TypeScript 5.4+
+- Next.js 14
+- @modelcontextprotocol/sdk
+- Upstash Redis & Ratelimit
+- Zod for validation
+- Vercel deployment
+
 ## [2.0.9] - 2026-01-03
 
 ### Fixed
-- **Memory exhaustion**: Added LRU eviction to memory cache (max 100 entries)
-- **High Railway costs**: Reduced resource limits (2Gi→512Mi RAM, 2→1 workers)
-- **O(n) cache operations**: Added framework key indexing for O(1) lookups
-- **Redis dependency**: Made Redis optional for hobby deployments
-
-### Changed
-- Railway memory limit reduced from 2Gi to 512Mi
-- Railway CPU limit reduced from 2000m to 500m
-- Removed auto-scaling (was scaling to 4 replicas)
-- Workers reduced from 2 to 1 for hobby deployments
-- Redis pool size reduced from 20 to 5 connections
-- Log level changed to WARNING in production
-- Logging uses JSON renderer in production for efficiency
-
-### Added
-- LRU eviction for memory cache with configurable max entries
-- Framework key index for O(1) cache lookups by framework
-- Memory utilization stats in cache statistics
-- Graceful fallback to in-memory rate limiting when Redis unavailable
+- Memory exhaustion with LRU eviction
+- High Railway costs with reduced resource limits
+- O(n) cache operations with framework key indexing
 
 ## [1.0.0] - 2025-01-21
 
 ### Added
-- Initial stable release of Augments MCP Server
-- Comprehensive framework documentation provider for Claude Code via Model Context Protocol (MCP)
-- Support for 85+ frameworks across 8 categories:
-  - Web Frameworks (25): React, Next.js, Vue.js, Angular, Svelte, Tailwind CSS, and more
-  - Backend Frameworks (18): FastAPI, Django, Express.js, Laravel, Spring Boot, and more
-  - AI/ML Frameworks (14): PyTorch, TensorFlow, Scikit-learn, LangChain, Streamlit, and more
-  - Mobile Frameworks (6): React Native, Flutter, Expo, Ionic, and more
-  - Database & ORM (5): Prisma, Mongoose, TypeORM, SQLAlchemy, Sequelize
-  - State Management (4): Redux, Zustand, MobX, Recoil
-  - Testing Frameworks (5): Jest, Vitest, Cypress, Playwright, pytest
-  - Development Tools (7): Webpack, Vite, ESLint, Prettier, Turbo, and more
-  - DevOps & Infrastructure (4): Docker, Kubernetes, Terraform, Ansible
-  - Design Systems (1): shadcn/ui
-- Advanced caching system with TTL strategies and multi-level caching
-- Hot-reloading configuration support for dynamic framework updates
-- 9 comprehensive MCP tools for complete documentation lifecycle:
-  - `list_available_frameworks` - Framework discovery and listing
-  - `search_frameworks` - Intelligent framework search
-  - `get_framework_info` - Detailed framework information
-  - `get_framework_docs` - Comprehensive documentation retrieval
-  - `get_framework_examples` - Code examples and patterns
-  - `search_documentation` - Framework-specific documentation search
-  - `get_framework_context` - Multi-framework context enhancement
-  - `analyze_code_compatibility` - Code compatibility analysis
-  - `check_framework_updates` - Cache management and updates
-- Async-first architecture with non-blocking operations throughout
-- GitHub API integration with rate limiting and smart caching
-- Web scraping capabilities for documentation aggregation
-- Structured logging and comprehensive error handling
-- Type safety with comprehensive type hints throughout
-- Extensible plugin-based architecture for new providers
-- Claude Code CLI integration support
-- Environment-based configuration with optional GitHub token support
+- Initial stable release (Python implementation)
+- Support for 85+ frameworks across 10 categories
+- 9 MCP tools for documentation lifecycle
+- FastMCP, Pydantic, httpx, BeautifulSoup4 stack
 
-### Technical Stack
-- FastMCP - Official MCP Python SDK
-- Pydantic - Data validation and serialization
-- httpx - Async HTTP client for API requests
-- BeautifulSoup4 - HTML parsing for web scraping
-- diskcache - Persistent caching with TTL support
-- structlog - Structured logging for observability
-- watchdog - File system monitoring for hot-reload
-
-### Documentation
-- Comprehensive README with installation, usage, and integration guides
-- Framework configuration schema and examples
-- Claude Code integration instructions (CLI and manual methods)
-- Development setup and contribution guidelines
-- Complete MCP tools reference with JSON examples
-
-### Infrastructure
-- Python 3.11+ support
-- UV package manager integration
-- Comprehensive test suite with pytest
-- Code quality tools (Black, Ruff, mypy)
-- GitHub Actions ready for CI/CD
-- MIT License
-
+[3.0.0]: https://github.com/augmnt/augments-mcp-server/releases/tag/v3.0.0
+[2.0.9]: https://github.com/augmnt/augments-mcp-server/releases/tag/v2.0.9
 [1.0.0]: https://github.com/augmnt/augments-mcp-server/releases/tag/v1.0.0
