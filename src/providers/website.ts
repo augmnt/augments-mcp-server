@@ -2,10 +2,31 @@
  * Website documentation provider
  */
 
+import { createHash } from 'crypto';
 import { htmlToMarkdown, extractCodeExamples, cleanMarkdown } from '@/utils/html-parser';
 import { getLogger } from '@/utils/logger';
 
 const logger = getLogger('website-provider');
+
+const DEFAULT_FETCH_TIMEOUT = 10000; // 10 seconds
+const HEAD_REQUEST_TIMEOUT = 5000; // 5 seconds for HEAD requests
+
+/**
+ * Fetch with timeout using AbortController
+ */
+async function fetchWithTimeout(
+  url: string,
+  options: RequestInit,
+  timeoutMs: number = DEFAULT_FETCH_TIMEOUT
+): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
 
 export class WebsiteProvider {
   private userAgent = 'Augments-MCP-Server/3.0 (Documentation Fetcher)';
@@ -17,13 +38,17 @@ export class WebsiteProvider {
     try {
       logger.debug('Fetching documentation from website', { url });
 
-      const response = await fetch(url, {
-        headers: {
-          'User-Agent': this.userAgent,
-          Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      const response = await fetchWithTimeout(
+        url,
+        {
+          headers: {
+            'User-Agent': this.userAgent,
+            Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          },
+          redirect: 'follow',
         },
-        redirect: 'follow',
-      });
+        DEFAULT_FETCH_TIMEOUT
+      );
 
       if (!response.ok) {
         logger.error('Website HTTP error', {
@@ -64,13 +89,17 @@ export class WebsiteProvider {
    */
   async fetchExamples(url: string, pattern?: string): Promise<string | null> {
     try {
-      const response = await fetch(url, {
-        headers: {
-          'User-Agent': this.userAgent,
-          Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      const response = await fetchWithTimeout(
+        url,
+        {
+          headers: {
+            'User-Agent': this.userAgent,
+            Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          },
+          redirect: 'follow',
         },
-        redirect: 'follow',
-      });
+        DEFAULT_FETCH_TIMEOUT
+      );
 
       if (!response.ok) {
         return null;
@@ -118,24 +147,65 @@ export class WebsiteProvider {
   }
 
   /**
-   * Check if website has been updated (basic check via HEAD request)
+   * Check if website has been updated (via HEAD request with content hash fallback)
    */
-  async checkForUpdates(url: string): Promise<{
+  async checkForUpdates(
+    url: string,
+    previousContentHash?: string
+  ): Promise<{
     lastModified: string | null;
     etag: string | null;
+    contentHash: string | null;
+    hasChanges: boolean | null;
   }> {
     try {
-      const response = await fetch(url, {
-        method: 'HEAD',
-        headers: {
-          'User-Agent': this.userAgent,
+      // Try HEAD request first for headers
+      const headResponse = await fetchWithTimeout(
+        url,
+        {
+          method: 'HEAD',
+          headers: {
+            'User-Agent': this.userAgent,
+          },
         },
-      });
+        HEAD_REQUEST_TIMEOUT
+      );
 
-      return {
-        lastModified: response.headers.get('last-modified'),
-        etag: response.headers.get('etag'),
-      };
+      const lastModified = headResponse.headers.get('last-modified');
+      const etag = headResponse.headers.get('etag');
+
+      // If we have HTTP headers, return them
+      if (lastModified || etag) {
+        return { lastModified, etag, contentHash: null, hasChanges: null };
+      }
+
+      // Fallback: fetch content and compute hash if we have a previous hash to compare
+      if (previousContentHash) {
+        const response = await fetchWithTimeout(
+          url,
+          {
+            headers: {
+              'User-Agent': this.userAgent,
+              Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            },
+            redirect: 'follow',
+          },
+          DEFAULT_FETCH_TIMEOUT
+        );
+
+        if (response.ok) {
+          const content = await response.text();
+          const currentHash = createHash('sha256').update(content).digest('hex');
+          return {
+            lastModified: null,
+            etag: null,
+            contentHash: currentHash,
+            hasChanges: currentHash !== previousContentHash,
+          };
+        }
+      }
+
+      return { lastModified: null, etag: null, contentHash: null, hasChanges: null };
     } catch (error) {
       logger.warn('Website update check failed', {
         url,
@@ -144,8 +214,17 @@ export class WebsiteProvider {
       return {
         lastModified: null,
         etag: null,
+        contentHash: null,
+        hasChanges: null,
       };
     }
+  }
+
+  /**
+   * Compute content hash for a given content string
+   */
+  computeContentHash(content: string): string {
+    return createHash('sha256').update(content).digest('hex');
   }
 }
 

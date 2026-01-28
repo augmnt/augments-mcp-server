@@ -159,10 +159,16 @@ export class FrameworkRegistryManager {
    * Search frameworks by query
    */
   searchFrameworks(query: string): SearchResult[] {
+    // Sanitize and limit query length to prevent performance issues
+    const sanitizedQuery = query.trim().slice(0, 200);
+    if (sanitizedQuery.length === 0) {
+      return [];
+    }
+
     const results: SearchResult[] = [];
 
     for (const config of this.frameworks.values()) {
-      const { score, matched_fields } = calculateSearchScore(config, query);
+      const { score, matched_fields } = calculateSearchScore(config, sanitizedQuery);
 
       if (score > 0) {
         results.push({

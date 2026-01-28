@@ -204,14 +204,20 @@ export class KVCache {
     framework: string;
     memory_entries: number;
     total_size_bytes: number;
+    last_cached_at: number | null;
   }> {
     let memoryEntries = 0;
     let totalSize = 0;
+    let lastCachedAt: number | null = null;
 
     for (const [key, entry] of this.localCache.entries()) {
       if (entry.framework === framework) {
         memoryEntries++;
         totalSize += entry.content.length;
+        // Track the most recent cache timestamp for this framework
+        if (lastCachedAt === null || entry.cached_at > lastCachedAt) {
+          lastCachedAt = entry.cached_at;
+        }
       }
     }
 
@@ -219,6 +225,23 @@ export class KVCache {
       framework,
       memory_entries: memoryEntries,
       total_size_bytes: totalSize,
+      last_cached_at: lastCachedAt,
+    };
+  }
+
+  /**
+   * Get cache timestamps for all entries
+   */
+  getCacheTimestamps(): { oldest: number | null; newest: number | null; all: number[] } {
+    if (this.localCache.size === 0) {
+      return { oldest: null, newest: null, all: [] };
+    }
+
+    const timestamps = Array.from(this.localCache.values()).map((e) => e.cached_at);
+    return {
+      oldest: Math.min(...timestamps),
+      newest: Math.max(...timestamps),
+      all: timestamps,
     };
   }
 

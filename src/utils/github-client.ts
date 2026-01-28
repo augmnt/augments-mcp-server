@@ -9,9 +9,14 @@ import { getLogger } from '@/utils/logger';
 const logger = getLogger('github-client');
 
 export class RateLimitError extends Error {
-  constructor(message: string) {
+  public readonly resetTime: Date;
+  public readonly waitSeconds: number;
+
+  constructor(message: string, resetTime?: Date) {
     super(message);
     this.name = 'RateLimitError';
+    this.resetTime = resetTime || new Date();
+    this.waitSeconds = Math.max(0, Math.ceil((this.resetTime.getTime() - Date.now()) / 1000));
   }
 }
 
@@ -257,12 +262,12 @@ export class GitHubClient {
   }
 
   private async checkRateLimit(): Promise<void> {
-    if (this.rateLimitRemaining <= 1) {
-      if (Date.now() < this.rateLimitReset.getTime()) {
-        const waitTime = Math.ceil((this.rateLimitReset.getTime() - Date.now()) / 1000);
-        logger.warn('Rate limit exceeded, waiting', { wait_seconds: waitTime });
-        await new Promise((resolve) => setTimeout(resolve, waitTime * 1000));
-      }
+    if (this.rateLimitRemaining <= 1 && Date.now() < this.rateLimitReset.getTime()) {
+      // Throw immediately instead of blocking - let caller handle the rate limit
+      throw new RateLimitError(
+        `GitHub API rate limit exceeded. Resets at ${this.rateLimitReset.toISOString()}`,
+        this.rateLimitReset
+      );
     }
 
     // Respect minimum delay between requests (100ms)

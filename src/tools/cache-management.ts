@@ -245,8 +245,26 @@ export async function getCacheStats(
       frameworkStats.push(fwStats);
     }
 
-    // Calculate totals (memory size would need to be tracked differently in production)
+    // Calculate totals
     const totalMemorySize = frameworkStats.reduce((sum, fw) => sum + fw.total_size_bytes, 0);
+
+    // Calculate cache age statistics
+    const timestamps = cache.getCacheTimestamps();
+    const now = Date.now();
+    let averageAgeHours = 0;
+    let oldestAgeHours = 0;
+    let newestAgeHours = 0;
+
+    if (timestamps.all.length > 0) {
+      const ageSum = timestamps.all.reduce((sum, ts) => sum + (now - ts), 0);
+      averageAgeHours = Math.round((ageSum / timestamps.all.length / 3600000) * 100) / 100;
+      if (timestamps.oldest !== null) {
+        oldestAgeHours = Math.round(((now - timestamps.oldest) / 3600000) * 100) / 100;
+      }
+      if (timestamps.newest !== null) {
+        newestAgeHours = Math.round(((now - timestamps.newest) / 3600000) * 100) / 100;
+      }
+    }
 
     const result = {
       overall: overallStats,
@@ -254,9 +272,9 @@ export async function getCacheStats(
       summary: {
         total_frameworks: frameworkStats.length,
         total_memory_size_bytes: totalMemorySize,
-        average_cache_age_hours: 0, // Would need timestamp tracking
-        oldest_cache_hours: 0,
-        newest_cache_hours: 0,
+        average_cache_age_hours: averageAgeHours,
+        oldest_cache_hours: oldestAgeHours,
+        newest_cache_hours: newestAgeHours,
       },
     };
 
@@ -280,7 +298,7 @@ async function checkGitHubUpdates(
   repo: string,
   docsPath: string,
   branch: string,
-  cacheInfo: { framework: string; memory_entries: number; total_size_bytes: number }
+  cacheInfo: { framework: string; memory_entries: number; total_size_bytes: number; last_cached_at: number | null }
 ): Promise<{
   has_updates: boolean;
   last_modified: string | null;
@@ -313,8 +331,10 @@ async function checkGitHubUpdates(
     const latestCommit = commits[0];
     const commitDate = latestCommit.date;
 
-    // Default to has updates (would need last cached timestamp for proper comparison)
-    const hasUpdates = true;
+    // Compare commit timestamp against cache timestamp
+    const hasUpdates =
+      cacheInfo.last_cached_at === null ||
+      (commits.length > 0 && new Date(commits[0].date).getTime() > cacheInfo.last_cached_at);
 
     // Extract change summaries
     const changes = commits.slice(0, 5).map((commit) => {
@@ -329,6 +349,16 @@ async function checkGitHubUpdates(
       commit_count: commits.length,
     };
   } catch (error) {
+    // Import RateLimitError at top of file - handle gracefully
+    if (error instanceof Error && error.name === 'RateLimitError') {
+      const rateLimitError = error as any;
+      return {
+        has_updates: false,
+        last_modified: null,
+        changes: [],
+        error: `Rate limited until ${rateLimitError.resetTime?.toISOString() || 'unknown'}`,
+      };
+    }
     logger.warn('GitHub update check failed', {
       repo,
       path: docsPath,
@@ -345,7 +375,7 @@ async function checkGitHubUpdates(
 
 async function checkWebsiteUpdates(
   websiteUrl: string,
-  cacheInfo: { framework: string; memory_entries: number; total_size_bytes: number },
+  cacheInfo: { framework: string; memory_entries: number; total_size_bytes: number; last_cached_at: number | null },
   websiteProvider: WebsiteProvider
 ): Promise<{
   has_updates: boolean;
@@ -357,12 +387,20 @@ async function checkWebsiteUpdates(
   try {
     const updateInfo = await websiteProvider.checkForUpdates(websiteUrl);
 
-    // Default to assuming updates if we can't determine
-    const hasUpdates = true;
+    // Determine if there are updates based on available information
+    let hasUpdates = cacheInfo.last_cached_at === null; // No cache means we need to fetch
+
+    if (!hasUpdates && updateInfo.lastModified && cacheInfo.last_cached_at !== null) {
+      // Compare Last-Modified header against cache timestamp
+      hasUpdates = new Date(updateInfo.lastModified).getTime() > cacheInfo.last_cached_at;
+    } else if (!hasUpdates && updateInfo.hasChanges !== null) {
+      // Use content hash comparison result if available
+      hasUpdates = updateInfo.hasChanges;
+    }
 
     return {
       has_updates: hasUpdates,
-      last_modified: updateInfo.lastModified || new Date().toISOString(),
+      last_modified: updateInfo.lastModified,
       changes: hasUpdates ? ['Website content may have been updated'] : [],
       etag: updateInfo.etag,
     };

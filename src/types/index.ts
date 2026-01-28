@@ -68,6 +68,7 @@ export interface CacheEntry {
   version: string;
   framework: string;
   source_type: string;
+  content_hash?: string; // SHA-256 hash for change detection when HTTP headers unavailable
 }
 
 // Update status
