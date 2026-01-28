@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.0] - 2026-01-28
+
+### Added
+- **Query-Focused Context Extraction**: New v4 architecture that fetches TypeScript definitions directly from npm packages
+- **TypeScript Definition Fetcher** (`src/core/type-fetcher.ts`): Fetches `.d.ts` files from npm packages and DefinitelyTyped
+- **TypeScript Parser** (`src/core/type-parser.ts`): Uses TypeScript compiler API to extract API signatures, types, and interfaces
+- **Query Parser** (`src/core/query-parser.ts`): Extracts framework and concept from natural language queries without LLM
+- **Version Registry** (`src/core/version-registry.ts`): Tracks npm package versions, supports version comparison and diff
+- **Code Example Extractor** (`src/core/example-extractor.ts`): Extracts code examples from official documentation
+
+### New MCP Tools (v4)
+- `get_api_context`: Primary tool for query-focused context extraction. Returns minimal, accurate API signatures and examples optimized for LLMs
+- `search_apis`: Discovery tool for searching APIs across frameworks by name or keyword
+- `get_version_info`: Version information tool with breaking change detection between versions
+
+### Changed
+- Bumped version to 4.0.0
+- Server now registers 15 tools (12 v3 + 3 v4)
+
+### Key Innovation
+The v4 tools fetch TypeScript definitions as the source of truth for API signatures, rather than relying on parsed documentation. This provides:
+- **Accuracy**: Types are compiled and must be correct
+- **Minimal context**: ~500-2000 tokens vs 50KB of docs
+- **Zero LLM cost**: Just data retrieval, the calling LLM uses the structured data
+- **Version-specific**: Can query specific package versions
+- **Universal coverage**: Any npm package with types can be queried
+
 ## [3.0.0] - 2026-01-23
 
 ### Changed
@@ -53,6 +80,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 9 MCP tools for documentation lifecycle
 - FastMCP, Pydantic, httpx, BeautifulSoup4 stack
 
+[4.0.0]: https://github.com/augmnt/augments-mcp-server/releases/tag/v4.0.0
 [3.0.0]: https://github.com/augmnt/augments-mcp-server/releases/tag/v3.0.0
 [2.0.9]: https://github.com/augmnt/augments-mcp-server/releases/tag/v2.0.9
 [1.0.0]: https://github.com/augmnt/augments-mcp-server/releases/tag/v1.0.0

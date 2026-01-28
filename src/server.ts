@@ -4,6 +4,8 @@
  * A comprehensive MCP server that provides real-time access to framework documentation
  * and context to enhance Claude Code's ability to generate accurate, up-to-date code.
  *
+ * v4: Query-focused context extraction with TypeScript definition parsing.
+ *
  * Uses the official MCP SDK for Claude Code compatibility.
  */
 
@@ -31,13 +33,22 @@ import {
   refreshFrameworkCache,
   getCacheStats,
 } from '@/tools';
+// v4 Tools: Query-focused context extraction
+import {
+  getApiContext,
+  formatApiContextResponse,
+  searchApis,
+  formatSearchApisResponse,
+  getVersionInfo,
+  formatVersionInfoResponse,
+} from '@/tools/v4';
 import { FrameworkCategories } from '@/types';
 import { getLogger } from '@/utils/logger';
 
 const logger = getLogger('mcp-server');
 
 // Server version
-export const SERVER_VERSION = '3.0.0';
+export const SERVER_VERSION = '4.0.0';
 
 // Singleton instance for serverless environments
 let serverInstance: McpServer | null = null;
@@ -348,8 +359,83 @@ export async function getServer(): Promise<McpServer> {
     }
   );
 
+  // ==================== v4 API Context Tools ====================
+
+  server.tool(
+    'get_api_context',
+    'Get minimal, accurate API context for a natural language query. Fetches TypeScript definitions and extracts relevant signatures. Returns focused context optimized for LLMs.',
+    {
+      query: z.string().min(1).describe('Natural language query (e.g., "useEffect cleanup" or "prisma findMany")'),
+      framework: z.string().optional().describe('Specific framework to search in (e.g., "react", "prisma")'),
+      version: z.string().optional().describe('Specific version (e.g., "19.0.0" or "latest")'),
+      includeExamples: z.boolean().default(true).describe('Whether to include code examples'),
+      maxExamples: z.number().min(0).max(5).default(2).describe('Maximum number of examples to include'),
+    },
+    async ({ query, framework, version, includeExamples, maxExamples }) => {
+      try {
+        const result = await getApiContext({
+          query,
+          framework,
+          version,
+          includeExamples: includeExamples ?? true,
+          maxExamples: maxExamples ?? 2,
+        });
+        return formatResult(formatApiContextResponse(result));
+      } catch (error) {
+        logger.error('Tool execution failed', { tool: 'get_api_context', error });
+        return formatError(error);
+      }
+    }
+  );
+
+  server.tool(
+    'search_apis',
+    'Search for APIs across frameworks by name or keyword. Returns ranked results with signatures and relevance scores.',
+    {
+      query: z.string().min(1).describe('Search query (e.g., "state management hook")'),
+      frameworks: z.array(z.string()).optional().describe('Limit search to specific frameworks'),
+      limit: z.number().min(1).max(20).default(5).describe('Maximum results per framework'),
+    },
+    async ({ query, frameworks, limit }) => {
+      try {
+        const result = await searchApis({
+          query,
+          frameworks,
+          limit: limit ?? 5,
+        });
+        return formatResult(formatSearchApisResponse(result));
+      } catch (error) {
+        logger.error('Tool execution failed', { tool: 'search_apis', error });
+        return formatError(error);
+      }
+    }
+  );
+
+  server.tool(
+    'get_version_info',
+    'Get version information for a framework/package including available versions, dist-tags, and breaking change detection.',
+    {
+      framework: z.string().min(1).describe('Framework or package name'),
+      fromVersion: z.string().optional().describe('Compare from this version'),
+      toVersion: z.string().optional().describe('Compare to this version'),
+    },
+    async ({ framework, fromVersion, toVersion }) => {
+      try {
+        const result = await getVersionInfo({
+          framework,
+          fromVersion,
+          toVersion,
+        });
+        return formatResult(formatVersionInfoResponse(result));
+      } catch (error) {
+        logger.error('Tool execution failed', { tool: 'get_version_info', error });
+        return formatError(error);
+      }
+    }
+  );
+
   logger.info('MCP Server initialized successfully', {
-    tools: 12,
+    tools: 15,
     version: SERVER_VERSION,
   });
 

@@ -1,6 +1,6 @@
 {
   "name": "augments-mcp-server",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Augments MCP Server - Framework Documentation Provider for AI Assistants",
   "private": true,
   "type": "module",
