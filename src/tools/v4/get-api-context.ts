@@ -168,18 +168,44 @@ export async function getApiContext(
           .map((r) => r.name)
       );
     } else {
-      notes.push(
-        `No API named "${parsedQuery.concept}" found in ${packageName}@${resolvedVersion}`
-      );
+      // Try barrel export sub-modules for packages with re-exports
+      const barrelPaths = typeFetcher.getBarrelExportPaths(packageName, parsedQuery.concept);
+      if (barrelPaths.length > 0) {
+        logger.debug('Trying barrel export paths', { packageName, paths: barrelPaths });
+        for (const path of barrelPaths) {
+          const subModuleTypes = await typeFetcher.fetchSpecificTypeFile(
+            packageName,
+            resolvedVersion,
+            path
+          );
+          if (subModuleTypes) {
+            api = typeParser.extractApiSignature(
+              subModuleTypes.content,
+              parsedQuery.concept,
+              subModuleTypes.filePath
+            );
+            if (api) {
+              logger.debug('Found API in barrel export sub-module', { path, name: api.name });
+              break;
+            }
+          }
+        }
+      }
 
-      // Try to find similar APIs
-      const searchResults = typeParser.searchApis(
-        types.content,
-        parsedQuery.concept
-      );
-      if (searchResults.length > 0) {
-        notes.push(`Similar APIs found: ${searchResults.slice(0, 5).map((r) => r.name).join(', ')}`);
-        relatedApis.push(...searchResults.slice(0, 5).map((r) => r.name));
+      if (!api) {
+        notes.push(
+          `No API named "${parsedQuery.concept}" found in ${packageName}@${resolvedVersion}`
+        );
+
+        // Try to find similar APIs
+        const searchResults = typeParser.searchApis(
+          types.content,
+          parsedQuery.concept
+        );
+        if (searchResults.length > 0) {
+          notes.push(`Similar APIs found: ${searchResults.slice(0, 5).map((r) => r.name).join(', ')}`);
+          relatedApis.push(...searchResults.slice(0, 5).map((r) => r.name));
+        }
       }
     }
   } else {

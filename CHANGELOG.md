@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **Query-Focused Context Extraction**: New v4 architecture that fetches TypeScript definitions directly from npm packages
+- **Extended Framework Support**: Added Supabase, React Hook Form, Framer Motion, Firebase, styled-components, Emotion
+- **Barrel Export Handling**: Smart sub-module fetching for packages with re-exports (react-hook-form, @tanstack/react-query)
+- **Improved Documentation Sources**: Added TanStack Query, tRPC, Supabase, React Hook Form, Express doc sources
 - **TypeScript Definition Fetcher** (`src/core/type-fetcher.ts`): Fetches `.d.ts` files from npm packages and DefinitelyTyped
 - **TypeScript Parser** (`src/core/type-parser.ts`): Uses TypeScript compiler API to extract API signatures, types, and interfaces
 - **Query Parser** (`src/core/query-parser.ts`): Extracts framework and concept from natural language queries without LLM

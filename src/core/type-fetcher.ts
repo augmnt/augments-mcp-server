@@ -15,6 +15,44 @@ const UNPKG_CDN = 'https://unpkg.com';
 const JSDELIVR_CDN = 'https://cdn.jsdelivr.net/npm';
 
 /**
+ * Alternative type file paths for packages with non-standard structures
+ */
+const ALTERNATIVE_TYPE_PATHS: Record<string, string[]> = {
+  '@tanstack/react-query': ['build/modern/index.d.ts', 'dist/index.d.ts', 'build/legacy/index.d.ts'],
+  '@trpc/client': ['dist/index.d.ts', 'dist/client.d.ts'],
+  '@trpc/server': ['dist/index.d.ts'],
+  '@supabase/supabase-js': ['dist/module/index.d.ts', 'dist/main/index.d.ts', 'dist/index.d.ts'],
+  'lodash': ['index.d.ts', 'lodash.d.ts'],
+  'lodash-es': ['index.d.ts'],
+  'framer-motion': ['dist/types/index.d.ts', 'dist/index.d.ts'],
+  'react-hook-form': ['dist/index.d.ts', 'dist/types.d.ts'],
+  'styled-components': ['dist/index.d.ts'],
+  '@emotion/react': ['dist/emotion-react.cjs.d.ts', 'types/index.d.ts'],
+  'zod': ['index.d.ts', 'lib/index.d.ts'],
+};
+
+/**
+ * Packages that use barrel exports - need to fetch specific sub-modules
+ * Maps package name to an array of sub-module paths to fetch for specific concepts
+ */
+const BARREL_EXPORT_MODULES: Record<string, Record<string, string[]>> = {
+  'react-hook-form': {
+    useform: ['dist/useForm.d.ts'],
+    usecontroller: ['dist/useController.d.ts'],
+    usefieldarray: ['dist/useFieldArray.d.ts'],
+    useformcontext: ['dist/useFormContext.d.ts'],
+    usewatch: ['dist/useWatch.d.ts'],
+    useformstate: ['dist/useFormState.d.ts'],
+  },
+  '@tanstack/react-query': {
+    usequery: ['build/modern/useQuery.d.ts', 'src/useQuery.ts'],
+    usemutation: ['build/modern/useMutation.d.ts'],
+    useinfinitequery: ['build/modern/useInfiniteQuery.d.ts'],
+    usesuspensequery: ['build/modern/useSuspenseQuery.d.ts'],
+  },
+};
+
+/**
  * Package metadata from npm registry
  */
 export interface NpmPackageInfo {
@@ -168,6 +206,18 @@ export class TypeFetcher {
       if (result) {
         this.cache.set(cacheKey, result);
         return result;
+      }
+    }
+
+    // Try alternative type paths for packages with non-standard structures
+    const altPaths = ALTERNATIVE_TYPE_PATHS[packageName];
+    if (altPaths) {
+      for (const altPath of altPaths) {
+        const result = await this.fetchSpecificTypeFile(packageName, resolvedVersion, altPath);
+        if (result) {
+          this.cache.set(cacheKey, result);
+          return result;
+        }
       }
     }
 
@@ -500,9 +550,9 @@ export class TypeFetcher {
   }
 
   /**
-   * Fetch a specific type file from a package
+   * Fetch a specific type file from a package (public for barrel export handling)
    */
-  private async fetchSpecificTypeFile(
+  async fetchSpecificTypeFile(
     packageName: string,
     version: string | undefined,
     filePath: string
@@ -512,9 +562,25 @@ export class TypeFetcher {
 
     try {
       const url = `${UNPKG_CDN}/${packageName}@${resolvedVersion}/${filePath}`;
+      logger.debug('Fetching specific type file', { url });
       const response = await fetch(url);
 
-      if (!response.ok) return null;
+      if (!response.ok) {
+        // Try jsdelivr as fallback
+        const jsdelivrUrl = `${JSDELIVR_CDN}/${packageName}@${resolvedVersion}/${filePath}`;
+        const jsdelivrResponse = await fetch(jsdelivrUrl);
+        if (!jsdelivrResponse.ok) return null;
+
+        const content = await jsdelivrResponse.text();
+        return {
+          packageName,
+          version: resolvedVersion,
+          content,
+          filePath,
+          source: 'bundled',
+          fetchedAt: Date.now(),
+        };
+      }
 
       const content = await response.text();
       return {
@@ -528,6 +594,24 @@ export class TypeFetcher {
     } catch {
       return null;
     }
+  }
+
+  /**
+   * Get barrel export module paths for a specific concept
+   */
+  getBarrelExportPaths(packageName: string, concept: string): string[] {
+    const modules = BARREL_EXPORT_MODULES[packageName];
+    if (!modules) return [];
+
+    const normalizedConcept = concept.toLowerCase().replace(/[^a-z]/g, '');
+    return modules[normalizedConcept] || [];
+  }
+
+  /**
+   * Check if a package uses barrel exports
+   */
+  hasBarrelExports(packageName: string): boolean {
+    return packageName in BARREL_EXPORT_MODULES;
   }
 
   /**

@@ -184,8 +184,8 @@ const FRAMEWORK_ALIASES: Record<string, { package: string; aliases: string[] }> 
 
   // API
   trpc: {
-    package: '@trpc/server',
-    aliases: ['tRPC', 't-rpc'],
+    package: '@trpc/client',
+    aliases: ['tRPC', 't-rpc', '@trpc/client', '@trpc/server'],
   },
   graphql: {
     package: 'graphql',
@@ -206,6 +206,46 @@ const FRAMEWORK_ALIASES: Record<string, { package: string; aliases: string[] }> 
   node: {
     package: '@types/node',
     aliases: ['nodejs', 'node.js'],
+  },
+
+  // BaaS / Database Services
+  supabase: {
+    package: '@supabase/supabase-js',
+    aliases: ['supabase-js', '@supabase'],
+  },
+  firebase: {
+    package: 'firebase',
+    aliases: ['firebase-js'],
+  },
+
+  // Form handling
+  'react-hook-form': {
+    package: 'react-hook-form',
+    aliases: ['rhf', 'react hook form'],
+  },
+  formik: {
+    package: 'formik',
+    aliases: [],
+  },
+
+  // Animation
+  'framer-motion': {
+    package: 'framer-motion',
+    aliases: ['framer', 'motion'],
+  },
+  gsap: {
+    package: 'gsap',
+    aliases: ['greensock'],
+  },
+
+  // Styling
+  'styled-components': {
+    package: 'styled-components',
+    aliases: ['styled'],
+  },
+  emotion: {
+    package: '@emotion/react',
+    aliases: ['@emotion'],
   },
 };
 
@@ -297,6 +337,31 @@ const API_PATTERNS: Record<string, string[]> = {
   usemutation: ['tanstack-query'],
   useinfinitequery: ['tanstack-query'],
   queryclient: ['tanstack-query'],
+  usesuspensequery: ['tanstack-query'],
+
+  // Supabase
+  createclient: ['supabase'],
+  supabaseclient: ['supabase'],
+  fromauthheader: ['supabase'],
+
+  // tRPC
+  createtrpcproxyclient: ['trpc'],
+  createtrpcclient: ['trpc'],
+  inittrpc: ['trpc'],
+  trpcrouter: ['trpc'],
+
+  // React Hook Form
+  useform: ['react-hook-form'],
+  useformcontext: ['react-hook-form'],
+  usecontroller: ['react-hook-form'],
+  usewatch: ['react-hook-form'],
+  usefieldarray: ['react-hook-form'],
+
+  // Framer Motion
+  motion: ['framer-motion'],
+  animate: ['framer-motion'],
+  useanimate: ['framer-motion'],
+  animatepresence: ['framer-motion'],
 };
 
 /**

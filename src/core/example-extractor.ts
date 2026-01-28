@@ -84,6 +84,42 @@ const DOC_SOURCES: Record<string, DocSourceConfig> = {
     branch: 'main',
     websiteBaseUrl: 'https://zod.dev',
   },
+  supabase: {
+    repo: 'supabase/supabase',
+    docsPath: 'apps/docs/content/guides',
+    branch: 'master',
+    websiteBaseUrl: 'https://supabase.com/docs',
+  },
+  'tanstack-query': {
+    repo: 'TanStack/query',
+    docsPath: 'docs/framework/react',
+    branch: 'main',
+    websiteBaseUrl: 'https://tanstack.com/query',
+  },
+  trpc: {
+    repo: 'trpc/trpc',
+    docsPath: 'www/docs',
+    branch: 'main',
+    websiteBaseUrl: 'https://trpc.io/docs',
+  },
+  'react-hook-form': {
+    repo: 'react-hook-form/documentation',
+    docsPath: 'src/content/docs',
+    branch: 'master',
+    websiteBaseUrl: 'https://react-hook-form.com',
+  },
+  'framer-motion': {
+    repo: 'framer/motion',
+    docsPath: 'packages/framer-motion',
+    branch: 'main',
+    websiteBaseUrl: 'https://www.framer.com/motion',
+  },
+  express: {
+    repo: 'expressjs/expressjs.com',
+    docsPath: 'en/guide',
+    branch: 'gh-pages',
+    websiteBaseUrl: 'https://expressjs.com',
+  },
 };
 
 /**
@@ -104,6 +140,9 @@ const CONCEPT_TO_DOC_PATHS: Record<string, Record<string, string[]>> = {
     component: ['components-and-props.md', 'component.md'],
     props: ['components-and-props.md'],
     state: ['state-and-lifecycle.md', 'managing-state.md'],
+    forwardref: ['forwardRef.md'],
+    createcontext: ['createContext.md'],
+    suspense: ['Suspense.md'],
   },
   next: {
     userouter: ['routing/navigation.md', 'api-reference/next/navigation.md'],
@@ -111,6 +150,37 @@ const CONCEPT_TO_DOC_PATHS: Record<string, Record<string, string[]>> = {
     getstaticprops: ['data-fetching/getStaticProps.md'],
     app: ['app-router/building-your-application/routing.md'],
     metadata: ['app-router/api-reference/functions/generate-metadata.md'],
+  },
+  'tanstack-query': {
+    usequery: ['reference/useQuery.md', 'useQuery.md'],
+    usemutation: ['reference/useMutation.md', 'useMutation.md'],
+    useinfinitequery: ['reference/useInfiniteQuery.md', 'useInfiniteQuery.md'],
+    queryclient: ['reference/QueryClient.md', 'QueryClient.md'],
+    usesuspensequery: ['reference/useSuspenseQuery.md'],
+  },
+  supabase: {
+    createclient: ['getting-started.mdx', 'auth/overview.mdx'],
+    auth: ['auth/overview.mdx', 'auth/authentication.mdx'],
+    storage: ['storage/overview.mdx'],
+    realtime: ['realtime/overview.mdx'],
+    database: ['database/overview.mdx'],
+  },
+  trpc: {
+    createtrpcproxyclient: ['client/vanilla.md', 'client/setup.md'],
+    router: ['server/routers.md'],
+    procedure: ['server/procedures.md'],
+    middleware: ['server/middlewares.md'],
+  },
+  'react-hook-form': {
+    useform: ['useform.mdx', 'api/useform.mdx'],
+    usecontroller: ['usecontroller.mdx', 'api/usecontroller.mdx'],
+    useformcontext: ['useformcontext.mdx', 'api/useformcontext.mdx'],
+    usefieldarray: ['usefieldarray.mdx', 'api/usefieldarray.mdx'],
+  },
+  express: {
+    router: ['routing.md'],
+    middleware: ['using-middleware.md'],
+    errorhandling: ['error-handling.md'],
   },
 };
 
