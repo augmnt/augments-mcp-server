@@ -8,6 +8,43 @@ import { getLogger } from '@/utils/logger';
 
 const logger = getLogger('github-client');
 
+/**
+ * Parsed repository information
+ */
+interface ParsedRepo {
+  owner: string;
+  repoName: string;
+}
+
+/**
+ * Parse and validate repository string format
+ */
+function parseRepoString(repo: string): ParsedRepo {
+  if (!repo || typeof repo !== 'string') {
+    throw new Error('Repository string is required');
+  }
+  const parts = repo.split('/');
+  if (parts.length !== 2 || !parts[0] || !parts[1]) {
+    throw new Error(`Invalid repository format: "${repo}". Expected format: "owner/repo"`);
+  }
+  return { owner: parts[0], repoName: parts[1] };
+}
+
+/**
+ * Type guard for Octokit errors with status code
+ */
+function isOctokitError(error: unknown): error is { status: number; message?: string } {
+  return typeof error === 'object' && error !== null && 'status' in error;
+}
+
+/**
+ * Extract error message from unknown error type
+ */
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  return String(error);
+}
+
 export class RateLimitError extends Error {
   public readonly resetTime: Date;
   public readonly waitSeconds: number;
@@ -46,7 +83,7 @@ export class GitHubClient {
     path: string,
     branch: string = 'main'
   ): Promise<string | null> {
-    const [owner, repoName] = repo.split('/');
+    const { owner, repoName } = parseRepoString(repo);
 
     try {
       await this.checkRateLimit();
@@ -71,18 +108,20 @@ export class GitHubClient {
       }
 
       return null;
-    } catch (error: any) {
-      if (error.status === 404) {
-        logger.debug('File not found', { repo, path });
-        return null;
-      }
-      if (error.status === 403 && error.message?.includes('rate limit')) {
-        throw new RateLimitError('GitHub API rate limit exceeded');
+    } catch (error: unknown) {
+      if (isOctokitError(error)) {
+        if (error.status === 404) {
+          logger.debug('File not found', { repo, path });
+          return null;
+        }
+        if (error.status === 403 && error.message?.includes('rate limit')) {
+          throw new RateLimitError('GitHub API rate limit exceeded');
+        }
       }
       logger.error('GitHub getFileContent error', {
         repo,
         path,
-        error: error.message,
+        error: getErrorMessage(error),
       });
       throw error;
     }
@@ -96,7 +135,7 @@ export class GitHubClient {
     path: string = '',
     branch: string = 'main'
   ): Promise<Array<{ name: string; type: string; path: string }>> {
-    const [owner, repoName] = repo.split('/');
+    const { owner, repoName } = parseRepoString(repo);
 
     try {
       await this.checkRateLimit();
@@ -125,15 +164,15 @@ export class GitHubClient {
       }
 
       return [];
-    } catch (error: any) {
-      if (error.status === 404) {
+    } catch (error: unknown) {
+      if (isOctokitError(error) && error.status === 404) {
         logger.debug('Directory not found', { repo, path });
         return [];
       }
       logger.error('GitHub getDirectoryContents error', {
         repo,
         path,
-        error: error.message,
+        error: getErrorMessage(error),
       });
       throw error;
     }
@@ -150,7 +189,7 @@ export class GitHubClient {
       limit?: number;
     } = {}
   ): Promise<Array<{ sha: string; message: string; date: string }>> {
-    const [owner, repoName] = repo.split('/');
+    const { owner, repoName } = parseRepoString(repo);
 
     try {
       await this.checkRateLimit();
@@ -178,13 +217,13 @@ export class GitHubClient {
       });
 
       return commits;
-    } catch (error: any) {
-      if (error.status === 404) {
+    } catch (error: unknown) {
+      if (isOctokitError(error) && error.status === 404) {
         return [];
       }
       logger.error('GitHub getCommits error', {
         repo,
-        error: error.message,
+        error: getErrorMessage(error),
       });
       throw error;
     }
@@ -227,15 +266,15 @@ export class GitHubClient {
       });
 
       return results;
-    } catch (error: any) {
-      if (error.status === 403) {
+    } catch (error: unknown) {
+      if (isOctokitError(error) && error.status === 403) {
         logger.warn('Code search not available (rate limited or requires auth)');
         return [];
       }
       logger.error('GitHub searchCode error', {
         repo,
         query,
-        error: error.message,
+        error: getErrorMessage(error),
       });
       return [];
     }

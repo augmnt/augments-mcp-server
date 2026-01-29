@@ -9,11 +9,23 @@ import { FrameworkRegistryManager } from '@/registry/manager';
 import { KVCache } from '@/cache';
 import { GitHubProvider } from '@/providers/github';
 import { WebsiteProvider } from '@/providers/website';
-import { GitHubClient, getGitHubClient } from '@/utils/github-client';
+import { GitHubClient, getGitHubClient, RateLimitError } from '@/utils/github-client';
 import { type CacheStats } from '@/types';
 import { getLogger } from '@/utils/logger';
 
 const logger = getLogger('tools:cache-management');
+
+/**
+ * Result of checking for updates from a source
+ */
+interface UpdateCheckResult {
+  has_updates: boolean;
+  last_modified: string | null;
+  changes: string[];
+  commit_count?: number;
+  etag?: string | null;
+  error?: string;
+}
 
 // Input schemas
 export const CheckFrameworkUpdatesInputSchema = z.object({
@@ -85,15 +97,15 @@ export async function checkFrameworkUpdates(
 
     // Determine overall update status
     const hasUpdates = Object.values(updateResults).some(
-      (result: any) => result?.has_updates === true
+      (result) => (result as UpdateCheckResult)?.has_updates === true
     );
 
     // Find the most recent update
     let lastModified: string | null = null;
     const changeSummary: string[] = [];
 
-    for (const [source, result] of Object.entries(updateResults)) {
-      const r = result as any;
+    for (const [_source, result] of Object.entries(updateResults)) {
+      const r = result as UpdateCheckResult;
       if (r?.last_modified) {
         if (!lastModified || new Date(r.last_modified) > new Date(lastModified)) {
           lastModified = r.last_modified;
@@ -349,14 +361,13 @@ async function checkGitHubUpdates(
       commit_count: commits.length,
     };
   } catch (error) {
-    // Import RateLimitError at top of file - handle gracefully
-    if (error instanceof Error && error.name === 'RateLimitError') {
-      const rateLimitError = error as any;
+    // Handle rate limit errors gracefully
+    if (error instanceof RateLimitError) {
       return {
         has_updates: false,
         last_modified: null,
         changes: [],
-        error: `Rate limited until ${rateLimitError.resetTime?.toISOString() || 'unknown'}`,
+        error: `Rate limited until ${error.resetTime?.toISOString() || 'unknown'}`,
       };
     }
     logger.warn('GitHub update check failed', {
