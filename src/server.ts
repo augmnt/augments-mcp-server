@@ -31,8 +31,8 @@ export const SERVER_VERSION = '5.0.0';
 // Registered tool count — set during initialization, used by health check
 export let registeredToolCount = 0;
 
-// Singleton instance for serverless environments
-let serverInstance: McpServer | null = null;
+// Track whether cache warming has been kicked off
+let cacheWarmingStarted = false;
 
 /**
  * Format tool result for MCP response
@@ -69,16 +69,14 @@ function formatError(error: unknown, toolName?: string): { content: Array<{ type
 }
 
 /**
- * Get the MCP server instance, creating it if necessary
+ * Create a fresh MCP server instance per request.
+ *
+ * McpServer.connect() binds the server to a single transport and cannot be
+ * called again without closing first. In a stateless serverless environment
+ * each request needs its own server+transport pair. Tool registration is
+ * just attaching handler functions — very cheap.
  */
 export async function getServer(): Promise<McpServer> {
-  if (serverInstance) {
-    return serverInstance;
-  }
-
-  logger.info('Initializing Augments MCP Server', { version: SERVER_VERSION });
-
-  // Create SDK McpServer
   const server = new McpServer({
     name: 'augments-mcp-server',
     version: SERVER_VERSION,
@@ -166,19 +164,19 @@ export async function getServer(): Promise<McpServer> {
 
   registeredToolCount = toolCount;
 
-  logger.info('MCP Server initialized successfully', {
-    tools: toolCount,
-    version: SERVER_VERSION,
-  });
-
-  serverInstance = server;
-
-  // Cache warming: pre-fetch types for popular frameworks (non-blocking)
-  warmPopularFrameworks().catch((error) => {
-    logger.warn('Cache warming failed', {
-      error: error instanceof Error ? error.message : String(error),
+  // Cache warming: kick off once on first request (non-blocking)
+  if (!cacheWarmingStarted) {
+    cacheWarmingStarted = true;
+    logger.info('MCP Server initialized, starting cache warming', {
+      tools: toolCount,
+      version: SERVER_VERSION,
     });
-  });
+    warmPopularFrameworks().catch((error) => {
+      logger.warn('Cache warming failed', {
+        error: error instanceof Error ? error.message : String(error),
+      });
+    });
+  }
 
   return server;
 }

@@ -1,7 +1,7 @@
 import { SERVER_VERSION } from '@/server';
 
 const INSTALL_COMMAND =
-  'claude mcp add --transport http augments https://mcp.augments.dev/mcp';
+  'claude mcp add --transport http -s user augments https://mcp.augments.dev/mcp';
 
 export default function Home() {
   return (
