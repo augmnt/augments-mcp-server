@@ -89,15 +89,15 @@ claude mcp list
 flowchart TD
     A["Query: 'how to use useEffect cleanup'"] --> B
 
-    B["Intent Detection → howto\nQuery Parser → react / useEffect"]
+    B["Intent Detection → howto<br/>Query Parser → react / useEffect"]
 
-    B --> C["Type Fetcher\n• CDN racing\n• npm metadata\n• @types"]
-    B --> D["Example Extractor\n• GitHub docs\n• README fallback\n• Auto-discovery"]
+    B --> C["Type Fetcher<br/>CDN racing · npm metadata · @types"]
+    B --> D["Example Extractor<br/>GitHub docs · README fallback · Auto-discovery"]
 
-    C --> E["Type Parser\n• Signatures\n• Parameters\n• Related types"]
-    D --> F["Prose Extractor\n• Section scoring\n• Paragraph extract\n• 2000 char budget"]
+    C --> E["Type Parser<br/>Signatures · Parameters · Related types"]
+    D --> F["Prose Extractor<br/>Section scoring · Paragraph extract · 2000 char budget"]
 
-    E --> G["Intent-Driven Formatter (howto)\n→ Examples first, prose, brief signature\n→ ~500-2000 tokens, 10KB max"]
+    E --> G["Intent-Driven Formatter (howto)<br/>→ Examples first, prose, brief signature<br/>→ ~500-2000 tokens, 10KB max"]
     F --> G
 ```
 
