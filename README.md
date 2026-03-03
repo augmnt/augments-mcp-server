@@ -85,38 +85,20 @@ claude mcp list
 
 ## Architecture
 
-```
-┌──────────────────────────────────────────────────────────┐
-│  Query: "how to use useEffect cleanup"                   │
-└──────────────────────┬───────────────────────────────────┘
-                       ↓
-┌──────────────────────────────────────────────────────────┐
-│  Intent Detection → "howto"                              │
-│  Query Parser → framework: react, concept: useEffect     │
-└──────────────────────┬───────────────────────────────────┘
-                       ↓
-         ┌─────────────┴─────────────┐
-         ↓                           ↓
-┌─────────────────┐      ┌──────────────────────┐
-│  Type Fetcher   │      │  Example Extractor   │
-│  • CDN racing   │      │  • GitHub docs       │
-│  • npm metadata │      │  • README fallback   │
-│  • @types       │      │  • Auto-discovery    │
-└────────┬────────┘      └──────────┬───────────┘
-         ↓                          ↓
-┌─────────────────┐      ┌──────────────────────┐
-│  Type Parser    │      │  Prose Extractor     │
-│  • Signatures   │      │  • Section scoring   │
-│  • Parameters   │      │  • Paragraph extract │
-│  • Related types│      │  • 2000 char budget  │
-└────────┬────────┘      └──────────┬───────────┘
-         └─────────────┬────────────┘
-                       ↓
-┌──────────────────────────────────────────────────────────┐
-│  Intent-Driven Formatter (howto)                         │
-│  → Examples first, prose, brief signature                │
-│  → ~500-2000 tokens, 10KB max                           │
-└──────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    A["Query: 'how to use useEffect cleanup'"] --> B
+
+    B["Intent Detection → howto\nQuery Parser → react / useEffect"]
+
+    B --> C["Type Fetcher\n• CDN racing\n• npm metadata\n• @types"]
+    B --> D["Example Extractor\n• GitHub docs\n• README fallback\n• Auto-discovery"]
+
+    C --> E["Type Parser\n• Signatures\n• Parameters\n• Related types"]
+    D --> F["Prose Extractor\n• Section scoring\n• Paragraph extract\n• 2000 char budget"]
+
+    E --> G["Intent-Driven Formatter (howto)\n→ Examples first, prose, brief signature\n→ ~500-2000 tokens, 10KB max"]
+    F --> G
 ```
 
 ### Source Structure
