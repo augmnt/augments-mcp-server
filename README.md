@@ -115,7 +115,6 @@ src/
 │   ├── get-api-context.ts   # Primary tool (types + prose + examples)
 │   ├── search-apis.ts       # Cross-framework API search
 │   └── get-version-info.ts  # Version comparison
-├── cache/                   # In-memory LRU cache
 └── server.ts                # MCP server (3 tools)
 ```
 
@@ -138,16 +137,19 @@ When no curated doc source exists, augments parses the npm `repository` field, i
 | `migration` | "migrate", "upgrade", "breaking" | Prose → signature → examples |
 | `balanced` | Default | Signature → prose → examples |
 
-## Supported Frameworks
+## Coverage
 
-### Auto-Discovery (Any npm Package)
-Any npm package with TypeScript types can be queried — no configuration needed:
-- Bundled types (`"types": "./dist/index.d.ts"` in package.json)
-- DefinitelyTyped (`@types/package-name`)
-- README fallback for packages without types
+### Any npm Package
+Every npm package is supported out of the box — no curation or configuration needed. Augments resolves documentation automatically through three layers:
 
-### Optimized with Curated Docs (22 Frameworks)
-React, Next.js, Vue, Prisma, Zod, Supabase, TanStack Query, tRPC, React Hook Form, Framer Motion, Express, Zustand, Jotai, Drizzle, SWR, Vitest, Playwright, Fastify, Hono, Solid, Svelte, Angular, Redux
+1. **TypeScript types** — bundled (`"types"` in package.json) or DefinitelyTyped (`@types/*`)
+2. **Auto-discovered docs** — parses the npm `repository` field, finds the GitHub repo, and probes `docs/`, `documentation/`, `doc/` directories
+3. **README fallback** — extracts concept-relevant code blocks and prose directly from `README.md`
+
+This means augments works with the entire npm ecosystem (~2.5M packages), not just a curated subset.
+
+### Enhanced Results for Popular Frameworks
+22 frameworks have curated doc sources for richer examples: React, Next.js, Vue, Prisma, Zod, Supabase, TanStack Query, tRPC, React Hook Form, Framer Motion, Express, Zustand, Jotai, Drizzle, SWR, Vitest, Playwright, Fastify, Hono, Solid, Svelte, Angular, Redux
 
 ### Barrel Export Handling
 Special sub-module resolution for: React Hook Form, TanStack Query, Zustand, Jotai, tRPC, Drizzle ORM, Next.js
