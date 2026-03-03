@@ -710,24 +710,36 @@ export class QueryParser {
       }
     }
 
-    // Remove common prepositions and articles
-    const stopWords = new Set(['in', 'for', 'with', 'the', 'a', 'an', 'to', 'how', 'what', 'why', 'when', 'using', 'use']);
+    // Remove common prepositions, articles, question words, and conversational fillers
+    const stopWords = new Set([
+      // Articles & prepositions
+      'in', 'for', 'with', 'the', 'a', 'an', 'to', 'of', 'on', 'at', 'by', 'from',
+      // Question words
+      'how', 'what', 'why', 'when', 'where', 'which',
+      // Verbs & fillers
+      'using', 'use', 'does', 'do', 'is', 'are', 'was', 'were', 'be', 'been',
+      'can', 'could', 'should', 'would', 'will', 'shall', 'may', 'might',
+      'work', 'works', 'working', 'get', 'gets', 'getting',
+      'show', 'tell', 'explain', 'describe',
+      // Pronouns & misc
+      'about', 'me', 'you', 'i', 'my', 'it', 'its', 'this', 'that',
+      'used', 'please', 'help', 'need', 'want',
+    ]);
     conceptTokens = conceptTokens.filter((t) => !stopWords.has(t));
 
     // Remove version strings
     conceptTokens = conceptTokens.filter((t) => !t.match(/^v?\d+(\.\d+)*$/));
 
-    // Check if the first token looks like an API name (camelCase starting with lowercase)
-    // If so, use just that as the primary concept
-    if (conceptTokens.length > 0) {
-      const firstToken = conceptTokens[0];
-      // Check for hook pattern (useXxx)
-      if (firstToken.match(/^use[a-z]+$/i)) {
-        return firstToken;
-      }
-      // Check for camelCase pattern
-      if (firstToken.match(/^[a-z]+[A-Z]/)) {
-        return firstToken;
+    // Scan all tokens for API name patterns (hooks, camelCase, PascalCase, known API_PATTERNS)
+    // Return the first matching token as the primary concept
+    for (const token of conceptTokens) {
+      if (
+        /^use[a-z]+$/i.test(token) ||        // Hook pattern (useXxx)
+        /^[a-z]+[A-Z]/.test(token) ||         // camelCase
+        /^[A-Z][a-z]+[A-Z]/.test(token) ||    // PascalCase
+        API_PATTERNS[token]                     // Known API pattern
+      ) {
+        return token;
       }
     }
 

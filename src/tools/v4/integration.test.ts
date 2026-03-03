@@ -444,4 +444,31 @@ describe('v4 integration tests', () => {
       expect(result.notes.length).toBeGreaterThan(0);
     });
   });
+
+  describe('detectIntent', () => {
+    it('"how does useEffect work?" → "howto"', async () => {
+      const { detectIntent } = await import('./get-api-context');
+      expect(detectIntent('how does useEffect work?')).toBe('howto');
+    });
+
+    it('"what does useEffect do?" → "howto"', async () => {
+      const { detectIntent } = await import('./get-api-context');
+      expect(detectIntent('what does useEffect do?')).toBe('howto');
+    });
+
+    it('"tell me about useState" → "howto"', async () => {
+      const { detectIntent } = await import('./get-api-context');
+      expect(detectIntent('tell me about useState')).toBe('howto');
+    });
+
+    it('"useEffect signature" → "reference"', async () => {
+      const { detectIntent } = await import('./get-api-context');
+      expect(detectIntent('useEffect signature')).toBe('reference');
+    });
+
+    it('"react useEffect" → "balanced"', async () => {
+      const { detectIntent } = await import('./get-api-context');
+      expect(detectIntent('react useEffect')).toBe('balanced');
+    });
+  });
 });

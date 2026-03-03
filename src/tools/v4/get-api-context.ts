@@ -71,9 +71,9 @@ export interface GetApiContextOutput {
 /**
  * Detect query intent from natural language
  */
-function detectIntent(query: string): QueryIntent {
+export function detectIntent(query: string): QueryIntent {
   const q = query.toLowerCase();
-  if (/\b(how\s+to|how\s+do\s+i|example\s+of|tutorial|guide|usage|getting\s+started)\b/.test(q)) {
+  if (/\b(how\s+to|how\s+do\s+i|how\s+does|how\s+do\s+you|how\s+can\s+i|what\s+does|what\s+is|tell\s+me\s+about|explain|can\s+you\s+(explain|show)|show\s+me|example\s+of|tutorial|guide|usage|getting\s+started)\b/.test(q)) {
     return 'howto';
   }
   if (/\b(signature|types?|parameters?|return\s+type|overloads?|interface|typedef)\b/.test(q)) {

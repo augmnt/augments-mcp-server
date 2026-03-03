@@ -427,4 +427,47 @@ describe('QueryParser', () => {
       expect(result1.version).toBe(result2.version);
     });
   });
+
+  describe('natural language query parsing', () => {
+    it('"how does useEffect work?" → concept "useeffect", framework "react"', () => {
+      const result = parser.parse('how does useEffect work?');
+      expect(result.concept).toBe('useeffect');
+      expect(result.framework).toBe('react');
+    });
+
+    it('"what does useEffect do?" → concept "useeffect"', () => {
+      const result = parser.parse('what does useEffect do?');
+      expect(result.concept).toBe('useeffect');
+    });
+
+    it('"tell me about useState" → concept "usestate"', () => {
+      const result = parser.parse('tell me about useState');
+      expect(result.concept).toBe('usestate');
+    });
+
+    it('"can you explain useCallback?" → concept "usecallback"', () => {
+      const result = parser.parse('can you explain useCallback?');
+      expect(result.concept).toBe('usecallback');
+    });
+
+    it('"prisma findMany with relations" → concept "findmany"', () => {
+      const result = parser.parse('prisma findMany with relations');
+      expect(result.concept).toBe('findmany');
+    });
+
+    it('"zustand persist middleware" → concept contains "persist"', () => {
+      const result = parser.parse('zustand persist middleware');
+      expect(result.concept).toContain('persist');
+    });
+
+    it('"show me how to use useEffect" → concept "useeffect"', () => {
+      const result = parser.parse('show me how to use useEffect');
+      expect(result.concept).toBe('useeffect');
+    });
+
+    it('"what is useRef?" → concept "useref"', () => {
+      const result = parser.parse('what is useRef?');
+      expect(result.concept).toBe('useref');
+    });
+  });
 });
