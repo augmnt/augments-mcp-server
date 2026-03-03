@@ -33,17 +33,27 @@ Query: "ioredis set"
 
 ## Quick Start
 
-### Option 1: Hosted MCP Server (Recommended)
+### Option 1: Hosted MCP Server — project-local (Recommended)
 
 ```bash
-# Add the hosted MCP server
+# Add the hosted MCP server (available in current project only)
 claude mcp add --transport http augments https://mcp.augments.dev/mcp
 
 # Verify configuration
 claude mcp list
 ```
 
-### Option 2: Using Cursor
+### Option 2: Hosted MCP Server — user-wide
+
+```bash
+# Add the hosted MCP server (available across all projects)
+claude mcp add --transport http --scope user augments https://mcp.augments.dev/mcp
+
+# Verify configuration
+claude mcp list
+```
+
+### Option 3: Using Cursor
 
 ```json
 {
