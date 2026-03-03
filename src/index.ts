@@ -14,6 +14,3 @@ export * from './core';
 
 // v4 Tools
 export * from './tools/v4';
-
-// Re-export types
-export * from './types';
