@@ -376,4 +376,55 @@ describe('QueryParser', () => {
       expect(parser.isApiName('middleware')).toBe(false);
     });
   });
+
+  describe('edge case inputs', () => {
+    it('empty string query does not crash and returns low confidence', () => {
+      const result = parser.parse('');
+      expect(result).toBeDefined();
+      expect(result.confidence).toBeLessThanOrEqual(0.5);
+    });
+
+    it('whitespace-only query does not crash', () => {
+      const result = parser.parse('   ');
+      expect(result).toBeDefined();
+    });
+
+    it('very long query (10000 chars) does not crash and returns a result', () => {
+      const longQuery = 'a'.repeat(10000);
+      const result = parser.parse(longQuery);
+      expect(result).toBeDefined();
+      expect(result.framework).toBeDefined();
+    });
+
+    it('query with special characters (!@#$%^&*) does not crash', () => {
+      const result = parser.parse('!@#$%^&*()');
+      expect(result).toBeDefined();
+    });
+
+    it('query with only numbers does not crash', () => {
+      const result = parser.parse('12345');
+      expect(result).toBeDefined();
+    });
+
+    it('query with unicode characters does not crash', () => {
+      const result = parser.parse('react 使用効果');
+      expect(result).toBeDefined();
+    });
+
+    it('query with newlines and tabs does not crash', () => {
+      const result = parser.parse('react\nuseEffect\tcleanup');
+      expect(result).toBeDefined();
+    });
+
+    it('repeated query produces consistent (deterministic) results', () => {
+      const query = 'react useEffect cleanup';
+      const result1 = parser.parse(query);
+      const result2 = parser.parse(query);
+      expect(result1.framework).toBe(result2.framework);
+      expect(result1.packageName).toBe(result2.packageName);
+      expect(result1.confidence).toBe(result2.confidence);
+      expect(result1.concept).toBe(result2.concept);
+      expect(result1.version).toBe(result2.version);
+    });
+  });
 });

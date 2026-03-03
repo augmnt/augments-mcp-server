@@ -6,7 +6,7 @@
  */
 
 import { WebStandardStreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js';
-import { getServer, SERVER_VERSION } from '@/server';
+import { getServer, SERVER_VERSION, registeredToolCount } from '@/server';
 import { getLogger } from '@/utils/logger';
 
 const logger = getLogger('api:mcp');
@@ -45,7 +45,7 @@ export async function GET(request: Request) {
         status: 'healthy',
         transport: 'streamable-http',
         endpoint: '/api/mcp',
-        tools: 7,
+        tools: registeredToolCount,
       }),
       {
         status: 200,

@@ -15,6 +15,16 @@ import { getLogger } from '@/utils/logger';
 
 const logger = getLogger('type-parser');
 
+// Relevance scoring constants for searchApis ranking
+const SCORE_EXACT_MATCH = 100;
+const SCORE_STARTS_WITH = 80;
+const SCORE_CONTAINS = 60;
+const SCORE_KIND_FUNCTION = 15;
+const SCORE_KIND_INTERFACE = 10;
+const SCORE_HAS_DESCRIPTION = 10;
+const SCORE_HAS_EXAMPLES = 5;
+const SCORE_DEPRECATED_PENALTY = -20;
+
 /**
  * Represents a parsed type definition
  */
@@ -271,24 +281,24 @@ export class TypeParser {
     const nameLower = def.name.toLowerCase();
 
     // Exact name match
-    if (nameLower === queryLower) score += 100;
+    if (nameLower === queryLower) score += SCORE_EXACT_MATCH;
     // Starts with query
-    else if (nameLower.startsWith(queryLower)) score += 80;
+    else if (nameLower.startsWith(queryLower)) score += SCORE_STARTS_WITH;
     // Contains query
-    else if (nameLower.includes(queryLower)) score += 60;
+    else if (nameLower.includes(queryLower)) score += SCORE_CONTAINS;
 
     // Boost exported declarations (functions and interfaces are usually more useful)
-    if (def.kind === 'function') score += 15;
-    if (def.kind === 'interface') score += 10;
+    if (def.kind === 'function') score += SCORE_KIND_FUNCTION;
+    if (def.kind === 'interface') score += SCORE_KIND_INTERFACE;
 
     // Boost items with JSDoc descriptions
-    if (def.description) score += 10;
+    if (def.description) score += SCORE_HAS_DESCRIPTION;
 
     // Boost items with examples
-    if (def.examples && def.examples.length > 0) score += 5;
+    if (def.examples && def.examples.length > 0) score += SCORE_HAS_EXAMPLES;
 
     // Penalize deprecated items
-    if (def.deprecated) score -= 20;
+    if (def.deprecated) score += SCORE_DEPRECATED_PENALTY;
 
     return score;
   }

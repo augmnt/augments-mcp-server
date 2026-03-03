@@ -14,6 +14,10 @@ const NPM_REGISTRY = 'https://registry.npmjs.org';
 const UNPKG_CDN = 'https://unpkg.com';
 const JSDELIVR_CDN = 'https://cdn.jsdelivr.net/npm';
 
+// Fetch timeouts (ms) — prevents hung upstreams from blocking the server
+const NPM_TIMEOUT = 10_000; // 10s for npm registry
+const CDN_TIMEOUT = 8_000;  // 8s for CDN (unpkg, jsdelivr)
+
 /**
  * Alternative type file paths for packages with non-standard structures
  */
@@ -121,6 +125,7 @@ export class TypeFetcher {
   private cache: Map<string, TypeDefinitionResult> = new Map();
   private packageInfoCache: Map<string, CachedPackageInfo> = new Map();
   private inFlightRequests: Map<string, Promise<NpmPackageInfo | null>> = new Map();
+  private inFlightTypeRequests: Map<string, Promise<TypeDefinitionResult | null>> = new Map();
   private readonly CACHE_TTL = 3600 * 1000; // 1 hour
   private readonly PACKAGE_INFO_TTL = 1800 * 1000; // 30 minutes
 
@@ -166,6 +171,7 @@ export class TypeFetcher {
           // Use abbreviated metadata to reduce payload from 2-10MB to 5-50KB
           Accept: 'application/vnd.npm.install-v1+json',
         },
+        signal: AbortSignal.timeout(NPM_TIMEOUT),
       });
 
       if (!response.ok) {
@@ -176,7 +182,13 @@ export class TypeFetcher {
         throw new Error(`npm registry returned ${response.status}`);
       }
 
-      const data = (await response.json()) as NpmPackageInfo;
+      let data: NpmPackageInfo;
+      try {
+        data = (await response.json()) as NpmPackageInfo;
+      } catch {
+        logger.error('Failed to parse npm registry JSON', { packageName });
+        return null;
+      }
       this.packageInfoCache.set(packageName, { data, fetchedAt: Date.now() });
       return data;
     } catch (error) {
@@ -198,10 +210,16 @@ export class TypeFetcher {
 
       const response = await fetch(url, {
         headers: { Accept: 'application/json' },
+        signal: AbortSignal.timeout(NPM_TIMEOUT),
       });
 
       if (!response.ok) return null;
-      return (await response.json()) as NpmVersionInfo;
+      try {
+        return (await response.json()) as NpmVersionInfo;
+      } catch {
+        logger.error('Failed to parse version-specific JSON', { packageName, version });
+        return null;
+      }
     } catch {
       return null;
     }
@@ -231,9 +249,36 @@ export class TypeFetcher {
   }
 
   /**
-   * Fetch TypeScript definitions for a package
+   * Fetch TypeScript definitions for a package (with request deduplication)
    */
   async fetchTypes(
+    packageName: string,
+    version?: string
+  ): Promise<TypeDefinitionResult | null> {
+    // Build a dedup key from the inputs (version may be undefined → 'latest')
+    const dedupKey = `${packageName}@${version ?? 'latest'}`;
+
+    // Check for in-flight request (deduplication)
+    const inFlight = this.inFlightTypeRequests.get(dedupKey);
+    if (inFlight) {
+      logger.debug('Awaiting in-flight type request', { packageName, version });
+      return inFlight;
+    }
+
+    const request = this.fetchTypesInternal(packageName, version);
+    this.inFlightTypeRequests.set(dedupKey, request);
+
+    try {
+      return await request;
+    } finally {
+      this.inFlightTypeRequests.delete(dedupKey);
+    }
+  }
+
+  /**
+   * Internal method: Fetch TypeScript definitions for a package
+   */
+  private async fetchTypesInternal(
     packageName: string,
     version?: string
   ): Promise<TypeDefinitionResult | null> {
@@ -313,11 +358,11 @@ export class TypeFetcher {
       const url = `${UNPKG_CDN}/${packageName}@${version}/${typesPath}`;
       logger.debug('Fetching bundled types', { url });
 
-      const response = await fetch(url);
+      const response = await fetch(url, { signal: AbortSignal.timeout(CDN_TIMEOUT) });
       if (!response.ok) {
         // Try jsdelivr as fallback
         const jsdelivrUrl = `${JSDELIVR_CDN}/${packageName}@${version}/${typesPath}`;
-        const jsdelivrResponse = await fetch(jsdelivrUrl);
+        const jsdelivrResponse = await fetch(jsdelivrUrl, { signal: AbortSignal.timeout(CDN_TIMEOUT) });
         if (!jsdelivrResponse.ok) {
           return null;
         }
@@ -374,11 +419,11 @@ export class TypeFetcher {
       const url = `${UNPKG_CDN}/${typesPackageName}@${typesVersion}/${typesPath}`;
       logger.debug('Fetching DefinitelyTyped types', { url });
 
-      const response = await fetch(url);
+      const response = await fetch(url, { signal: AbortSignal.timeout(CDN_TIMEOUT) });
       if (!response.ok) {
         // Try jsdelivr as fallback
         const jsdelivrUrl = `${JSDELIVR_CDN}/${typesPackageName}@${typesVersion}/${typesPath}`;
-        const jsdelivrResponse = await fetch(jsdelivrUrl);
+        const jsdelivrResponse = await fetch(jsdelivrUrl, { signal: AbortSignal.timeout(CDN_TIMEOUT) });
         if (!jsdelivrResponse.ok) {
           return null;
         }
@@ -627,12 +672,12 @@ export class TypeFetcher {
     try {
       const url = `${UNPKG_CDN}/${packageName}@${resolvedVersion}/${filePath}`;
       logger.debug('Fetching specific type file', { url });
-      const response = await fetch(url);
+      const response = await fetch(url, { signal: AbortSignal.timeout(CDN_TIMEOUT) });
 
       if (!response.ok) {
         // Try jsdelivr as fallback
         const jsdelivrUrl = `${JSDELIVR_CDN}/${packageName}@${resolvedVersion}/${filePath}`;
-        const jsdelivrResponse = await fetch(jsdelivrUrl);
+        const jsdelivrResponse = await fetch(jsdelivrUrl, { signal: AbortSignal.timeout(CDN_TIMEOUT) });
         if (!jsdelivrResponse.ok) return null;
 
         const content = await jsdelivrResponse.text();

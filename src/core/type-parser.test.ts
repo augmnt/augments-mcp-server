@@ -439,4 +439,95 @@ declare function timeout(ms: number, message?: string): Promise<never>;
       expect(result.definitions.length).toBe(200);
     });
   });
+
+  describe('error resilience with malformed input', () => {
+    it('returns no definitions and no errors for empty string content', () => {
+      const result = parser.parse('');
+      expect(result.definitions).toHaveLength(0);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it('returns no definitions for content that is just whitespace', () => {
+      const result = parser.parse('   \n\t\n   ');
+      expect(result.definitions).toHaveLength(0);
+    });
+
+    it('parses JavaScript (non-declaration) content without crashing', () => {
+      const content = `
+const x = 42;
+function hello() { console.log("hi"); }
+if (true) { let y = 10; }
+`;
+      const result = parser.parse(content);
+      // Should not throw; may or may not extract definitions
+      expect(result).toBeDefined();
+      expect(result.errors).toBeDefined();
+    });
+
+    it('returns partial results for content with syntax errors (unclosed braces)', () => {
+      const content = `
+declare function validFn(x: string): void;
+interface Broken {
+  name: string;
+`;
+      const result = parser.parse(content);
+      // Should still parse the valid function declaration
+      expect(result).toBeDefined();
+      const validDef = result.definitions.find((d) => d.name === 'validFn');
+      expect(validDef).toBeDefined();
+    });
+
+    it('parses extremely large content (10000+ chars) successfully', () => {
+      const lines: string[] = [];
+      for (let i = 0; i < 300; i++) {
+        lines.push(`declare function generatedFn${i}(arg: string, opt?: number): Promise<boolean>;`);
+      }
+      const content = lines.join('\n');
+      expect(content.length).toBeGreaterThan(10000);
+
+      const result = parser.parse(content);
+      expect(result.definitions.length).toBe(300);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it('does not crash on content with null bytes or unicode', () => {
+      const content = `
+declare function normalFn(x: string): void;
+// Comment with unicode: \u00e9\u00e0\u00fc\u4e16\u754c
+declare function another\u0000Fn(): void;
+`;
+      const result = parser.parse(content);
+      expect(result).toBeDefined();
+      // At minimum the normalFn should be found
+      const normalDef = result.definitions.find((d) => d.name === 'normalFn');
+      expect(normalDef).toBeDefined();
+    });
+  });
+
+  describe('extractApiSignature edge cases', () => {
+    it('returns null for empty string content', () => {
+      const sig = parser.extractApiSignature('', 'anything');
+      expect(sig).toBeNull();
+    });
+
+    it('does not crash when query contains special regex characters', () => {
+      const content = `
+declare function useEffect(effect: () => void, deps?: any[]): void;
+`;
+      // "use.*Effect" contains regex special chars .* 
+      const sig = parser.extractApiSignature(content, 'use.*Effect');
+      // Should not throw; result depends on implementation
+      expect(true).toBe(true);
+    });
+
+    it('returns null gracefully for a very long concept name (1000+ chars)', () => {
+      const content = `
+declare function useState<S>(initialState: S): [S, (value: S) => void];
+`;
+      const longName = 'a'.repeat(1001);
+      const sig = parser.extractApiSignature(content, longName);
+      expect(sig).toBeNull();
+    });
+  });
+
 });

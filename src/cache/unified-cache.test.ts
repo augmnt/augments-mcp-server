@@ -291,4 +291,103 @@ describe('UnifiedCache', () => {
       expect(arrCache.get('nums')).toEqual([1, 2, 3]);
     });
   });
+
+  describe('concurrent access patterns', () => {
+    it('last write wins for multiple rapid sets to the same key', () => {
+      for (let i = 0; i < 1000; i++) {
+        cache.set('race-key', `value-${i}`);
+      }
+
+      expect(cache.get('race-key')).toBe('value-999');
+      expect(cache.size).toBe(1);
+    });
+
+    it('rapid alternating get/set operations maintain consistency', () => {
+      cache.set('alt-key', 'initial');
+
+      for (let i = 0; i < 500; i++) {
+        const current = cache.get('alt-key');
+        expect(current).toBeDefined();
+        cache.set('alt-key', `updated-${i}`);
+      }
+
+      expect(cache.get('alt-key')).toBe('updated-499');
+      expect(cache.size).toBeLessThanOrEqual(5);
+    });
+
+    it('setting entries while iterating does not cause errors', () => {
+      expect(() => {
+        for (let i = 0; i < 100; i++) {
+          cache.set(`rapid-${i}`, `value-${i}`);
+        }
+      }).not.toThrow();
+
+      // Cache should still respect maxSize
+      expect(cache.size).toBeLessThanOrEqual(5);
+
+      // The most recently inserted entries should be present
+      expect(cache.get('rapid-99')).toBe('value-99');
+    });
+  });
+
+  describe('edge case keys and values', () => {
+    it('empty string as key works correctly', () => {
+      cache.set('', 'empty-key-value');
+
+      expect(cache.get('')).toBe('empty-key-value');
+      expect(cache.has('')).toBe(true);
+      expect(cache.delete('')).toBe(true);
+      expect(cache.get('')).toBeUndefined();
+    });
+
+    it('very long key (10000 chars) works correctly', () => {
+      const longKey = 'x'.repeat(10000);
+
+      cache.set(longKey, 'long-key-value');
+
+      expect(cache.get(longKey)).toBe('long-key-value');
+      expect(cache.has(longKey)).toBe(true);
+      expect(cache.delete(longKey)).toBe(true);
+      expect(cache.get(longKey)).toBeUndefined();
+    });
+
+    it('undefined-ish key names work correctly', () => {
+      const trickyKeys = ['undefined', 'null', 'constructor', '__proto__'];
+
+      trickyKeys.forEach((key, i) => {
+        cache.set(key, `tricky-${i}`);
+      });
+
+      trickyKeys.forEach((key, i) => {
+        expect(cache.get(key)).toBe(`tricky-${i}`);
+        expect(cache.has(key)).toBe(true);
+      });
+    });
+
+    it('special characters in keys work correctly', () => {
+      const specialKeys = [
+        'key with spaces',
+        'key\nwith\nnewlines',
+        'key\twith\ttabs',
+        'emoji-xF0x9Fx94x91-key',
+        'path/to/resource',
+        'query?param=value&other=1',
+        'unicode-xC3xA9xC3xA0xC3xBC-key',
+      ];
+
+      specialKeys.forEach((key, i) => {
+        cache.set(key, `special-${i}`);
+      });
+
+      // Only last maxSize entries should remain
+      expect(cache.size).toBeLessThanOrEqual(5);
+
+      // The most recently set keys should be retrievable
+      const lastKeys = specialKeys.slice(-5);
+      lastKeys.forEach((key, i) => {
+        const idx = specialKeys.length - 5 + i;
+        expect(cache.get(key)).toBe(`special-${idx}`);
+      });
+    });
+  });
 });

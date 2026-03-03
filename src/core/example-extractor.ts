@@ -10,6 +10,9 @@ import { getLogger } from '@/utils/logger';
 
 const logger = getLogger('example-extractor');
 
+// Fetch timeout for GitHub raw content
+const GITHUB_TIMEOUT = 8_000; // 8s
+
 /**
  * A code example with metadata
  */
@@ -455,7 +458,7 @@ export class ExampleExtractor {
       const url = this.buildGitHubRawUrl(config.repo, config.branch, filePath);
       logger.debug('Fetching examples from GitHub', { url });
 
-      const response = await fetch(url);
+      const response = await fetch(url, { signal: AbortSignal.timeout(GITHUB_TIMEOUT) });
       if (!response.ok) {
         logger.debug('Failed to fetch GitHub content', {
           url,

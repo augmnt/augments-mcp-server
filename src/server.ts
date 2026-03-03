@@ -51,6 +51,9 @@ const logger = getLogger('mcp-server');
 // Server version
 export const SERVER_VERSION = '4.1.0';
 
+// Registered tool count — set during initialization, used by health check
+export let registeredToolCount = 0;
+
 // Check if legacy tools are enabled via env var
 const LEGACY_TOOLS_ENABLED = process.env.LEGACY_TOOLS_ENABLED === 'true';
 
@@ -455,6 +458,8 @@ export async function getServer(): Promise<McpServer> {
     );
     toolCount++;
   }
+
+  registeredToolCount = toolCount;
 
   logger.info('MCP Server initialized successfully', {
     tools: toolCount,
