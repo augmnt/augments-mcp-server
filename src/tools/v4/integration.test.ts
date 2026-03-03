@@ -103,6 +103,15 @@ vi.mock('@/core', () => {
       return map[framework] || framework;
     }),
     getKnownFrameworks: vi.fn(() => ['react', 'next', 'vue', 'zod', 'express']),
+    suggestAlternatives: vi.fn((query: string) => {
+      const primary = mockQueryParser.parse(query);
+      if (primary.framework) return [primary];
+      return [
+        primary,
+        { ...primary, framework: 'react', packageName: 'react', confidence: 0.1 },
+        { ...primary, framework: 'vue', packageName: 'vue', confidence: 0.1 },
+      ];
+    }),
   };
 
   const mockTypeFetcher = {

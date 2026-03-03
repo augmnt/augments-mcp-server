@@ -87,6 +87,23 @@ export async function getApiContext(
 
   if (!framework || !packageName) {
     logger.debug('Could not identify framework', { query: input.query });
+    // Suggest alternatives using query parser
+    const alternatives = queryParser.suggestAlternatives(input.query);
+    const suggestions = alternatives
+      .filter((alt) => alt.framework)
+      .slice(0, 4)
+      .map((alt) => alt.framework!);
+
+    const notes: string[] = [
+      'Could not identify a framework from the query.',
+      'Please specify a framework explicitly.',
+    ];
+    if (suggestions.length > 0) {
+      notes.push(`Did you mean: ${suggestions.join(', ')}?`);
+    } else {
+      notes.push(`Known frameworks: ${queryParser.getKnownFrameworks().slice(0, 10).join(', ')}...`);
+    }
+
     return {
       framework: '',
       packageName: '',
@@ -96,11 +113,7 @@ export async function getApiContext(
       examples: [],
       confidence: parsedQuery.confidence,
       query: parsedQuery,
-      notes: [
-        'Could not identify a framework from the query.',
-        'Please specify a framework explicitly.',
-        `Known frameworks: ${queryParser.getKnownFrameworks().slice(0, 10).join(', ')}...`,
-      ],
+      notes,
     };
   }
 
@@ -132,10 +145,16 @@ export async function getApiContext(
   logger.debug('Resolved version', { packageName, resolvedVersion });
 
   // Fetch type definitions and examples in parallel (both are I/O-bound)
+  // Examples have a soft 3s timeout — type signatures (primary value) are never delayed
+  const EXAMPLE_SOFT_TIMEOUT = 3000;
   const typesPromise = typeFetcher.fetchTypes(packageName, resolvedVersion);
-  const examplesPromise = input.includeExamples !== false
+  const rawExamplesPromise = input.includeExamples !== false
     ? exampleExtractor.getExamplesForConcept(framework, parsedQuery.concept)
     : Promise.resolve([]);
+  const examplesPromise = Promise.race([
+    rawExamplesPromise,
+    new Promise<CodeExample[]>((resolve) => setTimeout(() => resolve([]), EXAMPLE_SOFT_TIMEOUT)),
+  ]);
 
   const [types, rawExamples] = await Promise.all([typesPromise, examplesPromise]);
 
@@ -202,13 +221,17 @@ export async function getApiContext(
           `No API named "${parsedQuery.concept}" found in ${packageName}@${resolvedVersion}`
         );
 
-        // Try to find similar APIs
+        // Try to find similar APIs with richer info
         const searchResults = typeParser.searchApis(
           types.content,
           parsedQuery.concept
         );
         if (searchResults.length > 0) {
-          notes.push(`Similar APIs found: ${searchResults.slice(0, 5).map((r) => r.name).join(', ')}`);
+          const similarDescriptions = searchResults.slice(0, 5).map((r) => {
+            const desc = r.description ? ` — ${r.description.substring(0, 80)}` : '';
+            return `${r.name} (${r.kind})${desc}`;
+          });
+          notes.push(`Similar APIs:\n${similarDescriptions.map((d) => `  - ${d}`).join('\n')}`);
           relatedApis.push(...searchResults.slice(0, 5).map((r) => r.name));
         }
       }
@@ -260,7 +283,7 @@ export async function getApiContext(
 /**
  * Maximum response size in characters to keep output LLM-friendly
  */
-const MAX_RESPONSE_SIZE = 8000;
+const MAX_RESPONSE_SIZE = 10000;
 
 /**
  * Format the output for MCP response (minimal, LLM-friendly)
@@ -315,7 +338,10 @@ export function formatApiContextResponse(output: GetApiContextOutput): string {
     if (output.api.examples && output.api.examples.length > 0) {
       lines.push('### JSDoc Examples');
       for (const example of output.api.examples) {
-        lines.push('```');
+        // Detect language from content
+        const hasTypeScriptSignals = /\b(import|const|let|function|interface|type)\b/.test(example);
+        const lang = hasTypeScriptSignals ? 'typescript' : '';
+        lines.push(`\`\`\`${lang}`);
         lines.push(example);
         lines.push('```');
       }
@@ -326,7 +352,7 @@ export function formatApiContextResponse(output: GetApiContextOutput): string {
     const relatedTypeEntries = Object.entries(output.api.relatedTypes);
     if (relatedTypeEntries.length > 0) {
       const currentSize = lines.join('\n').length;
-      const maxRelatedTypes = currentSize > MAX_RESPONSE_SIZE * 0.6 ? 3 : relatedTypeEntries.length;
+      const maxRelatedTypes = currentSize > MAX_RESPONSE_SIZE * 0.5 ? 5 : relatedTypeEntries.length;
 
       lines.push('### Related Types');
       for (const [name, signature] of relatedTypeEntries.slice(0, maxRelatedTypes)) {
@@ -348,7 +374,7 @@ export function formatApiContextResponse(output: GetApiContextOutput): string {
     // Overloads (limit to 2 if response is getting large)
     if (output.api.overloads && output.api.overloads.length > 1) {
       const currentSize = lines.join('\n').length;
-      const maxOverloads = currentSize > MAX_RESPONSE_SIZE * 0.6 ? 2 : output.api.overloads.length;
+      const maxOverloads = currentSize > MAX_RESPONSE_SIZE * 0.6 ? 3 : output.api.overloads.length;
 
       lines.push('### Overloads');
       for (const overload of output.api.overloads.slice(0, maxOverloads)) {
@@ -373,7 +399,7 @@ export function formatApiContextResponse(output: GetApiContextOutput): string {
   // Examples (reduce count if response is getting large)
   if (output.examples.length > 0) {
     const currentSize = lines.join('\n').length;
-    const maxExamples = currentSize > MAX_RESPONSE_SIZE * 0.7 ? 1 : output.examples.length;
+    const maxExamples = currentSize > MAX_RESPONSE_SIZE * 0.8 ? Math.min(2, output.examples.length) : output.examples.length;
 
     lines.push('## Code Examples');
     for (const example of output.examples.slice(0, maxExamples)) {

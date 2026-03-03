@@ -5,7 +5,7 @@
  * Given a concept (e.g., "useEffect"), finds its signature and resolves type references.
  *
  * Features:
- * - AST parse caching (djb2 hash-based, max 50 entries)
+ * - AST parse caching (djb2 hash-based, max 200 entries)
  * - Enhanced JSDoc extraction (@param, @returns, @example, @deprecated, @see)
  * - Smart response filtering with maxResults and scoring
  */
@@ -24,6 +24,7 @@ const SCORE_KIND_INTERFACE = 10;
 const SCORE_HAS_DESCRIPTION = 10;
 const SCORE_HAS_EXAMPLES = 5;
 const SCORE_DEPRECATED_PENALTY = -20;
+const SCORE_WORD_BOUNDARY = 5;
 
 /**
  * Represents a parsed type definition
@@ -106,7 +107,7 @@ function djb2Hash(str: string): number {
 export class TypeParser {
   private printer: ts.Printer;
   private parseCache: Map<number, ParseResult> = new Map();
-  private readonly MAX_PARSE_CACHE_SIZE = 50;
+  private readonly MAX_PARSE_CACHE_SIZE = 200;
 
   constructor() {
     this.printer = ts.createPrinter({
@@ -254,15 +255,24 @@ export class TypeParser {
     const queryLower = query.toLowerCase();
     const queryParts = queryLower.split(/\s+/);
 
+    // "create client" → "createclient" to match "createClient"
+    const concatenated = queryParts.length > 1 ? queryParts.join('') : null;
+
     return parseResult.definitions
       .filter((def) => {
         const nameLower = def.name.toLowerCase();
         const signatureLower = def.signature.toLowerCase();
 
-        // Match all query parts
-        return queryParts.every(
+        // Match all query parts (includes or word-boundary)
+        const partsMatch = queryParts.every(
           (part) => nameLower.includes(part) || signatureLower.includes(part)
         );
+        // Also match concatenated form (e.g., "createclient" matches "createClient")
+        const concatMatch = concatenated
+          ? nameLower.includes(concatenated) || signatureLower.includes(concatenated)
+          : false;
+
+        return partsMatch || concatMatch;
       })
       .sort((a, b) => {
         // Score-based sorting for better ranking
@@ -286,6 +296,11 @@ export class TypeParser {
     else if (nameLower.startsWith(queryLower)) score += SCORE_STARTS_WITH;
     // Contains query
     else if (nameLower.includes(queryLower)) score += SCORE_CONTAINS;
+
+    // Word-boundary bonus: query matches at a word boundary in the name
+    // e.g., "use" matches "useEffect" at boundary but not "excludeFromAutoFill"
+    const boundaryRegex = new RegExp(`(^|[^a-z])${queryLower}`, 'i');
+    if (boundaryRegex.test(def.name)) score += SCORE_WORD_BOUNDARY;
 
     // Boost exported declarations (functions and interfaces are usually more useful)
     if (def.kind === 'function') score += SCORE_KIND_FUNCTION;

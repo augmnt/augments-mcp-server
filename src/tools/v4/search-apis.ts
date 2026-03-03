@@ -70,6 +70,12 @@ const DEFAULT_SEARCH_FRAMEWORKS = [
   'zod',
   '@prisma/client',
   'express',
+  'lodash',
+  'axios',
+  'drizzle-orm',
+  'react-hook-form',
+  'zustand',
+  'svelte',
 ];
 
 /**

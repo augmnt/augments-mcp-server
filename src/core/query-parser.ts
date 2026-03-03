@@ -470,10 +470,18 @@ const CONTEXT_KEYWORDS = [
  * Query parser for extracting framework and concept from natural language
  */
 export class QueryParser {
+  private parseCache: Map<string, ParsedQuery> = new Map();
+  private readonly MAX_PARSE_CACHE_SIZE = 200;
+
   /**
    * Parse a natural language query into structured components
    */
   parse(query: string): ParsedQuery {
+    // Check parse cache (deterministic for same input)
+    const cached = this.parseCache.get(query);
+    if (cached) {
+      return cached;
+    }
     const normalizedQuery = query.toLowerCase().trim();
     const tokens = this.tokenize(normalizedQuery);
 
@@ -519,6 +527,16 @@ export class QueryParser {
       version: result.version,
       confidence: result.confidence,
     });
+
+    // Cache the result (evict oldest if at capacity)
+    if (this.parseCache.size >= this.MAX_PARSE_CACHE_SIZE) {
+      const firstKey = this.parseCache.keys().next().value;
+      if (firstKey !== undefined) {
+        this.parseCache.delete(firstKey);
+      }
+    }
+    this.parseCache.set(query, result);
+
     return result;
   }
 

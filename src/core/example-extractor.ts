@@ -259,6 +259,56 @@ const CONCEPT_TO_DOC_PATHS: Record<string, Record<string, string[]>> = {
     middleware: ['using-middleware.md'],
     errorhandling: ['error-handling.md'],
   },
+  vue: {
+    ref: ['essentials/reactivity-fundamentals.md'],
+    computed: ['essentials/computed.md'],
+    watch: ['essentials/watchers.md'],
+    reactive: ['essentials/reactivity-fundamentals.md'],
+    onmounted: ['essentials/lifecycle.md'],
+  },
+  zustand: {
+    create: ['guides/updating-state.md', 'guides/tutorial-tic-tac-toe.md'],
+    middleware: ['guides/flux-inspired-practice.md'],
+    persist: ['integrations/persisting-store-data.md'],
+  },
+  jotai: {
+    atom: ['basics/primitives.md', 'guides/atoms-in-atom.md'],
+    useatomvalue: ['basics/primitives.md'],
+    derived: ['guides/atoms-in-atom.md'],
+  },
+  drizzle: {
+    pgtable: ['column-types/pg.md', 'schemas.md'],
+    select: ['crud.md', 'select.md'],
+    insert: ['crud.md', 'insert.md'],
+    migrate: ['migrations.md'],
+  },
+  redux: {
+    createslice: ['tutorials/fundamentals/part-8-modern-redux.md'],
+    configurestore: ['tutorials/fundamentals/part-8-modern-redux.md'],
+    useselector: ['tutorials/fundamentals/part-5-ui-and-react.md'],
+    usedispatch: ['tutorials/fundamentals/part-5-ui-and-react.md'],
+  },
+  vitest: {
+    describe: ['guide/filtering.md', 'api/index.md'],
+    expect: ['api/expect.md'],
+    mock: ['guide/mocking.md', 'api/mock.md'],
+  },
+  playwright: {
+    test: ['test-components-js.md', 'writing-tests.md'],
+    page: ['pages.md', 'api/class-page.md'],
+    locator: ['locators.md', 'api/class-locator.md'],
+    expect: ['test-assertions.md'],
+  },
+  angular: {
+    component: ['guide/components.md'],
+    signal: ['guide/signals.md'],
+    inject: ['guide/di/dependency-injection.md'],
+  },
+  swr: {
+    useswr: ['docs/getting-started.mdx', 'docs/api.mdx'],
+    mutation: ['docs/mutation.mdx'],
+    pagination: ['docs/pagination.mdx'],
+  },
 };
 
 /**
@@ -266,7 +316,9 @@ const CONCEPT_TO_DOC_PATHS: Record<string, Record<string, string[]>> = {
  */
 export class ExampleExtractor {
   private cache: Map<string, CodeExample[]> = new Map();
+  private conceptCache: Map<string, { examples: CodeExample[]; fetchedAt: number }> = new Map();
   private readonly CACHE_TTL = 3600 * 1000; // 1 hour
+  private readonly MAX_CONCEPT_CACHE_SIZE = 100;
 
   /**
    * Extract code examples from markdown content
@@ -490,6 +542,14 @@ export class ExampleExtractor {
     framework: string,
     concept: string
   ): Promise<CodeExample[]> {
+    // Check concept-level cache
+    const conceptKey = `${framework}:${concept.toLowerCase()}`;
+    const cachedConcept = this.conceptCache.get(conceptKey);
+    if (cachedConcept && Date.now() - cachedConcept.fetchedAt < this.CACHE_TTL) {
+      logger.debug('Concept cache hit', { framework, concept });
+      return cachedConcept.examples;
+    }
+
     const config = this.getDocSource(framework);
     if (!config) {
       logger.debug('No doc source for framework', { framework });
@@ -541,6 +601,15 @@ export class ExampleExtractor {
       concept,
       count: scored.length,
     });
+
+    // Cache the scored results (evict oldest if at capacity)
+    if (this.conceptCache.size >= this.MAX_CONCEPT_CACHE_SIZE) {
+      const firstKey = this.conceptCache.keys().next().value;
+      if (firstKey !== undefined) {
+        this.conceptCache.delete(firstKey);
+      }
+    }
+    this.conceptCache.set(conceptKey, { examples: scored, fetchedAt: Date.now() });
 
     return scored;
   }
@@ -738,6 +807,7 @@ export class ExampleExtractor {
    */
   clearCache(): void {
     this.cache.clear();
+    this.conceptCache.clear();
     logger.debug('Cache cleared');
   }
 }

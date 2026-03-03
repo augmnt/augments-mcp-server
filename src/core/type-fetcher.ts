@@ -33,6 +33,15 @@ const ALTERNATIVE_TYPE_PATHS: Record<string, string[]> = {
   'styled-components': ['dist/index.d.ts'],
   '@emotion/react': ['dist/emotion-react.cjs.d.ts', 'types/index.d.ts'],
   'zod': ['index.d.ts', 'lib/index.d.ts'],
+  'axios': ['index.d.ts', 'index.d.cts'],
+  'zustand': ['esm/index.d.mts', 'index.d.ts'],
+  'jotai': ['esm/index.d.ts', 'index.d.ts'],
+  'drizzle-orm': ['index.d.ts', 'pg-core/index.d.ts', 'mysql-core/index.d.ts'],
+  'svelte': ['types/index.d.ts', 'index.d.ts'],
+  'hono': ['dist/types/index.d.ts', 'dist/index.d.ts'],
+  'fastify': ['types/index.d.ts', 'fastify.d.ts'],
+  'vitest': ['dist/index.d.ts', 'index.d.ts'],
+  'next-auth': ['index.d.ts', 'src/index.ts'],
 };
 
 /**
@@ -53,6 +62,33 @@ const BARREL_EXPORT_MODULES: Record<string, Record<string, string[]>> = {
     usemutation: ['build/modern/useMutation.d.ts'],
     useinfinitequery: ['build/modern/useInfiniteQuery.d.ts'],
     usesuspensequery: ['build/modern/useSuspenseQuery.d.ts'],
+  },
+  zustand: {
+    create: ['esm/react.d.mts', 'esm/index.d.mts'],
+    createstore: ['esm/vanilla.d.mts', 'esm/vanilla/store.d.mts'],
+  },
+  jotai: {
+    atom: ['esm/vanilla.d.ts', 'esm/index.d.ts'],
+    useatomvalue: ['esm/react.d.ts'],
+    usesetatom: ['esm/react.d.ts'],
+  },
+  '@trpc/server': {
+    inittrpc: ['dist/index.d.ts', 'dist/unstable-core-do-not-import/initTRPC.d.ts'],
+    router: ['dist/index.d.ts'],
+    procedure: ['dist/index.d.ts'],
+  },
+  '@trpc/client': {
+    createtrpcclient: ['dist/index.d.ts', 'dist/createTRPCClient.d.ts'],
+  },
+  'drizzle-orm': {
+    pgtable: ['pg-core/index.d.ts', 'pg-core/table.d.ts'],
+    mysqltable: ['mysql-core/index.d.ts', 'mysql-core/table.d.ts'],
+    sqlitetable: ['sqlite-core/index.d.ts', 'sqlite-core/table.d.ts'],
+  },
+  next: {
+    userouter: ['dist/client/components/navigation.d.ts', 'navigation.d.ts'],
+    usepathname: ['dist/client/components/navigation.d.ts', 'navigation.d.ts'],
+    usesearchparams: ['dist/client/components/navigation.d.ts', 'navigation.d.ts'],
   },
 };
 
@@ -130,6 +166,38 @@ export class TypeFetcher {
   private readonly PACKAGE_INFO_TTL = 1800 * 1000; // 30 minutes
 
   /**
+   * Fetch with retry and backoff — only for npm registry calls
+   * (CDN calls already have redundancy via fetchFromCdn racing)
+   */
+  private async fetchWithRetry(
+    url: string,
+    options: RequestInit,
+    retries: number = 1,
+    backoffMs: number = 1500
+  ): Promise<Response> {
+    let lastError: Error | null = null;
+    for (let attempt = 0; attempt <= retries; attempt++) {
+      try {
+        const response = await fetch(url, options);
+        // Retry on 5xx server errors
+        if (response.status >= 500 && attempt < retries) {
+          logger.debug('Registry 5xx, retrying', { url, status: response.status, attempt });
+          await new Promise((resolve) => setTimeout(resolve, backoffMs));
+          continue;
+        }
+        return response;
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error(String(error));
+        if (attempt < retries) {
+          logger.debug('Registry fetch failed, retrying', { url, attempt, error: lastError.message });
+          await new Promise((resolve) => setTimeout(resolve, backoffMs));
+        }
+      }
+    }
+    throw lastError || new Error(`Failed to fetch ${url} after ${retries + 1} attempts`);
+  }
+
+  /**
    * Fetch package metadata from npm registry using abbreviated metadata endpoint
    */
   async getPackageInfo(packageName: string): Promise<NpmPackageInfo | null> {
@@ -166,7 +234,7 @@ export class TypeFetcher {
       const url = `${NPM_REGISTRY}/${encodeURIComponent(packageName)}`;
       logger.debug('Fetching package info (abbreviated)', { packageName, url });
 
-      const response = await fetch(url, {
+      const response = await this.fetchWithRetry(url, {
         headers: {
           // Use abbreviated metadata to reduce payload from 2-10MB to 5-50KB
           Accept: 'application/vnd.npm.install-v1+json',
@@ -208,7 +276,7 @@ export class TypeFetcher {
       const url = `${NPM_REGISTRY}/${encodeURIComponent(packageName)}/${version}`;
       logger.debug('Fetching version-specific info', { packageName, version, url });
 
-      const response = await fetch(url, {
+      const response = await this.fetchWithRetry(url, {
         headers: { Accept: 'application/json' },
         signal: AbortSignal.timeout(NPM_TIMEOUT),
       });
@@ -343,6 +411,34 @@ export class TypeFetcher {
   }
 
   /**
+   * Race both CDN endpoints in parallel, returning the first successful response.
+   * Eliminates sequential fallback latency (up to 8s saved when one CDN is slow).
+   */
+  private async fetchFromCdn(
+    packageName: string,
+    version: string,
+    filePath: string
+  ): Promise<string | null> {
+    const unpkgUrl = `${UNPKG_CDN}/${packageName}@${version}/${filePath}`;
+    const jsdelivrUrl = `${JSDELIVR_CDN}/${packageName}@${version}/${filePath}`;
+
+    const fetchCdn = async (url: string): Promise<string> => {
+      const response = await fetch(url, { signal: AbortSignal.timeout(CDN_TIMEOUT) });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return response.text();
+    };
+
+    try {
+      // Race both CDNs — first success wins
+      return await Promise.any([fetchCdn(unpkgUrl), fetchCdn(jsdelivrUrl)]);
+    } catch {
+      // All CDN attempts failed
+      logger.debug('All CDN fetches failed', { packageName, version, filePath });
+      return null;
+    }
+  }
+
+  /**
    * Fetch bundled TypeScript definitions from a package
    */
   private async fetchBundledTypes(
@@ -353,47 +449,18 @@ export class TypeFetcher {
     const typesPath = versionInfo.types || versionInfo.typings;
     if (!typesPath) return null;
 
-    try {
-      // Try unpkg first (faster)
-      const url = `${UNPKG_CDN}/${packageName}@${version}/${typesPath}`;
-      logger.debug('Fetching bundled types', { url });
+    logger.debug('Fetching bundled types', { packageName, version, typesPath });
+    const content = await this.fetchFromCdn(packageName, version, typesPath);
+    if (!content) return null;
 
-      const response = await fetch(url, { signal: AbortSignal.timeout(CDN_TIMEOUT) });
-      if (!response.ok) {
-        // Try jsdelivr as fallback
-        const jsdelivrUrl = `${JSDELIVR_CDN}/${packageName}@${version}/${typesPath}`;
-        const jsdelivrResponse = await fetch(jsdelivrUrl, { signal: AbortSignal.timeout(CDN_TIMEOUT) });
-        if (!jsdelivrResponse.ok) {
-          return null;
-        }
-        const content = await jsdelivrResponse.text();
-        return {
-          packageName,
-          version,
-          content,
-          filePath: typesPath,
-          source: 'bundled',
-          fetchedAt: Date.now(),
-        };
-      }
-
-      const content = await response.text();
-      return {
-        packageName,
-        version,
-        content,
-        filePath: typesPath,
-        source: 'bundled',
-        fetchedAt: Date.now(),
-      };
-    } catch (error) {
-      logger.error('Failed to fetch bundled types', {
-        packageName,
-        version,
-        error: error instanceof Error ? error.message : String(error),
-      });
-      return null;
-    }
+    return {
+      packageName,
+      version,
+      content,
+      filePath: typesPath,
+      source: 'bundled',
+      fetchedAt: Date.now(),
+    };
   }
 
   /**
@@ -415,30 +482,10 @@ export class TypeFetcher {
       const versionInfo = info.versions[typesVersion];
       const typesPath = versionInfo.types || versionInfo.typings || 'index.d.ts';
 
-      // Fetch the types file
-      const url = `${UNPKG_CDN}/${typesPackageName}@${typesVersion}/${typesPath}`;
-      logger.debug('Fetching DefinitelyTyped types', { url });
+      logger.debug('Fetching DefinitelyTyped types', { typesPackageName, typesVersion, typesPath });
+      const content = await this.fetchFromCdn(typesPackageName, typesVersion, typesPath);
+      if (!content) return null;
 
-      const response = await fetch(url, { signal: AbortSignal.timeout(CDN_TIMEOUT) });
-      if (!response.ok) {
-        // Try jsdelivr as fallback
-        const jsdelivrUrl = `${JSDELIVR_CDN}/${typesPackageName}@${typesVersion}/${typesPath}`;
-        const jsdelivrResponse = await fetch(jsdelivrUrl, { signal: AbortSignal.timeout(CDN_TIMEOUT) });
-        if (!jsdelivrResponse.ok) {
-          return null;
-        }
-        const content = await jsdelivrResponse.text();
-        return {
-          packageName: typesPackageName,
-          version: typesVersion,
-          content,
-          filePath: typesPath,
-          source: 'definitely-typed',
-          fetchedAt: Date.now(),
-        };
-      }
-
-      const content = await response.text();
       return {
         packageName: typesPackageName,
         version: typesVersion,
@@ -669,40 +716,18 @@ export class TypeFetcher {
     const resolvedVersion = await this.resolveVersion(packageName, version);
     if (!resolvedVersion) return null;
 
-    try {
-      const url = `${UNPKG_CDN}/${packageName}@${resolvedVersion}/${filePath}`;
-      logger.debug('Fetching specific type file', { url });
-      const response = await fetch(url, { signal: AbortSignal.timeout(CDN_TIMEOUT) });
+    logger.debug('Fetching specific type file', { packageName, resolvedVersion, filePath });
+    const content = await this.fetchFromCdn(packageName, resolvedVersion, filePath);
+    if (!content) return null;
 
-      if (!response.ok) {
-        // Try jsdelivr as fallback
-        const jsdelivrUrl = `${JSDELIVR_CDN}/${packageName}@${resolvedVersion}/${filePath}`;
-        const jsdelivrResponse = await fetch(jsdelivrUrl, { signal: AbortSignal.timeout(CDN_TIMEOUT) });
-        if (!jsdelivrResponse.ok) return null;
-
-        const content = await jsdelivrResponse.text();
-        return {
-          packageName,
-          version: resolvedVersion,
-          content,
-          filePath,
-          source: 'bundled',
-          fetchedAt: Date.now(),
-        };
-      }
-
-      const content = await response.text();
-      return {
-        packageName,
-        version: resolvedVersion,
-        content,
-        filePath,
-        source: 'bundled',
-        fetchedAt: Date.now(),
-      };
-    } catch {
-      return null;
-    }
+    return {
+      packageName,
+      version: resolvedVersion,
+      content,
+      filePath,
+      source: 'bundled',
+      fetchedAt: Date.now(),
+    };
   }
 
   /**
