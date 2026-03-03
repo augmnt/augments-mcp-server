@@ -1,8 +1,8 @@
 /**
  * get_api_context Tool
  *
- * The primary v4 tool for query-focused context extraction.
- * Returns minimal, accurate API context to LLMs.
+ * The primary v5 tool for query-focused context extraction.
+ * Returns types + prose + examples with context-aware formatting to LLMs.
  */
 
 import { getLogger } from '@/utils/logger';
@@ -18,6 +18,11 @@ import {
 } from '@/core';
 
 const logger = getLogger('get-api-context');
+
+/**
+ * Query intent type — determines response format
+ */
+export type QueryIntent = 'howto' | 'reference' | 'migration' | 'balanced';
 
 /**
  * Input parameters for get_api_context tool
@@ -51,12 +56,193 @@ export interface GetApiContextOutput {
   relatedApis: string[];
   /** Code examples */
   examples: CodeExample[];
+  /** Prose documentation extracted from README/docs */
+  prose: string | null;
+  /** Detected query intent */
+  intent: QueryIntent;
   /** Parsing confidence (0-1) */
   confidence: number;
   /** Original parsed query */
   query: ParsedQuery;
   /** Any warnings or notes */
   notes: string[];
+}
+
+/**
+ * Detect query intent from natural language
+ */
+function detectIntent(query: string): QueryIntent {
+  const q = query.toLowerCase();
+  if (/\b(how\s+to|how\s+do\s+i|example\s+of|tutorial|guide|usage|getting\s+started)\b/.test(q)) {
+    return 'howto';
+  }
+  if (/\b(signature|types?|parameters?|return\s+type|overloads?|interface|typedef)\b/.test(q)) {
+    return 'reference';
+  }
+  if (/\b(migrat|upgrade|breaking\s+changes?|v\d+\s+to\s+v\d+|deprecat)\b/.test(q)) {
+    return 'migration';
+  }
+  return 'balanced';
+}
+
+/**
+ * Extract code blocks from README that mention a concept
+ */
+function extractReadmeExamples(readmeContent: string, concept: string): CodeExample[] {
+  const examples: CodeExample[] = [];
+  const codeBlockRegex = /```(\w+)?\s*\n([\s\S]*?)```/g;
+  const conceptLower = concept.toLowerCase();
+
+  let match;
+  while ((match = codeBlockRegex.exec(readmeContent)) !== null) {
+    const language = match[1] || 'javascript';
+    const code = match[2].trim();
+
+    // Skip very short, config, or install blocks
+    if (code.length < 20) continue;
+    if (/\b(npm|yarn|pnpm|bun)\s+(install|add|i)\b/.test(code)) continue;
+    if (/^(bash|shell|sh)$/i.test(language)) continue;
+
+    // Check if concept is mentioned in the code or nearby text
+    const beforeBlock = readmeContent.substring(Math.max(0, match.index - 300), match.index);
+    if (
+      code.toLowerCase().includes(conceptLower) ||
+      beforeBlock.toLowerCase().includes(conceptLower)
+    ) {
+      // Extract context heading
+      const headingMatch = beforeBlock.match(/#+\s+([^\n]+)\s*$/);
+      examples.push({
+        code,
+        language: language.toLowerCase(),
+        source: 'README.md',
+        concepts: [conceptLower],
+        context: headingMatch ? headingMatch[1].trim() : undefined,
+      });
+    }
+  }
+
+  return examples.slice(0, 3); // Limit to 3 README examples
+}
+
+/**
+ * Extract prose documentation from README/doc content for a concept.
+ * Finds the most relevant section and returns its prose paragraphs.
+ */
+function extractProseForConcept(content: string, concept: string, maxChars: number = 2000): string | null {
+  const sections = splitIntoSections(content);
+  if (sections.length === 0) return null;
+
+  // Score each section by concept relevance
+  const scored = sections
+    .map((section) => ({
+      section,
+      score: scoreSectionRelevance(section, concept),
+    }))
+    .filter((s) => s.score > 0)
+    .sort((a, b) => b.score - a.score);
+
+  if (scored.length === 0) return null;
+
+  // Extract prose paragraphs from the top-scoring section
+  const prose = extractProseParagraphs(scored[0].section.body);
+  if (!prose || prose.length < 20) return null;
+
+  return prose.length > maxChars ? prose.substring(0, maxChars - 3) + '...' : prose;
+}
+
+interface Section {
+  heading: string;
+  body: string;
+}
+
+function splitIntoSections(content: string): Section[] {
+  const sections: Section[] = [];
+  const parts = content.split(/^(#{1,3}\s+.+)$/m);
+
+  // Handle content before first heading
+  if (parts[0]?.trim()) {
+    sections.push({ heading: '', body: parts[0].trim() });
+  }
+
+  for (let i = 1; i < parts.length; i += 2) {
+    const heading = parts[i]?.replace(/^#+\s*/, '').trim() || '';
+    const body = parts[i + 1]?.trim() || '';
+    if (body) {
+      sections.push({ heading, body });
+    }
+  }
+
+  return sections;
+}
+
+function scoreSectionRelevance(section: Section, concept: string): number {
+  let score = 0;
+  const conceptLower = concept.toLowerCase();
+  const headingLower = section.heading.toLowerCase();
+  const bodyLower = section.body.toLowerCase();
+
+  // Heading contains concept
+  if (headingLower.includes(conceptLower)) score += 50;
+  // Heading is exactly the concept
+  if (headingLower === conceptLower) score += 30;
+
+  // Count keyword density in body (occurrences per 1000 chars)
+  const escapedConcept = conceptLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const conceptCount = (bodyLower.match(new RegExp(escapedConcept, 'g')) || []).length;
+  score += Math.min(conceptCount * 5, 25);
+
+  // Bonus for sections with prose (not just code)
+  const proseLines = section.body.split('\n').filter((line) => !isNonProseLine(line));
+  if (proseLines.length > 2) score += 10;
+
+  return score;
+}
+
+function extractProseParagraphs(body: string): string {
+  const lines = body.split('\n');
+  const proseLines: string[] = [];
+
+  let inCodeBlock = false;
+  for (const line of lines) {
+    if (line.trim().startsWith('```')) {
+      inCodeBlock = !inCodeBlock;
+      continue;
+    }
+    if (inCodeBlock) continue;
+    if (isNonProseLine(line)) continue;
+    if (line.trim()) {
+      proseLines.push(line.trim());
+    }
+  }
+
+  return proseLines.join('\n');
+}
+
+function isNonProseLine(line: string): boolean {
+  const trimmed = line.trim();
+  if (!trimmed) return true;
+  if (trimmed.startsWith('```')) return true;
+  if (trimmed.startsWith('|') && trimmed.endsWith('|')) return true; // table
+  if (trimmed.startsWith('![')) return true; // image
+  if (/^[-*]\s*$/.test(trimmed)) return true; // empty list item
+  if (/^#{1,6}\s/.test(trimmed)) return true; // heading (handled separately)
+  return false;
+}
+
+/**
+ * Synthesize a one-line plain-English summary from an API signature
+ */
+function synthesizeUsageSummary(api: ApiSignature): string {
+  const parts: string[] = [];
+  parts.push(`\`${api.name}\``);
+  if (api.parameters && api.parameters.length > 0) {
+    const paramNames = api.parameters.map((p) => p.name).join(', ');
+    parts.push(`takes ${paramNames}`);
+  }
+  if (api.returnType) {
+    parts.push(`and returns \`${api.returnType}\``);
+  }
+  return parts.join(' ') + '.';
 }
 
 /**
@@ -74,6 +260,9 @@ export async function getApiContext(
   const typeParser = getTypeParser();
   const versionRegistry = getVersionRegistry();
   const exampleExtractor = getExampleExtractor();
+
+  // Detect query intent
+  const intent = detectIntent(input.query);
 
   // Parse the query
   const parsedQuery = queryParser.parse(input.query);
@@ -111,6 +300,8 @@ export async function getApiContext(
       api: null,
       relatedApis: [],
       examples: [],
+      prose: null,
+      intent,
       confidence: parsedQuery.confidence,
       query: parsedQuery,
       notes,
@@ -133,6 +324,8 @@ export async function getApiContext(
       api: null,
       relatedApis: [],
       examples: [],
+      prose: null,
+      intent,
       confidence: parsedQuery.confidence,
       query: parsedQuery,
       notes: [
@@ -255,7 +448,40 @@ export async function getApiContext(
   // Use pre-fetched examples
   const maxExamples = input.maxExamples || 2;
   let examples: CodeExample[] = rawExamples.slice(0, maxExamples);
-  logger.debug('Fetched examples', { count: examples.length });
+
+  // README fallback: if no examples and no curated doc source, try package README
+  let readmeContent: string | null = null;
+  if (examples.length === 0 && !exampleExtractor.getDocSource(framework)) {
+    logger.debug('No examples and no doc source — trying README fallback', { packageName });
+    readmeContent = await Promise.race([
+      typeFetcher.fetchReadme(packageName, resolvedVersion),
+      new Promise<null>((resolve) => setTimeout(() => resolve(null), EXAMPLE_SOFT_TIMEOUT)),
+    ]);
+
+    if (readmeContent) {
+      const readmeExamples = extractReadmeExamples(readmeContent, parsedQuery.concept);
+      examples = readmeExamples.slice(0, maxExamples);
+      logger.debug('README fallback examples', { count: examples.length });
+    }
+  }
+
+  // Extract prose documentation from README or doc content
+  let prose: string | null = null;
+  if (readmeContent) {
+    prose = extractProseForConcept(readmeContent, parsedQuery.concept);
+  }
+  // If no README was fetched but we have a doc source, we could still try README for prose
+  if (!prose && !readmeContent) {
+    const readmeForProse = await Promise.race([
+      typeFetcher.fetchReadme(packageName, resolvedVersion),
+      new Promise<null>((resolve) => setTimeout(() => resolve(null), EXAMPLE_SOFT_TIMEOUT)),
+    ]);
+    if (readmeForProse) {
+      prose = extractProseForConcept(readmeForProse, parsedQuery.concept);
+    }
+  }
+
+  logger.debug('Fetched examples', { count: examples.length, hasProse: !!prose });
 
   const duration = Date.now() - startTime;
   logger.info('Query processed', {
@@ -264,6 +490,8 @@ export async function getApiContext(
     version: resolvedVersion,
     hasApi: !!api,
     exampleCount: examples.length,
+    hasProse: !!prose,
+    intent,
     duration,
   });
 
@@ -274,6 +502,8 @@ export async function getApiContext(
     api,
     relatedApis,
     examples,
+    prose,
+    intent,
     confidence: parsedQuery.confidence,
     query: parsedQuery,
     notes,
@@ -285,9 +515,147 @@ export async function getApiContext(
  */
 const MAX_RESPONSE_SIZE = 10000;
 
+// ==================== Composable Render Helpers ====================
+
+function renderSignature(api: ApiSignature, brief: boolean = false): string[] {
+  const lines: string[] = [];
+
+  // Deprecation warning
+  if (api.deprecated) {
+    lines.push(`**DEPRECATED**${api.deprecatedMessage ? `: ${api.deprecatedMessage}` : ''}`);
+    lines.push('');
+  }
+
+  lines.push('## API Signature');
+  lines.push('```typescript');
+  lines.push(api.signature);
+  lines.push('```');
+  if (api.description) {
+    lines.push(api.description);
+  }
+  lines.push('');
+
+  if (brief) return lines;
+
+  // Parameters with descriptions
+  if (api.parameters && api.parameters.length > 0) {
+    lines.push('### Parameters');
+    for (const param of api.parameters) {
+      const optional = param.optional ? '?' : '';
+      const desc = param.description ? ` — ${param.description}` : '';
+      lines.push(`- \`${param.name}${optional}\`: ${param.type}${desc}`);
+    }
+    lines.push('');
+  }
+
+  // Return type
+  if (api.returnType) {
+    lines.push('### Returns');
+    lines.push(`\`${api.returnType}\``);
+    lines.push('');
+  }
+
+  // JSDoc examples (from type definitions)
+  if (api.examples && api.examples.length > 0) {
+    lines.push('### JSDoc Examples');
+    for (const example of api.examples) {
+      const hasTypeScriptSignals = /\b(import|const|let|function|interface|type)\b/.test(example);
+      const lang = hasTypeScriptSignals ? 'typescript' : '';
+      lines.push(`\`\`\`${lang}`);
+      lines.push(example);
+      lines.push('```');
+    }
+    lines.push('');
+  }
+
+  return lines;
+}
+
+function renderProse(prose: string): string[] {
+  return ['## Description', prose, ''];
+}
+
+function renderExamples(examples: CodeExample[], maxCount?: number): string[] {
+  if (examples.length === 0) return [];
+  const lines: string[] = [];
+  const limit = maxCount ?? examples.length;
+
+  lines.push('## Code Examples');
+  for (const example of examples.slice(0, limit)) {
+    if (example.context) {
+      lines.push(`### ${example.context}`);
+    }
+    lines.push(`\`\`\`${example.language}`);
+    lines.push(example.code);
+    lines.push('```');
+    lines.push(`*Source: ${example.source}*`);
+    lines.push('');
+  }
+  if (examples.length > limit) {
+    lines.push(`*${examples.length - limit} more examples available*`);
+    lines.push('');
+  }
+  return lines;
+}
+
+function renderRelatedTypes(api: ApiSignature, currentSize: number): string[] {
+  const relatedTypeEntries = Object.entries(api.relatedTypes);
+  if (relatedTypeEntries.length === 0) return [];
+
+  const lines: string[] = [];
+  const maxRelatedTypes = currentSize > MAX_RESPONSE_SIZE * 0.5 ? 5 : relatedTypeEntries.length;
+
+  lines.push('### Related Types');
+  for (const [name, signature] of relatedTypeEntries.slice(0, maxRelatedTypes)) {
+    const truncatedSig = signature.length > 300
+      ? signature.substring(0, 297) + '...'
+      : signature;
+    lines.push(`**${name}**`);
+    lines.push('```typescript');
+    lines.push(truncatedSig);
+    lines.push('```');
+  }
+  if (relatedTypeEntries.length > maxRelatedTypes) {
+    lines.push(`*...and ${relatedTypeEntries.length - maxRelatedTypes} more related types*`);
+  }
+  lines.push('');
+  return lines;
+}
+
+function renderOverloads(api: ApiSignature, currentSize: number): string[] {
+  if (!api.overloads || api.overloads.length <= 1) return [];
+
+  const lines: string[] = [];
+  const maxOverloads = currentSize > MAX_RESPONSE_SIZE * 0.6 ? 3 : api.overloads.length;
+
+  lines.push('### Overloads');
+  for (const overload of api.overloads.slice(0, maxOverloads)) {
+    lines.push('```typescript');
+    lines.push(overload);
+    lines.push('```');
+  }
+  if (api.overloads.length > maxOverloads) {
+    lines.push(`*...and ${api.overloads.length - maxOverloads} more overloads*`);
+  }
+  lines.push('');
+  return lines;
+}
+
+function renderRelatedApis(relatedApis: string[]): string[] {
+  if (relatedApis.length === 0) return [];
+  return ['## Related APIs', relatedApis.map((a) => `- ${a}`).join('\n'), ''];
+}
+
+function renderNotes(notes: string[]): string[] {
+  if (notes.length === 0) return [];
+  return ['## Notes', ...notes.map((n) => `- ${n}`), ''];
+}
+
+// ==================== Intent-Driven Formatter ====================
+
 /**
  * Format the output for MCP response (minimal, LLM-friendly)
- * Progressively truncates when exceeding MAX_RESPONSE_SIZE
+ * Uses intent-driven assembly for context-aware formatting.
  */
 export function formatApiContextResponse(output: GetApiContextOutput): string {
   const lines: string[] = [];
@@ -299,133 +667,55 @@ export function formatApiContextResponse(output: GetApiContextOutput): string {
   }
   lines.push('');
 
-  // API signature
-  if (output.api) {
-    // Deprecation warning
-    if (output.api.deprecated) {
-      lines.push(`**DEPRECATED**${output.api.deprecatedMessage ? `: ${output.api.deprecatedMessage}` : ''}`);
-      lines.push('');
-    }
-
-    lines.push('## API Signature');
-    lines.push('```typescript');
-    lines.push(output.api.signature);
-    lines.push('```');
-    if (output.api.description) {
-      lines.push(output.api.description);
-    }
-    lines.push('');
-
-    // Parameters with descriptions
-    if (output.api.parameters && output.api.parameters.length > 0) {
-      lines.push('### Parameters');
-      for (const param of output.api.parameters) {
-        const optional = param.optional ? '?' : '';
-        const desc = param.description ? ` — ${param.description}` : '';
-        lines.push(`- \`${param.name}${optional}\`: ${param.type}${desc}`);
-      }
-      lines.push('');
-    }
-
-    // Return type
-    if (output.api.returnType) {
-      lines.push(`### Returns`);
-      lines.push(`\`${output.api.returnType}\``);
-      lines.push('');
-    }
-
-    // JSDoc examples (from type definitions)
-    if (output.api.examples && output.api.examples.length > 0) {
-      lines.push('### JSDoc Examples');
-      for (const example of output.api.examples) {
-        // Detect language from content
-        const hasTypeScriptSignals = /\b(import|const|let|function|interface|type)\b/.test(example);
-        const lang = hasTypeScriptSignals ? 'typescript' : '';
-        lines.push(`\`\`\`${lang}`);
-        lines.push(example);
-        lines.push('```');
-      }
-      lines.push('');
-    }
-
-    // Related types (limit based on size budget)
-    const relatedTypeEntries = Object.entries(output.api.relatedTypes);
-    if (relatedTypeEntries.length > 0) {
-      const currentSize = lines.join('\n').length;
-      const maxRelatedTypes = currentSize > MAX_RESPONSE_SIZE * 0.5 ? 5 : relatedTypeEntries.length;
-
-      lines.push('### Related Types');
-      for (const [name, signature] of relatedTypeEntries.slice(0, maxRelatedTypes)) {
-        // Truncate long signatures
-        const truncatedSig = signature.length > 300
-          ? signature.substring(0, 297) + '...'
-          : signature;
-        lines.push(`**${name}**`);
-        lines.push('```typescript');
-        lines.push(truncatedSig);
-        lines.push('```');
-      }
-      if (relatedTypeEntries.length > maxRelatedTypes) {
-        lines.push(`*...and ${relatedTypeEntries.length - maxRelatedTypes} more related types*`);
-      }
-      lines.push('');
-    }
-
-    // Overloads (limit to 2 if response is getting large)
-    if (output.api.overloads && output.api.overloads.length > 1) {
-      const currentSize = lines.join('\n').length;
-      const maxOverloads = currentSize > MAX_RESPONSE_SIZE * 0.6 ? 3 : output.api.overloads.length;
-
-      lines.push('### Overloads');
-      for (const overload of output.api.overloads.slice(0, maxOverloads)) {
-        lines.push('```typescript');
-        lines.push(overload);
-        lines.push('```');
-      }
-      if (output.api.overloads.length > maxOverloads) {
-        lines.push(`*...and ${output.api.overloads.length - maxOverloads} more overloads*`);
-      }
-      lines.push('');
-    }
-  }
-
-  // Related APIs
-  if (output.relatedApis.length > 0) {
-    lines.push('## Related APIs');
-    lines.push(output.relatedApis.map((a) => `- ${a}`).join('\n'));
+  // Usage summary for howto intent
+  if (output.intent === 'howto' && output.api) {
+    lines.push(synthesizeUsageSummary(output.api));
     lines.push('');
   }
 
-  // Examples (reduce count if response is getting large)
-  if (output.examples.length > 0) {
-    const currentSize = lines.join('\n').length;
-    const maxExamples = currentSize > MAX_RESPONSE_SIZE * 0.8 ? Math.min(2, output.examples.length) : output.examples.length;
+  // Intent-driven content assembly
+  switch (output.intent) {
+    case 'howto':
+      // Examples first, then prose, then signature (brief), skip related types
+      lines.push(...renderExamples(output.examples));
+      if (output.prose) lines.push(...renderProse(output.prose));
+      if (output.api) lines.push(...renderSignature(output.api, true));
+      break;
 
-    lines.push('## Code Examples');
-    for (const example of output.examples.slice(0, maxExamples)) {
-      if (example.context) {
-        lines.push(`### ${example.context}`);
+    case 'reference':
+      // Signature first (full), then related types, then examples (1 max)
+      if (output.api) {
+        lines.push(...renderSignature(output.api, false));
+        lines.push(...renderRelatedTypes(output.api, lines.join('\n').length));
+        lines.push(...renderOverloads(output.api, lines.join('\n').length));
       }
-      lines.push(`\`\`\`${example.language}`);
-      lines.push(example.code);
-      lines.push('```');
-      lines.push(`*Source: ${example.source}*`);
-      lines.push('');
-    }
-    if (output.examples.length > maxExamples) {
-      lines.push(`*${output.examples.length - maxExamples} more examples available*`);
-      lines.push('');
-    }
+      if (output.prose) lines.push(...renderProse(output.prose));
+      lines.push(...renderExamples(output.examples, 1));
+      break;
+
+    case 'migration':
+      // Prose first (focus on changes), then signature diffs
+      if (output.prose) lines.push(...renderProse(output.prose));
+      if (output.api) lines.push(...renderSignature(output.api, false));
+      lines.push(...renderExamples(output.examples));
+      break;
+
+    case 'balanced':
+    default:
+      // Default order: signature, prose, examples, related types
+      if (output.api) {
+        lines.push(...renderSignature(output.api, false));
+        lines.push(...renderRelatedTypes(output.api, lines.join('\n').length));
+        lines.push(...renderOverloads(output.api, lines.join('\n').length));
+      }
+      if (output.prose) lines.push(...renderProse(output.prose));
+      lines.push(...renderExamples(output.examples));
+      break;
   }
 
-  // Notes
-  if (output.notes.length > 0) {
-    lines.push('## Notes');
-    for (const note of output.notes) {
-      lines.push(`- ${note}`);
-    }
-    lines.push('');
-  }
+  // Always include related APIs and notes
+  lines.push(...renderRelatedApis(output.relatedApis));
+  lines.push(...renderNotes(output.notes));
 
   return lines.join('\n');
 }

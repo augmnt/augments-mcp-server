@@ -7,6 +7,7 @@ export {
   formatApiContextResponse,
   type GetApiContextInput,
   type GetApiContextOutput,
+  type QueryIntent,
 } from './get-api-context';
 
 export {

@@ -7,6 +7,7 @@
  */
 
 import { getLogger } from '@/utils/logger';
+import { getTypeFetcher } from './type-fetcher';
 
 const logger = getLogger('example-extractor');
 
@@ -314,9 +315,19 @@ const CONCEPT_TO_DOC_PATHS: Record<string, Record<string, string[]>> = {
 /**
  * Code example extractor for finding and parsing examples
  */
+/**
+ * Discovered doc source info from npm metadata
+ */
+interface DiscoveredDocSource {
+  owner: string;
+  repo: string;
+  docPaths: string[];
+}
+
 export class ExampleExtractor {
   private cache: Map<string, CodeExample[]> = new Map();
   private conceptCache: Map<string, { examples: CodeExample[]; fetchedAt: number }> = new Map();
+  private discoveryCache: Map<string, DiscoveredDocSource | null> = new Map();
   private readonly CACHE_TTL = 3600 * 1000; // 1 hour
   private readonly MAX_CONCEPT_CACHE_SIZE = 100;
 
@@ -536,6 +547,93 @@ export class ExampleExtractor {
   }
 
   /**
+   * Auto-discover doc source from npm package metadata.
+   * Parses repository URL to find GitHub owner/repo, then probes common doc paths.
+   */
+  async discoverDocSource(packageName: string): Promise<DiscoveredDocSource | null> {
+    // Check discovery cache (indefinite TTL)
+    if (this.discoveryCache.has(packageName)) {
+      return this.discoveryCache.get(packageName)!;
+    }
+
+    try {
+      const typeFetcher = getTypeFetcher();
+      const info = await typeFetcher.getVersionSpecificInfo(packageName, 'latest');
+      if (!info) {
+        this.discoveryCache.set(packageName, null);
+        return null;
+      }
+
+      // Parse repository URL
+      let repoUrl: string | null = null;
+      if (typeof info.repository === 'string') {
+        repoUrl = info.repository;
+      } else if (info.repository?.url) {
+        repoUrl = info.repository.url;
+      }
+
+      if (!repoUrl) {
+        this.discoveryCache.set(packageName, null);
+        return null;
+      }
+
+      // Extract owner/repo from GitHub URL patterns
+      const ghMatch = repoUrl.match(/github\.com[/:]([^/]+)\/([^/.]+)/);
+      if (!ghMatch) {
+        this.discoveryCache.set(packageName, null);
+        return null;
+      }
+
+      const owner = ghMatch[1];
+      const repo = ghMatch[2];
+
+      // Probe common doc paths via GitHub raw content
+      const probePaths = ['docs/', 'documentation/', 'doc/', 'README.md'];
+      const discoveredPaths: string[] = [];
+
+      // Probe in parallel with a 5s overall timeout
+      const probePromises = probePaths.map(async (path) => {
+        try {
+          const url = `https://raw.githubusercontent.com/${owner}/${repo}/main/${path}`;
+          const response = await fetch(url, {
+            method: 'HEAD',
+            signal: AbortSignal.timeout(5000),
+          });
+          if (response.ok) return path;
+        } catch {
+          // Ignore probe failures
+        }
+        return null;
+      });
+
+      const probeResults = await Promise.allSettled(probePromises);
+      for (const result of probeResults) {
+        if (result.status === 'fulfilled' && result.value) {
+          discoveredPaths.push(result.value);
+        }
+      }
+
+      if (discoveredPaths.length === 0) {
+        // Always have README.md as fallback
+        discoveredPaths.push('README.md');
+      }
+
+      const discovered: DiscoveredDocSource = { owner, repo, docPaths: discoveredPaths };
+      this.discoveryCache.set(packageName, discovered);
+
+      logger.debug('Discovered doc source', { packageName, owner, repo, docPaths: discoveredPaths });
+      return discovered;
+    } catch (error) {
+      logger.debug('Doc source discovery failed', {
+        packageName,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      this.discoveryCache.set(packageName, null);
+      return null;
+    }
+  }
+
+  /**
    * Get examples for a specific concept and framework
    */
   async getExamplesForConcept(
@@ -551,33 +649,52 @@ export class ExampleExtractor {
     }
 
     const config = this.getDocSource(framework);
-    if (!config) {
-      logger.debug('No doc source for framework', { framework });
-      return [];
-    }
-
-    const docPaths = this.getDocPathsForConcept(framework, concept);
     const allExamples: CodeExample[] = [];
 
-    // Fetch all doc paths in parallel
-    const fetchPromises = docPaths.map(async (path) => {
-      const fullPath = config.docsPath
-        ? `${config.docsPath}/${path}`
-        : path;
+    if (config) {
+      const docPaths = this.getDocPathsForConcept(framework, concept);
 
-      const examples = await this.fetchExamplesFromGitHub(config, fullPath);
+      // Fetch all doc paths in parallel
+      const fetchPromises = docPaths.map(async (path) => {
+        const fullPath = config.docsPath
+          ? `${config.docsPath}/${path}`
+          : path;
 
-      // Filter the fetched examples for relevance
-      return examples.filter((ex) =>
-        ex.concepts.includes(concept.toLowerCase()) ||
-        ex.code.toLowerCase().includes(concept.toLowerCase())
-      );
-    });
+        const examples = await this.fetchExamplesFromGitHub(config, fullPath);
 
-    const results = await Promise.allSettled(fetchPromises);
-    for (const result of results) {
-      if (result.status === 'fulfilled') {
-        allExamples.push(...result.value);
+        // Filter the fetched examples for relevance
+        return examples.filter((ex) =>
+          ex.concepts.includes(concept.toLowerCase()) ||
+          ex.code.toLowerCase().includes(concept.toLowerCase())
+        );
+      });
+
+      const results = await Promise.allSettled(fetchPromises);
+      for (const result of results) {
+        if (result.status === 'fulfilled') {
+          allExamples.push(...result.value);
+        }
+      }
+    } else {
+      // No curated doc source — try auto-discovery from npm metadata
+      logger.debug('No curated doc source, trying auto-discovery', { framework });
+      const discovered = await this.discoverDocSource(framework);
+      if (discovered) {
+        // Try fetching README.md from the discovered repo
+        const discoveredConfig: DocSourceConfig = {
+          repo: `${discovered.owner}/${discovered.repo}`,
+          docsPath: '',
+          branch: 'main',
+        };
+
+        for (const docPath of discovered.docPaths) {
+          const examples = await this.fetchExamplesFromGitHub(discoveredConfig, docPath);
+          const relevant = examples.filter((ex) =>
+            ex.concepts.includes(concept.toLowerCase()) ||
+            ex.code.toLowerCase().includes(concept.toLowerCase())
+          );
+          allExamples.push(...relevant);
+        }
       }
     }
 

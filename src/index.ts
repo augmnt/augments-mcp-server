@@ -4,14 +4,10 @@
  * Main entry point for the TypeScript MCP server.
  * Provides real-time framework documentation access for AI assistants.
  *
- * v4: Query-focused context extraction with TypeScript definition parsing.
+ * v5: Types + prose + examples with context-aware formatting for any npm package.
  */
 
 export { getServer, SERVER_VERSION } from './server';
-export { getRegistry, FrameworkRegistryManager } from './registry/manager';
-export { getCache, KVCache } from './cache';
-export { getGitHubProvider, GitHubProvider } from './providers/github';
-export { getWebsiteProvider, WebsiteProvider } from './providers/website';
 
 // v4 Core modules
 export * from './core';

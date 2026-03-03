@@ -25,6 +25,39 @@ const SCORE_HAS_DESCRIPTION = 10;
 const SCORE_HAS_EXAMPLES = 5;
 const SCORE_DEPRECATED_PENALTY = -20;
 const SCORE_WORD_BOUNDARY = 5;
+const SCORE_SYNONYM_MATCH = 40;
+
+/**
+ * Concept synonym clusters: maps high-level concepts to concrete API names.
+ * "state management" → matches useState, createStore, atom, etc.
+ */
+const CONCEPT_SYNONYMS: Record<string, string[]> = {
+  state: ['usestate', 'usereducer', 'createstore', 'atom', 'signal', 'ref', 'reactive', 'writable', 'store'],
+  form: ['useform', 'formdata', 'register', 'handlesubmit', 'validate', 'field', 'control'],
+  fetch: ['usequery', 'useswr', 'fetch', 'axios', 'request', 'get', 'post', 'createclient'],
+  animation: ['usespring', 'motion', 'animate', 'transition', 'keyframes', 'spring', 'tween'],
+  routing: ['userouter', 'usenavigate', 'useparams', 'route', 'link', 'navigate', 'redirect', 'push'],
+  auth: ['useauth', 'signin', 'signout', 'session', 'token', 'authorize', 'authenticate', 'login'],
+  cache: ['usecache', 'cache', 'memoize', 'memo', 'usememo', 'persist', 'store', 'invalidate'],
+  effect: ['useeffect', 'watcheffect', 'watch', 'onmount', 'onmounted', 'afterrender', 'lifecycle'],
+};
+
+/**
+ * Expand query terms with synonyms. If any query term matches a concept key,
+ * add all synonym terms as additional match candidates.
+ */
+function expandWithSynonyms(queryParts: string[]): string[] {
+  const expanded = new Set(queryParts);
+  for (const part of queryParts) {
+    const synonyms = CONCEPT_SYNONYMS[part];
+    if (synonyms) {
+      for (const syn of synonyms) {
+        expanded.add(syn);
+      }
+    }
+  }
+  return Array.from(expanded);
+}
 
 /**
  * Represents a parsed type definition
@@ -258,12 +291,15 @@ export class TypeParser {
     // "create client" → "createclient" to match "createClient"
     const concatenated = queryParts.length > 1 ? queryParts.join('') : null;
 
+    // Expand query with concept synonyms (e.g., "state" → also match "usestate", "createstore", etc.)
+    const expandedTerms = expandWithSynonyms(queryParts);
+
     return parseResult.definitions
       .filter((def) => {
         const nameLower = def.name.toLowerCase();
         const signatureLower = def.signature.toLowerCase();
 
-        // Match all query parts (includes or word-boundary)
+        // Match all original query parts (includes or word-boundary)
         const partsMatch = queryParts.every(
           (part) => nameLower.includes(part) || signatureLower.includes(part)
         );
@@ -272,12 +308,17 @@ export class TypeParser {
           ? nameLower.includes(concatenated) || signatureLower.includes(concatenated)
           : false;
 
-        return partsMatch || concatMatch;
+        // Synonym match: name matches any expanded synonym term
+        const synonymMatch = expandedTerms.some(
+          (term) => nameLower.includes(term) || nameLower === term
+        );
+
+        return partsMatch || concatMatch || synonymMatch;
       })
       .sort((a, b) => {
         // Score-based sorting for better ranking
-        const scoreA = this.scoreDefinition(a, queryLower);
-        const scoreB = this.scoreDefinition(b, queryLower);
+        const scoreA = this.scoreDefinition(a, queryLower, expandedTerms);
+        const scoreB = this.scoreDefinition(b, queryLower, expandedTerms);
         return scoreB - scoreA;
       })
       .slice(0, maxResults);
@@ -286,7 +327,7 @@ export class TypeParser {
   /**
    * Score a type definition for relevance ranking
    */
-  private scoreDefinition(def: TypeDefinition, queryLower: string): number {
+  private scoreDefinition(def: TypeDefinition, queryLower: string, expandedTerms?: string[]): number {
     let score = 0;
     const nameLower = def.name.toLowerCase();
 
@@ -296,6 +337,13 @@ export class TypeParser {
     else if (nameLower.startsWith(queryLower)) score += SCORE_STARTS_WITH;
     // Contains query
     else if (nameLower.includes(queryLower)) score += SCORE_CONTAINS;
+
+    // Synonym match bonus: name matches an expanded synonym term but not the original query
+    if (expandedTerms && !nameLower.includes(queryLower)) {
+      if (expandedTerms.some((term) => nameLower.includes(term) || nameLower === term)) {
+        score += SCORE_SYNONYM_MATCH;
+      }
+    }
 
     // Word-boundary bonus: query matches at a word boundary in the name
     // e.g., "use" matches "useEffect" at boundary but not "excludeFromAutoFill"

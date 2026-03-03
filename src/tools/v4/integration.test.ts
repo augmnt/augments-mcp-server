@@ -138,6 +138,7 @@ vi.mock('@/core', () => {
     }),
     getBarrelExportPaths: vi.fn(() => []),
     fetchSpecificTypeFile: vi.fn(async () => null),
+    fetchReadme: vi.fn(async () => null),
   };
 
   const mockTypeParser = {
@@ -206,6 +207,11 @@ vi.mock('@/core', () => {
           concepts: [concept.toLowerCase()],
         },
       ];
+    }),
+    getDocSource: vi.fn((framework: string) => {
+      // Simulate having doc sources for known frameworks
+      const known = ['react', 'next', 'vue', 'zod', 'express'];
+      return known.includes(framework) ? { repo: `mock/${framework}`, docsPath: 'docs', branch: 'main' } : null;
     }),
   };
 

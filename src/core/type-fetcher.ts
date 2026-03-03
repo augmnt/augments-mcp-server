@@ -136,6 +136,8 @@ export interface NpmVersionInfo {
   exports?: Record<string, unknown>;
   dependencies?: Record<string, string>;
   peerDependencies?: Record<string, string>;
+  repository?: { type: string; url: string } | string;
+  homepage?: string;
   dist: {
     tarball: string;
     shasum: string;
@@ -746,6 +748,36 @@ export class TypeFetcher {
    */
   hasBarrelExports(packageName: string): boolean {
     return packageName in BARREL_EXPORT_MODULES;
+  }
+
+  /**
+   * Fetch README.md for a package from CDN.
+   * Used as fallback when no DOC_SOURCES entry exists.
+   */
+  async fetchReadme(packageName: string, version?: string): Promise<string | null> {
+    const resolvedVersion = await this.resolveVersion(packageName, version);
+    if (!resolvedVersion) return null;
+
+    const cacheKey = `readme:${packageName}@${resolvedVersion}`;
+    const cached = this.cache.get(cacheKey);
+    if (cached && Date.now() - cached.fetchedAt < this.CACHE_TTL) {
+      return cached.content;
+    }
+
+    const content = await this.fetchFromCdn(packageName, resolvedVersion, 'README.md');
+    if (!content) return null;
+
+    // Cache the README content using the type definitions cache
+    this.cache.set(cacheKey, {
+      packageName,
+      version: resolvedVersion,
+      content,
+      filePath: 'README.md',
+      source: 'bundled',
+      fetchedAt: Date.now(),
+    });
+
+    return content;
   }
 
   /**

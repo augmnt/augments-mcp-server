@@ -1,30 +1,35 @@
 ![Augments MCP Server](https://raw.githubusercontent.com/augmnt/augments-mcp-server/main/banner.png)
 
-A next-generation framework documentation provider for Claude Code via Model Context Protocol (MCP). Provides **query-focused API context** by extracting TypeScript definitions directly from npm packages - delivering minimal, accurate information instead of dumping entire documentation pages.
+A next-generation framework documentation provider for Claude Code via Model Context Protocol (MCP). Returns **types + prose + examples** with context-aware formatting for **any** npm package — not just curated ones.
 
 mcp-name: dev.augments/mcp
 
-## What's New in v4
+## What's New in v5
 
-**Version 4.0** introduces a fundamentally new approach to framework documentation:
+**Version 5.0** closes the gap with context7 by adding prose documentation, README fallback, concept search, and intent-aware formatting — while keeping the type-signature accuracy that made v4 unique.
 
-| Old Approach (v3) | New Approach (v4) |
-|-------------------|-------------------|
-| Fetch entire documentation pages | Extract specific API signatures |
-| ~50KB of context per query | ~500 tokens of precise context |
-| Manual framework registry (85) | Auto-discovery via npm (millions) |
-| No version support | Version-specific queries |
-| Prose documentation | TypeScript definitions (source of truth) |
+| v4 | v5 |
+|----|-----|
+| Type signatures only | Types + prose + examples |
+| ~20 curated frameworks | Any npm package (auto-discovery) |
+| Keyword-only search | Concept synonyms ("state" → useState, createStore, atom) |
+| One-size-fits-all format | Intent-aware (how-to vs reference vs migration) |
+| 7 tools (4 legacy) | 3 focused tools |
 
-### Why TypeScript Definitions?
+### What You Get Now
 
-Documentation can be outdated or wrong. **TypeScript definitions can't lie** - they're compiled and must match the actual API. When you ask "what are the params for useEffect?", v4 gives you:
-
-```typescript
-function useEffect(effect: EffectCallback, deps?: DependencyList): void
 ```
+Query: "how to use zustand"
+→ Intent: howto
+→ Code examples first, then prose explanation, then brief signature
 
-Not 5KB of tutorial explaining what effects are.
+Query: "useEffect signature"
+→ Intent: reference
+→ Full signature, parameters, return type, related types, 1 example
+
+Query: "ioredis set"
+→ README fallback provides examples for uncurated packages
+```
 
 ## Quick Start
 
@@ -51,163 +56,125 @@ claude mcp list
 }
 ```
 
-### Using the v4 Tools
+### Usage
 
 ```
-# Get API signature with minimal context
-@augments get_api_context query="useEffect cleanup" framework="react" version="19"
+# Get API context with prose + examples (recommended first tool to try)
+@augments get_api_context query="useEffect cleanup" framework="react"
 
-# Search for APIs across frameworks
-@augments search_apis query="state management hook"
+# How-to format — examples first
+@augments get_api_context query="how to use zustand"
 
-# Get version information
+# Reference format — full signature first
+@augments get_api_context query="zod object signature"
+
+# Search for APIs by concept (synonym-aware)
+@augments search_apis query="state management"
+
+# Get version information and breaking changes
 @augments get_version_info framework="react" fromVersion="18" toVersion="19"
 ```
 
-## MCP Tools
-
-### v4 API Context Tools (New)
+## Tools
 
 | Tool | Description |
 |------|-------------|
-| `get_api_context` | Query-focused TypeScript extraction - returns minimal API signatures |
-| `search_apis` | Search for APIs across frameworks by keyword |
-| `get_version_info` | Get npm version info, compare versions, detect breaking changes |
+| `get_api_context` | **Primary tool.** Returns API signatures, prose documentation, and code examples for any npm package. Handles natural language queries with intent detection. |
+| `search_apis` | Search for APIs across frameworks by keyword or concept. Supports synonym expansion ("state" matches useState, createStore, atom, etc). |
+| `get_version_info` | Get npm version info, compare versions, and detect breaking changes. |
 
-### Framework Discovery
-
-| Tool | Description |
-|------|-------------|
-| `list_available_frameworks` | List frameworks by category |
-| `search_frameworks` | Search with relevance scoring |
-| `get_framework_info` | Get detailed framework config |
-| `get_registry_stats` | Registry statistics |
-
-### Documentation Access
-
-| Tool | Description |
-|------|-------------|
-| `get_framework_docs` | Fetch comprehensive documentation |
-| `get_framework_examples` | Get code examples |
-| `search_documentation` | Search within docs |
-
-### Context Enhancement
-
-| Tool | Description |
-|------|-------------|
-| `get_framework_context` | Multi-framework context |
-| `analyze_code_compatibility` | Code compatibility check |
-
-### Cache Management
-
-| Tool | Description |
-|------|-------------|
-| `check_framework_updates` | Check for updates |
-| `refresh_framework_cache` | Refresh cache |
-| `get_cache_stats` | Cache statistics |
-
-## v4 Architecture
+## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│  Query: "useEffect cleanup react 19"                    │
-└─────────────────────┬───────────────────────────────────┘
-                      ↓
-┌─────────────────────────────────────────────────────────┐
-│  Query Parser                                           │
-│  • Identify framework: react                            │
-│  • Identify concept: useEffect                          │
-│  • Identify version: 19                                 │
-└─────────────────────┬───────────────────────────────────┘
-                      ↓
-┌─────────────────────────────────────────────────────────┐
-│  Type Fetcher                                           │
-│  • Fetch @types/react@19 from npm CDN                   │
-│  • Handle barrel exports (sub-module fetching)          │
-│  • Cache with TTL                                       │
-└─────────────────────┬───────────────────────────────────┘
-                      ↓
-┌─────────────────────────────────────────────────────────┐
-│  Type Parser (TypeScript Compiler API)                  │
-│  • Extract useEffect signature                          │
-│  • Resolve related types (EffectCallback, etc.)         │
-│  • Find overloads                                       │
-└─────────────────────┬───────────────────────────────────┘
-                      ↓
-┌─────────────────────────────────────────────────────────┐
-│  Return ~500 tokens:                                    │
-│  {                                                      │
-│    api: { name, signature, parameters, returnType },    │
-│    relatedTypes: { EffectCallback: "...", ... },        │
-│    examples: [...],                                     │
-│    version: "19.0.4"                                    │
-│  }                                                      │
-└─────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────┐
+│  Query: "how to use useEffect cleanup"                   │
+└──────────────────────┬───────────────────────────────────┘
+                       ↓
+┌──────────────────────────────────────────────────────────┐
+│  Intent Detection → "howto"                              │
+│  Query Parser → framework: react, concept: useEffect     │
+└──────────────────────┬───────────────────────────────────┘
+                       ↓
+         ┌─────────────┴─────────────┐
+         ↓                           ↓
+┌─────────────────┐      ┌──────────────────────┐
+│  Type Fetcher   │      │  Example Extractor   │
+│  • CDN racing   │      │  • GitHub docs       │
+│  • npm metadata │      │  • README fallback   │
+│  • @types       │      │  • Auto-discovery    │
+└────────┬────────┘      └──────────┬───────────┘
+         ↓                          ↓
+┌─────────────────┐      ┌──────────────────────┐
+│  Type Parser    │      │  Prose Extractor     │
+│  • Signatures   │      │  • Section scoring   │
+│  • Parameters   │      │  • Paragraph extract │
+│  • Related types│      │  • 2000 char budget  │
+└────────┬────────┘      └──────────┬───────────┘
+         └─────────────┬────────────┘
+                       ↓
+┌──────────────────────────────────────────────────────────┐
+│  Intent-Driven Formatter (howto)                         │
+│  → Examples first, prose, brief signature                │
+│  → ~500-2000 tokens, 10KB max                           │
+└──────────────────────────────────────────────────────────┘
 ```
 
 ### Source Structure
 
 ```
 src/
-├── core/                    # v4 Core modules
+├── core/                    # Core modules
 │   ├── query-parser.ts      # Parse natural language → framework + concept
-│   ├── type-fetcher.ts      # Fetch .d.ts from npm/unpkg/jsdelivr
-│   ├── type-parser.ts       # Parse TypeScript, extract signatures
-│   ├── example-extractor.ts # Fetch code examples from GitHub
+│   ├── type-fetcher.ts      # Fetch .d.ts + README from npm/unpkg/jsdelivr
+│   ├── type-parser.ts       # Parse TypeScript, extract signatures, synonym search
+│   ├── example-extractor.ts # Fetch examples from GitHub docs + auto-discovery
 │   └── version-registry.ts  # npm registry integration
-├── tools/
-│   ├── v4/                  # v4 API context tools
-│   │   ├── get-api-context.ts
-│   │   ├── search-apis.ts
-│   │   └── get-version-info.ts
-│   ├── discovery.ts         # Framework discovery tools
-│   ├── documentation.ts     # Documentation tools
-│   ├── context.ts           # Context enhancement tools
-│   └── cache-management.ts  # Cache management
-├── registry/                # Framework registry (v3 compatibility)
-├── providers/               # Documentation providers
-├── cache/                   # Caching layer
-└── server.ts                # MCP server setup (15 tools)
+├── tools/v4/                # MCP tools
+│   ├── get-api-context.ts   # Primary tool (types + prose + examples)
+│   ├── search-apis.ts       # Cross-framework API search
+│   └── get-version-info.ts  # Version comparison
+├── cache/                   # In-memory LRU cache
+└── server.ts                # MCP server (3 tools)
 ```
+
+## Key Features
+
+### Concept Synonyms
+"state management" matches `useState`, `useReducer`, `createStore`, `atom`, `signal`, `ref`, `reactive`, `writable`, `store`. Eight concept clusters cover state, form, fetch, animation, routing, auth, cache, and effect patterns.
+
+### README Fallback
+For the 99%+ of npm packages without curated documentation sources, augments fetches `README.md` from the CDN and extracts concept-relevant code blocks and prose.
+
+### Auto-Discovery
+When no curated doc source exists, augments parses the npm `repository` field, identifies the GitHub repo, and probes for `docs/`, `documentation/`, `doc/`, or `README.md`.
+
+### Intent-Aware Formatting
+| Intent | Trigger | Format |
+|--------|---------|--------|
+| `howto` | "how to", "example of", "guide" | Examples → prose → brief signature |
+| `reference` | "signature", "types", "parameters" | Full signature → related types → 1 example |
+| `migration` | "migrate", "upgrade", "breaking" | Prose → signature → examples |
+| `balanced` | Default | Signature → prose → examples |
 
 ## Supported Frameworks
 
-### v4 Auto-Discovery
-Any npm package with TypeScript types can be queried - no manual configuration needed:
+### Auto-Discovery (Any npm Package)
+Any npm package with TypeScript types can be queried — no configuration needed:
 - Bundled types (`"types": "./dist/index.d.ts"` in package.json)
 - DefinitelyTyped (`@types/package-name`)
+- README fallback for packages without types
 
-### Tested & Optimized
-| Framework | Package | Features |
-|-----------|---------|----------|
-| React | `react`, `@types/react` | All hooks, components, types |
-| TanStack Query | `@tanstack/react-query` | useQuery, useMutation, etc. |
-| React Hook Form | `react-hook-form` | useForm, useController, etc. |
-| Supabase | `@supabase/supabase-js` | createClient, auth, storage |
-| Express | `express` | Router, middleware |
-| Mongoose | `mongoose` | Schema, Model |
-| Next.js | `next` | App Router, Server Components |
-| Vue 3 | `vue` | Composition API |
-| Zod | `zod` | Schema validation |
-| tRPC | `@trpc/client` | Type-safe APIs |
-| Prisma | `@prisma/client` | Database ORM |
+### Optimized with Curated Docs (22 Frameworks)
+React, Next.js, Vue, Prisma, Zod, Supabase, TanStack Query, tRPC, React Hook Form, Framer Motion, Express, Zustand, Jotai, Drizzle, SWR, Vitest, Playwright, Fastify, Hono, Solid, Svelte, Angular, Redux
 
-### Legacy Framework Registry
-85+ frameworks with manual documentation sources are still available via v3 tools.
+### Barrel Export Handling
+Special sub-module resolution for: React Hook Form, TanStack Query, Zustand, Jotai, tRPC, Drizzle ORM, Next.js
 
 ## Self-Hosting
 
 ### Deploy to Vercel
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/augmnt/augments-mcp-server&env=GITHUB_TOKEN,UPSTASH_REDIS_REST_URL,UPSTASH_REDIS_REST_TOKEN)
-
-### Environment Variables
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `GITHUB_TOKEN` | Optional | GitHub token for higher API rate limits |
-| `UPSTASH_REDIS_REST_URL` | Optional | Upstash Redis URL for caching |
-| `UPSTASH_REDIS_REST_TOKEN` | Optional | Upstash Redis token |
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/augmnt/augments-mcp-server)
 
 ### Local Development
 
@@ -220,30 +187,34 @@ npm install
 # Run development server
 npm run dev
 
-# Build
-npm run build
+# Run tests
+npm test
 
 # Type check
 npm run type-check
+
+# Build
+npm run build
 ```
 
-## How v4 Compares to Context7
+## How v5 Compares to Context7
 
-| Aspect | Context7 | Augments v4 |
+| Aspect | Context7 | Augments v5 |
 |--------|----------|-------------|
-| **Source** | Parsed prose docs | TypeScript definitions |
-| **Accuracy** | Docs can be wrong | Types must be correct |
-| **Context size** | ~5-10KB chunks | ~500 tokens |
-| **LLM cost** | Pays for ranking | Zero - pure data retrieval |
+| **Source** | Parsed prose docs | TypeScript definitions + prose + README |
+| **Accuracy** | Docs can be wrong | Types must be correct, prose supplements |
+| **Context size** | ~5-10KB chunks | ~500-2000 tokens (intent-aware) |
+| **Coverage** | Manual submission | Any npm package (auto-discovery) |
+| **Format** | One-size-fits-all | Intent-aware (how-to vs reference) |
+| **Search** | Keyword match | Concept synonyms + keyword |
 | **Freshness** | Crawl schedule | On-demand from npm |
-| **Coverage** | Manual submission | Any npm package with types |
 
 ## Contributing
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/amazing-feature`
 3. Make your changes
-4. Run tests and linting
+4. Run tests: `npm test`
 5. Submit a pull request
 
 ## License
@@ -257,4 +228,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Built for the Claude Code ecosystem** | **Version 4.0.0**
+**Built for the Claude Code ecosystem** | **Version 5.0.0**

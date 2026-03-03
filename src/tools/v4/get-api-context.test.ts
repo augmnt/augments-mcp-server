@@ -34,6 +34,8 @@ describe('get-api-context', () => {
         api: null,
         relatedApis: [],
         examples: [],
+        prose: null,
+        intent: 'balanced' as const,
         confidence: 0.8,
         query: defaultQuery,
         notes: [],
