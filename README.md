@@ -1,5 +1,7 @@
 ![Augments MCP Server](https://raw.githubusercontent.com/augmnt/augments-mcp-server/main/banner.png)
 
+[![TypeScript](https://img.shields.io/badge/typescript-5.x-blue.svg)](https://www.typescriptlang.org/) [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE) [![MCPAmpel](https://img.shields.io/endpoint?url=https://mcpampel.com/badge/augmnt/augments-mcp-server.json)](https://mcpampel.com/repo/augmnt/augments-mcp-server)
+
 A next-generation framework documentation provider for Claude Code via Model Context Protocol (MCP). Returns **types + prose + examples** with context-aware formatting for **any** npm package — not just curated ones.
 
 mcp-name: dev.augments/mcp
