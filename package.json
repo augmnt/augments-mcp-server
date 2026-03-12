@@ -1,31 +1,35 @@
 {
-  "name": "augments-mcp-server",
-  "version": "5.0.1",
+  "name": "@augmnt-sh/augments-mcp-server",
+  "version": "6.0.0",
   "description": "Augments MCP Server - Framework Documentation Provider for AI Assistants",
-  "private": true,
   "type": "module",
+  "bin": {
+    "augments-mcp-server": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "start": "node dist/cli.js",
+    "lint": "tsc --noEmit",
     "type-check": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.0",
-    "next": "^14.2.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "typescript": "^5.4.0",
     "zod": "^3.23.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
-    "@types/react": "^18.2.0",
-    "eslint": "^8.57.0",
-    "eslint-config-next": "^14.2.0",
-    "typescript": "^5.4.0",
+    "tsup": "^8.0.0",
     "vitest": "^3.2.4"
   },
   "engines": {
@@ -44,5 +48,8 @@
     "developer-tools"
   ],
   "author": "Augments",
-  "license": "MIT"
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
 }

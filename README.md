@@ -4,63 +4,57 @@ A next-generation framework documentation provider for Claude Code via Model Con
 
 mcp-name: dev.augments/mcp
 
-## What's New in v5
+## What's New in v6
 
-**Version 5.0** closes the gap with context7 by adding prose documentation, README fallback, concept search, and intent-aware formatting — while keeping the type-signature accuracy that made v4 unique.
+**Version 6.0** converts augments from a hosted HTTP service to a **local stdio MCP server** published on npm. No more remote calls — everything runs on your machine, faster and with zero hosting dependency.
 
-| v4 | v5 |
+| v5 | v6 |
 |----|-----|
-| Type signatures only | Types + prose + examples |
-| ~20 curated frameworks | Any npm package (auto-discovery) |
-| Keyword-only search | Concept synonyms ("state" → useState, createStore, atom) |
-| One-size-fits-all format | Intent-aware (how-to vs reference vs migration) |
-| 7 tools (4 legacy) | 3 focused tools |
-
-### What You Get Now
-
-```
-Query: "how to use zustand"
-→ Intent: howto
-→ Code examples first, then prose explanation, then brief signature
-
-Query: "useEffect signature"
-→ Intent: reference
-→ Full signature, parameters, return type, related types, 1 example
-
-Query: "ioredis set"
-→ README fallback provides examples for uncurated packages
-```
+| Hosted HTTP on Vercel | Local stdio via npx |
+| Remote network calls | Runs on your machine |
+| Next.js runtime | Lightweight tsup bundle |
+| Logs to stdout | Logs to stderr (stdio-safe) |
 
 ## Quick Start
 
-### Option 1: Hosted MCP Server — project-local (Recommended)
+### Claude Code
 
 ```bash
-# Add the hosted MCP server (available in current project only)
-claude mcp add --transport http augments https://mcp.augments.dev/mcp
+# Add the MCP server (runs locally via npx)
+claude mcp add augments -- npx -y @augmnt-sh/augments-mcp-server
 
 # Verify configuration
 claude mcp list
 ```
 
-### Option 2: Hosted MCP Server — user-wide
+### Cursor
 
-```bash
-# Add the hosted MCP server (available across all projects)
-claude mcp add --transport http --scope user augments https://mcp.augments.dev/mcp
-
-# Verify configuration
-claude mcp list
-```
-
-### Option 3: Using Cursor
+Add to your MCP config:
 
 ```json
 {
   "mcpServers": {
     "augments": {
-      "transport": "http",
-      "url": "https://mcp.augments.dev/mcp"
+      "command": "npx",
+      "args": ["-y", "augments-mcp-server"]
+    }
+  }
+}
+```
+
+### Environment Variables
+
+Set `GITHUB_TOKEN` for higher GitHub API rate limits when fetching examples:
+
+```json
+{
+  "mcpServers": {
+    "augments": {
+      "command": "npx",
+      "args": ["-y", "augments-mcp-server"],
+      "env": {
+        "GITHUB_TOKEN": "ghp_your_token_here"
+      }
     }
   }
 }
@@ -115,17 +109,18 @@ flowchart TD
 
 ```
 src/
+├── cli.ts                   # stdio entry point
+├── server.ts                # MCP server (3 tools)
 ├── core/                    # Core modules
 │   ├── query-parser.ts      # Parse natural language → framework + concept
 │   ├── type-fetcher.ts      # Fetch .d.ts + README from npm/unpkg/jsdelivr
 │   ├── type-parser.ts       # Parse TypeScript, extract signatures, synonym search
 │   ├── example-extractor.ts # Fetch examples from GitHub docs + auto-discovery
 │   └── version-registry.ts  # npm registry integration
-├── tools/v4/                # MCP tools
-│   ├── get-api-context.ts   # Primary tool (types + prose + examples)
-│   ├── search-apis.ts       # Cross-framework API search
-│   └── get-version-info.ts  # Version comparison
-└── server.ts                # MCP server (3 tools)
+└── tools/v4/                # MCP tools
+    ├── get-api-context.ts   # Primary tool (types + prose + examples)
+    ├── search-apis.ts       # Cross-framework API search
+    └── get-version-info.ts  # Version comparison
 ```
 
 ## Key Features
@@ -164,13 +159,7 @@ This means augments works with the entire npm ecosystem (~2.5M packages), not ju
 ### Barrel Export Handling
 Special sub-module resolution for: React Hook Form, TanStack Query, Zustand, Jotai, tRPC, Drizzle ORM, Next.js
 
-## Self-Hosting
-
-### Deploy to Vercel
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/augmnt/augments-mcp-server)
-
-### Local Development
+## Local Development
 
 ```bash
 # Clone and install
@@ -178,7 +167,13 @@ git clone https://github.com/augmnt/augments-mcp-server.git
 cd augments-mcp-server
 npm install
 
-# Run development server
+# Build with tsup
+npm run build
+
+# Run locally
+npm start
+
+# Watch mode
 npm run dev
 
 # Run tests
@@ -186,14 +181,11 @@ npm test
 
 # Type check
 npm run type-check
-
-# Build
-npm run build
 ```
 
-## How v5 Compares to Context7
+## How Augments Compares to Context7
 
-| Aspect | Context7 | Augments v5 |
+| Aspect | Context7 | Augments |
 |--------|----------|-------------|
 | **Source** | Parsed prose docs | TypeScript definitions + prose + README |
 | **Accuracy** | Docs can be wrong | Types must be correct, prose supplements |
@@ -222,4 +214,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Built for the Claude Code ecosystem** | **Version 5.0.0**
+**Built for the Claude Code ecosystem** | **Version 6.0.0**

@@ -4,7 +4,7 @@
  * A comprehensive MCP server that provides real-time access to framework documentation
  * and context to enhance Claude Code's ability to generate accurate, up-to-date code.
  *
- * v5: Types + prose + examples with context-aware formatting for any npm package.
+ * v6: Local stdio MCP server, npm-publishable, tsup bundle.
  * Consolidated to 3 tools for optimal LLM tool-use decisions.
  *
  * Uses the official MCP SDK for Claude Code compatibility.
@@ -26,7 +26,7 @@ import { getLogger } from '@/utils/logger';
 const logger = getLogger('mcp-server');
 
 // Server version
-export const SERVER_VERSION = '5.0.0';
+export const SERVER_VERSION = '6.0.0';
 
 // Registered tool count — set during initialization, used by health check
 export let registeredToolCount = 0;
@@ -69,12 +69,9 @@ function formatError(error: unknown, toolName?: string): { content: Array<{ type
 }
 
 /**
- * Create a fresh MCP server instance per request.
+ * Create and configure the MCP server instance.
  *
- * McpServer.connect() binds the server to a single transport and cannot be
- * called again without closing first. In a stateless serverless environment
- * each request needs its own server+transport pair. Tool registration is
- * just attaching handler functions — very cheap.
+ * Registers all tools and kicks off background cache warming on first call.
  */
 export async function getServer(): Promise<McpServer> {
   const server = new McpServer({

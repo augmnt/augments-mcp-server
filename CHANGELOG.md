@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.0.0] - 2026-03-12
+
+### Changed
+- **Local stdio transport**: Replaced Vercel HTTP transport with stdio via `@modelcontextprotocol/sdk/server/stdio.js`. Users install with `npx -y @augmnt-sh/augments-mcp-server`
+- **npm-publishable**: Removed `"private": true`, added `bin`, `files`, and `prepublishOnly` to package.json
+- **tsup bundler**: Replaced Next.js build with tsup (ESM, node18 target, path alias resolution)
+- **Logger writes to stderr**: All log methods use `process.stderr.write()` instead of `console.*` to avoid corrupting the JSON-RPC stream on stdout
+- **typescript moved to dependencies**: Required at runtime by `type-parser.ts`
+
+### Removed
+- Next.js runtime (`next`, `react`, `react-dom`, `@types/react`, `eslint-config-next`)
+- Vercel deployment files (`vercel.json`, `next.config.mjs`, `next-env.d.ts`, `.eslintrc.json`)
+- HTTP transport layer (`app/api/mcp/route.ts`)
+- Web UI (`app/page.tsx`, `app/layout.tsx`)
+
 ## [4.0.0] - 2026-01-28
 
 ### Added
@@ -83,6 +98,7 @@ The v4 tools fetch TypeScript definitions as the source of truth for API signatu
 - 9 MCP tools for documentation lifecycle
 - FastMCP, Pydantic, httpx, BeautifulSoup4 stack
 
+[6.0.0]: https://github.com/augmnt/augments-mcp-server/releases/tag/v6.0.0
 [4.0.0]: https://github.com/augmnt/augments-mcp-server/releases/tag/v4.0.0
 [3.0.0]: https://github.com/augmnt/augments-mcp-server/releases/tag/v3.0.0
 [2.0.9]: https://github.com/augmnt/augments-mcp-server/releases/tag/v2.0.9
