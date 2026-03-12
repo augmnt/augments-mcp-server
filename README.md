@@ -21,7 +21,7 @@ mcp-name: dev.augments/mcp
 
 ```bash
 # Add the MCP server (runs locally via npx)
-claude mcp add augments -- npx -y @augmnt-sh/augments-mcp-server
+claude mcp add -s user augments -- npx -y @augmnt-sh/augments-mcp-server
 
 # Verify configuration
 claude mcp list
