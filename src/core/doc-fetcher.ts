@@ -15,6 +15,7 @@
 
 import { getLogger } from '@/utils/logger';
 import { getExampleExtractor, type DocSourceConfig } from './example-extractor';
+import { expandWithSynonyms } from './type-parser';
 
 const logger = getLogger('doc-fetcher');
 
@@ -324,6 +325,17 @@ export class DocFetcher {
   /**
    * Match a concept against the file index.
    * Returns matched paths sorted by relevance.
+   *
+   * Scoring strategy:
+   * 1. Full concept exact/prefix/contains match (highest priority: 100/80/70)
+   * 2. Each concept part scored independently and summed, with a bonus when ALL
+   *    parts match the same file (addresses multi-word concepts like "persist middleware")
+   *    - Part exact match in filename:    60 pts each
+   *    - Part contained in filename:      40 pts each
+   *    - Part contained in path:          20 pts each
+   *    - All-parts-match bonus:          +20 (multi-part concepts only)
+   * 3. Path-depth bonus for specificity: +2 per path segment, capped at +10
+   *
    */
   private matchConceptToFiles(
     concept: string,
@@ -331,44 +343,68 @@ export class DocFetcher {
     maxFiles: number
   ): Array<{ path: string; score: number }> {
     const normalized = concept.toLowerCase().replace(/[-_\s]/g, '');
-    const conceptParts = concept.toLowerCase().split(/[-_\s]+/).filter(Boolean);
+    const conceptParts = concept.toLowerCase().split(/[-_\s]+/).filter((p) => p.length >= 2);
+
+    // Expand concept parts with synonyms for broader file matching
+    const expandedParts = expandWithSynonyms(conceptParts);
+    const synonymOnly = expandedParts.filter((p) => !conceptParts.includes(p));
+
     const matches: Array<{ path: string; score: number }> = [];
 
     for (const [fileName, filePath] of fileIndex) {
       let score = 0;
+      const pathLower = filePath.toLowerCase().replace(/[-_]/g, '');
 
-      // Exact match
+      // 1. Full concept exact match (highest priority)
       if (fileName === normalized) {
         score = 100;
-      }
-      // File name starts with concept
-      else if (fileName.startsWith(normalized)) {
+      } else if (fileName.startsWith(normalized)) {
         score = 80;
-      }
-      // Concept starts with file name (e.g., "usestate" starts with "use")
-      else if (normalized.startsWith(fileName) && fileName.length >= 3) {
-        score = 40;
-      }
-      // File name contains concept
-      else if (fileName.includes(normalized)) {
-        score = 60;
-      }
-      // Concept contained in file name
-      else if (normalized.length >= 4 && fileName.includes(normalized)) {
-        score = 50;
-      }
-      // Any concept part matches file name
-      else if (conceptParts.some((part) => part.length >= 3 && fileName.includes(part))) {
-        score = 30;
-      }
-      // Check path components too
-      else {
-        const pathLower = filePath.toLowerCase().replace(/[-_]/g, '');
-        if (pathLower.includes(normalized)) {
-          score = 25;
-        } else if (conceptParts.some((part) => part.length >= 3 && pathLower.includes(part))) {
-          score = 15;
+      } else if (fileName.includes(normalized)) {
+        score = 70;
+      } else if (conceptParts.length > 0) {
+        // 2. Score each part independently and sum
+        let partScore = 0;
+        let partsMatched = 0;
+
+        for (const part of conceptParts) {
+          if (part.length < 2) continue;
+          if (fileName === part) {
+            partScore += 60;
+            partsMatched++;
+          } else if (fileName.includes(part)) {
+            partScore += 40;
+            partsMatched++;
+          } else if (pathLower.includes(part)) {
+            partScore += 20;
+            partsMatched++;
+          }
         }
+
+        // Bonus when ALL parts match the same file (multi-word concepts)
+        if (partsMatched === conceptParts.length && conceptParts.length > 1) {
+          partScore += 20;
+        }
+
+        score = partScore;
+
+        // 3. Synonym expansion: check synonym terms at 50% weight
+        if (score === 0 && synonymOnly.length > 0) {
+          for (const syn of synonymOnly) {
+            if (syn.length < 3) continue;
+            if (fileName.includes(syn)) {
+              score += 20;
+            } else if (pathLower.includes(syn)) {
+              score += 10;
+            }
+          }
+        }
+      }
+
+      // 4. Path-depth bonus for specificity
+      if (score > 0) {
+        const depth = filePath.split('/').length;
+        score += Math.min(depth * 2, 10);
       }
 
       if (score > 0) {
@@ -490,14 +526,32 @@ export class DocFetcher {
     let score = 0;
     const headingLower = section.heading.toLowerCase();
     const bodyLower = section.body.toLowerCase();
+    const conceptParts = conceptLower.split(/[-_\s]+/).filter((p) => p.length >= 2);
 
+    // Full concept match in heading
     if (headingLower.includes(conceptLower)) score += 50;
     if (headingLower === conceptLower) score += 30;
 
-    // Count mentions in body
+    // Per-part heading matches (helps multi-word concepts like "persist middleware")
+    if (conceptParts.length > 1) {
+      const headingMatches = conceptParts.filter((p) => headingLower.includes(p)).length;
+      score += headingMatches * 15;
+      if (headingMatches === conceptParts.length) score += 20;
+    }
+
+    // Count mentions in body — try full concept first, then individual parts
     const escapedConcept = conceptLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const mentions = (bodyLower.match(new RegExp(escapedConcept, 'g')) || []).length;
-    score += Math.min(mentions * 5, 25);
+    const fullMentions = (bodyLower.match(new RegExp(escapedConcept, 'g')) || []).length;
+    score += Math.min(fullMentions * 5, 25);
+
+    if (fullMentions === 0 && conceptParts.length > 1) {
+      let partMentions = 0;
+      for (const part of conceptParts) {
+        const escaped = part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        partMentions += (bodyLower.match(new RegExp(escaped, 'g')) || []).length;
+      }
+      score += Math.min(partMentions * 3, 20);
+    }
 
     // Has code blocks
     if (/```\w*\n/.test(section.body)) score += 10;

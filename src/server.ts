@@ -32,7 +32,7 @@ import { getLogger } from '@/utils/logger';
 const logger = getLogger('mcp-server');
 
 // Server version
-export const SERVER_VERSION = '7.0.0';
+export const SERVER_VERSION = '7.1.0';
 
 // Server start time for diagnostics
 const serverStartTime = Date.now();

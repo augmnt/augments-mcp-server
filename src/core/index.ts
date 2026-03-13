@@ -13,6 +13,7 @@ export {
 export {
   TypeParser,
   getTypeParser,
+  expandWithSynonyms,
   type TypeDefinition,
   type ParameterInfo,
   type MemberInfo,

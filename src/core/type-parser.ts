@@ -89,7 +89,7 @@ const REVERSE_SYNONYM_MAP: Map<string, string[]> = new Map();
  * If any query term matches a concept key OR a synonym value,
  * add all related terms as additional match candidates.
  */
-function expandWithSynonyms(queryParts: string[]): string[] {
+export function expandWithSynonyms(queryParts: string[]): string[] {
   const expanded = new Set(queryParts);
   for (const part of queryParts) {
     // Forward lookup: part is a concept key

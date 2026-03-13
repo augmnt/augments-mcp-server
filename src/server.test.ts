@@ -62,9 +62,9 @@ describe('server', () => {
   });
 
   describe('SERVER_VERSION', () => {
-    it('is 7.0.0', async () => {
+    it('is 7.1.0', async () => {
       const { SERVER_VERSION } = await import('@/server');
-      expect(SERVER_VERSION).toBe('7.0.0');
+      expect(SERVER_VERSION).toBe('7.1.0');
     });
   });
 
@@ -90,7 +90,7 @@ describe('server', () => {
       const { getServer } = await import('@/server');
       await getServer();
       expect(McpServer).toHaveBeenCalledWith(
-        expect.objectContaining({ version: '7.0.0' })
+        expect.objectContaining({ version: '7.1.0' })
       );
     });
 

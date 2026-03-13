@@ -19,6 +19,7 @@ const logger = getLogger('doc-search');
 const BM25_K1 = 1.5;
 const BM25_B = 0.75;
 const API_NAME_BOOST = 3.0;
+const HEADING_BOOST = 2.0;
 
 /**
  * A chunk of documentation content
@@ -99,17 +100,22 @@ export class DocSearchEngine {
     this.totalDocuments++;
     this.indexedChunks++;
 
-    // Tokenize all content
-    const tokens = this.tokenize(
-      `${chunk.heading} ${chunk.prose} ${chunk.apiNames.join(' ')}`
+    // Tokenize heading and body separately for heading boost
+    const headingTokens = this.tokenize(chunk.heading);
+    const bodyTokens = this.tokenize(
+      `${chunk.prose} ${chunk.apiNames.join(' ')}`
     );
+    const allTokens = [...headingTokens, ...bodyTokens];
 
     // Store document length
-    this.documentLengths.set(chunk.id, tokens.length);
+    this.documentLengths.set(chunk.id, allTokens.length);
 
-    // Build term frequencies
+    // Build term frequencies with heading boost
     const termFreqs = new Map<string, number>();
-    for (const token of tokens) {
+    for (const token of headingTokens) {
+      termFreqs.set(token, (termFreqs.get(token) || 0) + HEADING_BOOST);
+    }
+    for (const token of bodyTokens) {
       termFreqs.set(token, (termFreqs.get(token) || 0) + 1);
     }
 
@@ -184,6 +190,18 @@ export class DocSearchEngine {
             break;
           }
         }
+      }
+    }
+
+    // Heading match boost: chunks whose heading contains query terms rank higher
+    for (const [chunkId, score] of scores) {
+      const chunk = this.chunks.get(chunkId);
+      if (!chunk || !chunk.heading) continue;
+      const headingLower = chunk.heading.toLowerCase();
+      const headingMatchCount = queryTokens.filter((t) => headingLower.includes(t)).length;
+      if (headingMatchCount > 0) {
+        const headingBoost = 1 + (headingMatchCount / queryTokens.length) * 0.5;
+        scores.set(chunkId, score * headingBoost);
       }
     }
 
