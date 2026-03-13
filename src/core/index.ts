@@ -1,5 +1,5 @@
 /**
- * Core modules for v4 query-focused context extraction
+ * Core modules for v4+ query-focused context extraction
  */
 
 export {
@@ -41,3 +41,31 @@ export {
   type CodeExample,
   type DocSourceConfig,
 } from './example-extractor';
+
+export {
+  DocFetcher,
+  getDocFetcher,
+  type DocSearchResult,
+} from './doc-fetcher';
+
+export {
+  DocSearchEngine,
+  getDocSearchEngine,
+  type DocChunk,
+  type DocSearchResult as BM25SearchResult,
+} from './doc-search';
+
+export {
+  ChangelogFetcher,
+  getChangelogFetcher,
+} from './changelog-fetcher';
+
+export {
+  TypeDiffer,
+  getTypeDiffer,
+} from './type-differ';
+
+export {
+  getErrorPatterns,
+  type ErrorPattern,
+} from './error-patterns';

@@ -14,6 +14,11 @@ const NPM_REGISTRY = 'https://registry.npmjs.org';
 const UNPKG_CDN = 'https://unpkg.com';
 const JSDELIVR_CDN = 'https://cdn.jsdelivr.net/npm';
 
+// Circuit breaker state for CDN endpoints
+const cdnCircuitBreaker = new Map<string, { failures: number; lastFailure: number }>();
+const CIRCUIT_BREAKER_THRESHOLD = 3;
+const CIRCUIT_BREAKER_RESET_MS = 5 * 60 * 1000; // 5 minutes
+
 // Fetch timeouts (ms) — prevents hung upstreams from blocking the server
 const NPM_TIMEOUT = 10_000; // 10s for npm registry
 const CDN_TIMEOUT = 8_000;  // 8s for CDN (unpkg, jsdelivr)
@@ -168,21 +173,30 @@ export class TypeFetcher {
   private readonly PACKAGE_INFO_TTL = 1800 * 1000; // 30 minutes
 
   /**
-   * Fetch with retry and backoff — only for npm registry calls
+   * Fetch with retry and exponential backoff — only for npm registry calls
    * (CDN calls already have redundancy via fetchFromCdn racing)
    */
   private async fetchWithRetry(
     url: string,
     options: RequestInit,
-    retries: number = 1,
-    backoffMs: number = 1500
+    retries: number = 1
   ): Promise<Response> {
     let lastError: Error | null = null;
     for (let attempt = 0; attempt <= retries; attempt++) {
       try {
         const response = await fetch(url, options);
+        // Handle 429 rate limiting with Retry-After header
+        if (response.status === 429 && attempt < retries) {
+          const retryAfter = response.headers.get('Retry-After');
+          const waitMs = retryAfter ? parseFloat(retryAfter) * 1000 : Math.min(1000 * Math.pow(2, attempt) + Math.random() * 500, 10000);
+          logger.debug('Registry 429, retrying after delay', { url, attempt, waitMs });
+          await new Promise((resolve) => setTimeout(resolve, waitMs));
+          continue;
+        }
         // Retry on 5xx server errors
         if (response.status >= 500 && attempt < retries) {
+          const jitter = Math.random() * 500;
+          const backoffMs = Math.min(1000 * Math.pow(2, attempt) + jitter, 10000);
           logger.debug('Registry 5xx, retrying', { url, status: response.status, attempt });
           await new Promise((resolve) => setTimeout(resolve, backoffMs));
           continue;
@@ -191,6 +205,8 @@ export class TypeFetcher {
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
         if (attempt < retries) {
+          const jitter = Math.random() * 500;
+          const backoffMs = Math.min(1000 * Math.pow(2, attempt) + jitter, 10000);
           logger.debug('Registry fetch failed, retrying', { url, attempt, error: lastError.message });
           await new Promise((resolve) => setTimeout(resolve, backoffMs));
         }
@@ -415,6 +431,7 @@ export class TypeFetcher {
   /**
    * Race both CDN endpoints in parallel, returning the first successful response.
    * Eliminates sequential fallback latency (up to 8s saved when one CDN is slow).
+   * Applies a circuit breaker per CDN host to skip repeatedly failing endpoints.
    */
   private async fetchFromCdn(
     packageName: string,
@@ -424,18 +441,58 @@ export class TypeFetcher {
     const unpkgUrl = `${UNPKG_CDN}/${packageName}@${version}/${filePath}`;
     const jsdelivrUrl = `${JSDELIVR_CDN}/${packageName}@${version}/${filePath}`;
 
-    const fetchCdn = async (url: string): Promise<string> => {
-      const response = await fetch(url, { signal: AbortSignal.timeout(CDN_TIMEOUT) });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      return response.text();
+    const isTripped = (host: string): boolean => {
+      const state = cdnCircuitBreaker.get(host);
+      if (!state) return false;
+      if (Date.now() - state.lastFailure > CIRCUIT_BREAKER_RESET_MS) {
+        cdnCircuitBreaker.delete(host);
+        return false;
+      }
+      return state.failures >= CIRCUIT_BREAKER_THRESHOLD;
     };
+
+    const recordFailure = (host: string): void => {
+      const state = cdnCircuitBreaker.get(host) ?? { failures: 0, lastFailure: 0 };
+      cdnCircuitBreaker.set(host, { failures: state.failures + 1, lastFailure: Date.now() });
+    };
+
+    const recordSuccess = (host: string): void => {
+      cdnCircuitBreaker.delete(host);
+    };
+
+    const fetchCdn = async (url: string, host: string): Promise<string> => {
+      if (isTripped(host)) {
+        logger.warn('CDN circuit breaker open, skipping', { host });
+        throw new Error(`Circuit breaker open for ${host}`);
+      }
+      try {
+        const response = await fetch(url, { signal: AbortSignal.timeout(CDN_TIMEOUT) });
+        if (!response.ok) {
+          recordFailure(host);
+          throw new Error(`HTTP ${response.status}`);
+        }
+        recordSuccess(host);
+        return response.text();
+      } catch (error) {
+        if (!(error instanceof Error && error.message.startsWith('Circuit breaker open'))) {
+          recordFailure(host);
+        }
+        throw error;
+      }
+    };
+
+    const cdnEntries: Array<[string, string]> = [
+      [unpkgUrl, UNPKG_CDN],
+      [jsdelivrUrl, JSDELIVR_CDN],
+    ];
 
     try {
       // Race both CDNs — first success wins
-      return await Promise.any([fetchCdn(unpkgUrl), fetchCdn(jsdelivrUrl)]);
+      return await Promise.any(cdnEntries.map(([url, host]) => fetchCdn(url, host)));
     } catch {
       // All CDN attempts failed
-      logger.debug('All CDN fetches failed', { packageName, version, filePath });
+      const failedCdns = cdnEntries.map(([, host]) => host);
+      logger.warn('All CDN fetches failed', { packageName, version, filePath, failedCdns });
       return null;
     }
   }
@@ -786,6 +843,7 @@ export class TypeFetcher {
   clearCache(): void {
     this.cache.clear();
     this.packageInfoCache.clear();
+    cdnCircuitBreaker.clear();
     logger.debug('Cache cleared');
   }
 }

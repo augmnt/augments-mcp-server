@@ -1,6 +1,6 @@
 {
   "name": "@augmnt-sh/augments-mcp-server",
-  "version": "6.0.0",
+  "version": "7.0.0",
   "description": "Augments MCP Server - Framework Documentation Provider for AI Assistants",
   "type": "module",
   "bin": {
@@ -20,6 +20,9 @@
     "type-check": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "AUGMENTS_E2E=1 vitest run",
+    "test:coverage": "vitest run --coverage",
+    "postbuild": "chmod +x dist/cli.js",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {

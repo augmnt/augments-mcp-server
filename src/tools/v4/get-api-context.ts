@@ -12,6 +12,7 @@ import {
   getTypeParser,
   getVersionRegistry,
   getExampleExtractor,
+  getDocFetcher,
   type ApiSignature,
   type CodeExample,
   type ParsedQuery,
@@ -337,9 +338,11 @@ export async function getApiContext(
 
   logger.debug('Resolved version', { packageName, resolvedVersion });
 
-  // Fetch type definitions and examples in parallel (both are I/O-bound)
-  // Examples have a soft 3s timeout — type signatures (primary value) are never delayed
+  // Fetch type definitions, doc content, and examples in parallel (all I/O-bound)
+  // Examples and docs have soft 3s timeout — type signatures (primary value) are never delayed
   const EXAMPLE_SOFT_TIMEOUT = 3000;
+  const docFetcher = getDocFetcher();
+
   const typesPromise = typeFetcher.fetchTypes(packageName, resolvedVersion);
   const rawExamplesPromise = input.includeExamples !== false
     ? exampleExtractor.getExamplesForConcept(framework, parsedQuery.concept)
@@ -348,8 +351,15 @@ export async function getApiContext(
     rawExamplesPromise,
     new Promise<CodeExample[]>((resolve) => setTimeout(() => resolve([]), EXAMPLE_SOFT_TIMEOUT)),
   ]);
+  // Documentation-first: fetch real docs from GitHub
+  const docSearchPromise = Promise.race([
+    docFetcher.searchDocs(framework, parsedQuery.concept),
+    new Promise<Awaited<ReturnType<typeof docFetcher.searchDocs>>>((resolve) =>
+      setTimeout(() => resolve([]), EXAMPLE_SOFT_TIMEOUT)
+    ),
+  ]);
 
-  const [types, rawExamples] = await Promise.all([typesPromise, examplesPromise]);
+  const [types, rawExamples, docResults] = await Promise.all([typesPromise, examplesPromise, docSearchPromise]);
 
   let api: ApiSignature | null = null;
   const relatedApis: string[] = [];
@@ -449,35 +459,53 @@ export async function getApiContext(
   const maxExamples = input.maxExamples || 2;
   let examples: CodeExample[] = rawExamples.slice(0, maxExamples);
 
-  // README fallback: if no examples and no curated doc source, try package README
-  let readmeContent: string | null = null;
-  if (examples.length === 0 && !exampleExtractor.getDocSource(framework)) {
-    logger.debug('No examples and no doc source — trying README fallback', { packageName });
-    readmeContent = await Promise.race([
+  // Documentation-first: use doc search results as primary prose source
+  let prose: string | null = null;
+  if (docResults.length > 0) {
+    // Combine prose from top doc results
+    const proseSegments = docResults
+      .filter((r) => r.prose)
+      .map((r) => r.prose)
+      .slice(0, 2);
+    if (proseSegments.length > 0) {
+      prose = proseSegments.join('\n\n');
+      if (prose.length > 3000) prose = prose.substring(0, 2997) + '...';
+    }
+
+    // Supplement examples from doc search code blocks if needed
+    if (examples.length < maxExamples) {
+      for (const docResult of docResults) {
+        for (const block of docResult.codeBlocks) {
+          if (examples.length >= maxExamples) break;
+          examples.push({
+            code: block.code,
+            language: block.language,
+            source: docResult.source,
+            concepts: [parsedQuery.concept],
+            context: block.context,
+          });
+        }
+      }
+    }
+  }
+
+  // Fallback: fetch README once if no doc content (shared between examples and prose)
+  if (!prose || examples.length === 0) {
+    const readmeContent = await Promise.race([
       typeFetcher.fetchReadme(packageName, resolvedVersion),
       new Promise<null>((resolve) => setTimeout(() => resolve(null), EXAMPLE_SOFT_TIMEOUT)),
     ]);
 
     if (readmeContent) {
-      const readmeExamples = extractReadmeExamples(readmeContent, parsedQuery.concept);
-      examples = readmeExamples.slice(0, maxExamples);
-      logger.debug('README fallback examples', { count: examples.length });
-    }
-  }
-
-  // Extract prose documentation from README or doc content
-  let prose: string | null = null;
-  if (readmeContent) {
-    prose = extractProseForConcept(readmeContent, parsedQuery.concept);
-  }
-  // If no README was fetched but we have a doc source, we could still try README for prose
-  if (!prose && !readmeContent) {
-    const readmeForProse = await Promise.race([
-      typeFetcher.fetchReadme(packageName, resolvedVersion),
-      new Promise<null>((resolve) => setTimeout(() => resolve(null), EXAMPLE_SOFT_TIMEOUT)),
-    ]);
-    if (readmeForProse) {
-      prose = extractProseForConcept(readmeForProse, parsedQuery.concept);
+      // README fallback for examples
+      if (examples.length === 0) {
+        const readmeExamples = extractReadmeExamples(readmeContent, parsedQuery.concept);
+        examples = readmeExamples.slice(0, maxExamples);
+      }
+      // README fallback for prose
+      if (!prose) {
+        prose = extractProseForConcept(readmeContent, parsedQuery.concept);
+      }
     }
   }
 

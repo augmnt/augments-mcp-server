@@ -7,12 +7,16 @@
  */
 
 import { getLogger } from '@/utils/logger';
+import { LRUCache } from '@/utils/lru-cache';
 import { getTypeFetcher } from './type-fetcher';
 
 const logger = getLogger('example-extractor');
 
 // Fetch timeout for GitHub raw content
 const GITHUB_TIMEOUT = 8_000; // 8s
+
+let githubRateLimitRemaining = 60; // Default for unauthenticated
+let githubRateLimitReset = 0;
 
 /**
  * A code example with metadata
@@ -326,10 +330,9 @@ interface DiscoveredDocSource {
 
 export class ExampleExtractor {
   private cache: Map<string, CodeExample[]> = new Map();
-  private conceptCache: Map<string, { examples: CodeExample[]; fetchedAt: number }> = new Map();
+  private conceptCache: LRUCache<string, { examples: CodeExample[]; fetchedAt: number }> = new LRUCache(100);
   private discoveryCache: Map<string, DiscoveredDocSource | null> = new Map();
   private readonly CACHE_TTL = 3600 * 1000; // 1 hour
-  private readonly MAX_CONCEPT_CACHE_SIZE = 100;
 
   /**
    * Extract code examples from markdown content
@@ -521,7 +524,18 @@ export class ExampleExtractor {
       const url = this.buildGitHubRawUrl(config.repo, config.branch, filePath);
       logger.debug('Fetching examples from GitHub', { url });
 
+      if (githubRateLimitRemaining <= 1 && Date.now() / 1000 < githubRateLimitReset) {
+        logger.warn('GitHub rate limited, skipping fetch', { resetAt: githubRateLimitReset });
+        return [];
+      }
+
       const response = await fetch(url, { signal: AbortSignal.timeout(GITHUB_TIMEOUT) });
+
+      const remaining = response.headers.get('X-RateLimit-Remaining');
+      const reset = response.headers.get('X-RateLimit-Reset');
+      if (remaining !== null) githubRateLimitRemaining = parseInt(remaining, 10);
+      if (reset !== null) githubRateLimitReset = parseInt(reset, 10);
+
       if (!response.ok) {
         logger.debug('Failed to fetch GitHub content', {
           url,
@@ -594,11 +608,22 @@ export class ExampleExtractor {
       // Probe in parallel with a 5s overall timeout
       const probePromises = probePaths.map(async (path) => {
         try {
+          if (githubRateLimitRemaining <= 1 && Date.now() / 1000 < githubRateLimitReset) {
+            logger.warn('GitHub rate limited, skipping fetch', { resetAt: githubRateLimitReset });
+            return null;
+          }
+
           const url = `https://raw.githubusercontent.com/${owner}/${repo}/main/${path}`;
           const response = await fetch(url, {
             method: 'HEAD',
             signal: AbortSignal.timeout(5000),
           });
+
+          const remaining = response.headers.get('X-RateLimit-Remaining');
+          const reset = response.headers.get('X-RateLimit-Reset');
+          if (remaining !== null) githubRateLimitRemaining = parseInt(remaining, 10);
+          if (reset !== null) githubRateLimitReset = parseInt(reset, 10);
+
           if (response.ok) return path;
         } catch {
           // Ignore probe failures
@@ -719,13 +744,7 @@ export class ExampleExtractor {
       count: scored.length,
     });
 
-    // Cache the scored results (evict oldest if at capacity)
-    if (this.conceptCache.size >= this.MAX_CONCEPT_CACHE_SIZE) {
-      const firstKey = this.conceptCache.keys().next().value;
-      if (firstKey !== undefined) {
-        this.conceptCache.delete(firstKey);
-      }
-    }
+    // Cache the scored results (LRU eviction)
     this.conceptCache.set(conceptKey, { examples: scored, fetchedAt: Date.now() });
 
     return scored;

@@ -4,15 +4,13 @@
  * A comprehensive MCP server that provides real-time access to framework documentation
  * and context to enhance Claude Code's ability to generate accurate, up-to-date code.
  *
- * v6: Local stdio MCP server, npm-publishable, tsup bundle.
- * Consolidated to 3 tools for optimal LLM tool-use decisions.
+ * v7: Documentation-first search, 7 tools, BM25 indexing, migration guides, error diagnosis.
  *
  * Uses the official MCP SDK for Claude Code compatibility.
  */
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-// v4 Tools: Query-focused context extraction
 import {
   getApiContext,
   formatApiContextResponse,
@@ -20,13 +18,24 @@ import {
   formatSearchApisResponse,
   getVersionInfo,
   formatVersionInfoResponse,
+  getMigrationGuide,
+  formatMigrationGuideResponse,
+  diagnoseError,
+  formatDiagnoseErrorResponse,
+  comparePackages,
+  formatComparePackagesResponse,
+  scanProjectDeps,
+  formatScanProjectDepsResponse,
 } from '@/tools/v4';
 import { getLogger } from '@/utils/logger';
 
 const logger = getLogger('mcp-server');
 
 // Server version
-export const SERVER_VERSION = '6.0.0';
+export const SERVER_VERSION = '7.0.0';
+
+// Server start time for diagnostics
+const serverStartTime = Date.now();
 
 // Registered tool count — set during initialization, used by health check
 export let registeredToolCount = 0;
@@ -51,7 +60,6 @@ function formatError(error: unknown, toolName?: string): { content: Array<{ type
   const message = error instanceof Error ? error.message : String(error);
   const prefix = toolName ? `Error in ${toolName}: ` : 'Error: ';
 
-  // Add recovery suggestions for common errors
   let hint = '';
   const msgLower = message.toLowerCase();
   if (msgLower.includes('timeout') || msgLower.includes('timed out') || msgLower.includes('aborted')) {
@@ -70,8 +78,6 @@ function formatError(error: unknown, toolName?: string): { content: Array<{ type
 
 /**
  * Create and configure the MCP server instance.
- *
- * Registers all tools and kicks off background cache warming on first call.
  */
 export async function getServer(): Promise<McpServer> {
   const server = new McpServer({
@@ -137,7 +143,7 @@ export async function getServer(): Promise<McpServer> {
 
   server.tool(
     'get_version_info',
-    'Get version info, available versions, and breaking change detection for any npm package.',
+    'Get version info, available versions, and breaking change detection for any npm package. Now includes actual breaking changes and new features from changelogs.',
     {
       framework: z.string().min(1).describe('Framework or package name'),
       fromVersion: z.string().optional().describe('Compare from this version'),
@@ -159,12 +165,174 @@ export async function getServer(): Promise<McpServer> {
   );
   toolCount++;
 
+  // ==================== New Tools (4) ====================
+
+  server.tool(
+    'get_migration_guide',
+    'Get a detailed migration guide between package versions. Returns breaking changes, new features, deprecations, type diffs, and official migration docs.',
+    {
+      package: z.string().min(1).describe('Package or framework name (e.g., "react", "next", "prisma")'),
+      fromVersion: z.string().min(1).describe('Version to migrate from (e.g., "18", "14.0.0")'),
+      toVersion: z.string().optional().describe('Version to migrate to (defaults to latest)'),
+    },
+    async ({ package: pkg, fromVersion, toVersion }) => {
+      try {
+        const result = await getMigrationGuide({
+          package: pkg,
+          fromVersion,
+          toVersion,
+        });
+        return formatResult(formatMigrationGuideResponse(result));
+      } catch (error) {
+        logger.error('Tool execution failed', { tool: 'get_migration_guide', error });
+        return formatError(error, 'get_migration_guide');
+      }
+    }
+  );
+  toolCount++;
+
+  server.tool(
+    'diagnose_error',
+    'Diagnose an error message or stack trace. Matches against known error patterns, searches GitHub issues, and finds relevant documentation.',
+    {
+      error: z.string().min(1).describe('The error message or stack trace to diagnose'),
+      package: z.string().optional().describe('Package or framework the error is from'),
+      version: z.string().optional().describe('Package version'),
+    },
+    async ({ error, package: pkg, version }) => {
+      try {
+        const result = await diagnoseError({
+          error,
+          package: pkg,
+          version,
+        });
+        return formatResult(formatDiagnoseErrorResponse(result));
+      } catch (err) {
+        logger.error('Tool execution failed', { tool: 'diagnose_error', error: err });
+        return formatError(err, 'diagnose_error');
+      }
+    }
+  );
+  toolCount++;
+
+  server.tool(
+    'compare_packages',
+    'Compare npm packages side-by-side: downloads, bundle size, dependencies, GitHub stars, exported APIs. Great for choosing between alternatives.',
+    {
+      packages: z.array(z.string()).min(2).max(5).describe('Package names to compare (2-5)'),
+      criteria: z.string().optional().describe('Focus area (e.g., "bundle size", "popularity")'),
+    },
+    async ({ packages, criteria }) => {
+      try {
+        const result = await comparePackages({ packages, criteria });
+        return formatResult(formatComparePackagesResponse(result));
+      } catch (error) {
+        logger.error('Tool execution failed', { tool: 'compare_packages', error });
+        return formatError(error, 'compare_packages');
+      }
+    }
+  );
+  toolCount++;
+
+  server.tool(
+    'scan_project_deps',
+    'Scan project dependencies for outdated packages, major updates, deprecated packages, and security advisories. Reads package.json.',
+    {
+      packageJsonPath: z.string().optional().describe('Path to package.json (defaults to ./package.json)'),
+      checkTypes: z.array(z.enum(['updates', 'deprecated', 'security'])).optional().describe('Types of checks to run'),
+    },
+    async ({ packageJsonPath, checkTypes }) => {
+      try {
+        const result = await scanProjectDeps({ packageJsonPath, checkTypes });
+        return formatResult(formatScanProjectDepsResponse(result));
+      } catch (error) {
+        logger.error('Tool execution failed', { tool: 'scan_project_deps', error });
+        return formatError(error, 'scan_project_deps');
+      }
+    }
+  );
+  toolCount++;
+
+  // ==================== Diagnostics Tool ====================
+
+  server.tool(
+    'diagnostics',
+    'Get server health information: version, uptime, memory usage, cache statistics, and Node.js version.',
+    {},
+    async () => {
+      try {
+        const { getDocFetcher, getDocSearchEngine } = await import('@/core');
+        const docFetcher = getDocFetcher();
+        const searchEngine = getDocSearchEngine();
+
+        const memUsage = process.memoryUsage();
+        const uptimeMs = Date.now() - serverStartTime;
+        const uptimeMin = Math.floor(uptimeMs / 60_000);
+
+        const info = {
+          version: SERVER_VERSION,
+          nodeVersion: process.version,
+          platform: process.platform,
+          uptime: `${uptimeMin}m ${Math.floor((uptimeMs % 60_000) / 1000)}s`,
+          memory: {
+            heapUsed: `${(memUsage.heapUsed / 1024 / 1024).toFixed(1)}MB`,
+            heapTotal: `${(memUsage.heapTotal / 1024 / 1024).toFixed(1)}MB`,
+            rss: `${(memUsage.rss / 1024 / 1024).toFixed(1)}MB`,
+          },
+          tools: toolCount,
+          caches: {
+            docFetcher: docFetcher.getCacheStats(),
+            searchEngine: searchEngine.getStats(),
+          },
+        };
+
+        return formatResult(JSON.stringify(info, null, 2));
+      } catch (error) {
+        return formatError(error, 'diagnostics');
+      }
+    }
+  );
+  toolCount++;
+
   registeredToolCount = toolCount;
+
+  // ==================== MCP Resources ====================
+
+  server.resource(
+    'frameworks',
+    'augments://frameworks',
+    async () => {
+      const { getQueryParser } = await import('@/core');
+      const parser = getQueryParser();
+      const frameworks = parser.getKnownFrameworks();
+
+      const content = [
+        '# Supported Frameworks',
+        '',
+        'The following frameworks and packages are supported with curated documentation sources, type definitions, and optimized search:',
+        '',
+        ...frameworks.map((f) => {
+          const pkg = parser.getPackageName(f);
+          return `- **${f}**${pkg && pkg !== f ? ` (${pkg})` : ''}`;
+        }),
+        '',
+        `Total: ${frameworks.length} frameworks`,
+      ].join('\n');
+
+      return {
+        contents: [{
+          uri: 'augments://frameworks',
+          mimeType: 'text/markdown',
+          text: content,
+        }],
+      };
+    }
+  );
 
   // Cache warming: kick off once on first request (non-blocking)
   if (!cacheWarmingStarted) {
     cacheWarmingStarted = true;
-    logger.info('MCP Server initialized, starting cache warming', {
+    logger.info('MCP Server initialized', {
       tools: toolCount,
       version: SERVER_VERSION,
     });
@@ -180,13 +348,11 @@ export async function getServer(): Promise<McpServer> {
 
 /**
  * Pre-fetch types for the most commonly queried frameworks.
- * Runs in the background after server initialization to eliminate cold-start latency.
  */
 async function warmPopularFrameworks(): Promise<void> {
   const { getTypeFetcher } = await import('@/core');
   const typeFetcher = getTypeFetcher();
 
-  // Tier 1: Full type warming (types + npm metadata)
   const tier1Packages = [
     'react',
     'next',
@@ -198,7 +364,6 @@ async function warmPopularFrameworks(): Promise<void> {
     'react-dom',
   ];
 
-  // Tier 2: Metadata-only warming (npm metadata for faster first use)
   const tier2Packages = [
     'lodash',
     'axios',
@@ -214,25 +379,32 @@ async function warmPopularFrameworks(): Promise<void> {
     '@trpc/server',
   ];
 
-  // Warm tier 1 in batches of 4
-  const batchSize = 4;
-  for (let i = 0; i < tier1Packages.length; i += batchSize) {
-    const batch = tier1Packages.slice(i, i + batchSize);
-    await Promise.allSettled(
-      batch.map((pkg) => typeFetcher.fetchTypes(pkg))
-    );
-  }
+  // Warm tier 1 in batches of 6 (I/O bound)
+  const batchSize = 6;
+  const totalTimeout = setTimeout(() => {
+    logger.warn('Cache warming timed out after 30s');
+  }, 30_000);
 
-  // Warm tier 2 with metadata only (getPackageInfo is much cheaper)
-  for (let i = 0; i < tier2Packages.length; i += batchSize) {
-    const batch = tier2Packages.slice(i, i + batchSize);
-    await Promise.allSettled(
-      batch.map((pkg) => typeFetcher.getPackageInfo(pkg))
-    );
-  }
+  try {
+    for (let i = 0; i < tier1Packages.length; i += batchSize) {
+      const batch = tier1Packages.slice(i, i + batchSize);
+      await Promise.allSettled(
+        batch.map((pkg) => typeFetcher.fetchTypes(pkg))
+      );
+    }
 
-  logger.info('Cache warming completed', {
-    tier1: tier1Packages.length,
-    tier2: tier2Packages.length,
-  });
+    for (let i = 0; i < tier2Packages.length; i += batchSize) {
+      const batch = tier2Packages.slice(i, i + batchSize);
+      await Promise.allSettled(
+        batch.map((pkg) => typeFetcher.getPackageInfo(pkg))
+      );
+    }
+
+    logger.info('Cache warming completed', {
+      tier1: tier1Packages.length,
+      tier2: tier2Packages.length,
+    });
+  } finally {
+    clearTimeout(totalTimeout);
+  }
 }

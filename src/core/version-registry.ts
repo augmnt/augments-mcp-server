@@ -8,6 +8,7 @@
 
 import { getLogger } from '@/utils/logger';
 import { getTypeFetcher } from './type-fetcher';
+import { getChangelogFetcher } from './changelog-fetcher';
 
 const logger = getLogger('version-registry');
 
@@ -79,6 +80,10 @@ export interface VersionDiff {
   isMajorChange: boolean;
   /** Summary of changes */
   summary: string[];
+  /** Actual breaking changes from changelog/releases */
+  breakingChanges?: string[];
+  /** New features from changelog/releases */
+  newFeatures?: string[];
 }
 
 /**
@@ -209,7 +214,6 @@ export class VersionRegistry {
       summary.push(
         `Major version change from ${fromParsed.major} to ${toParsed.major}`
       );
-      summary.push('This likely includes breaking changes');
       summary.push(
         `Check the ${packageName} migration guide for v${toParsed.major}`
       );
@@ -223,11 +227,45 @@ export class VersionRegistry {
       summary.push('Bug fixes and improvements');
     }
 
+    // Fetch actual breaking changes and new features from changelog/releases
+    let breakingChanges: string[] | undefined;
+    let newFeatures: string[] | undefined;
+
+    try {
+      const changelogFetcher = getChangelogFetcher();
+      const [breaking, features] = await Promise.all([
+        changelogFetcher.getBreakingChanges(packageName, fromVersion, toVersion),
+        changelogFetcher.getNewFeatures(packageName, fromVersion, toVersion),
+      ]);
+
+      if (breaking.length > 0) {
+        breakingChanges = breaking;
+        summary.push(`Found ${breaking.length} breaking change(s)`);
+      } else if (isMajorChange) {
+        summary.push('No specific breaking changes found in changelog — check official migration guide');
+      }
+
+      if (features.length > 0) {
+        newFeatures = features;
+        summary.push(`Found ${features.length} new feature(s)`);
+      }
+    } catch (error) {
+      logger.debug('Failed to fetch changelog data for version diff', {
+        packageName,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      if (isMajorChange) {
+        summary.push('Could not fetch changelog — this likely includes breaking changes');
+      }
+    }
+
     return {
       from: fromVersion,
       to: toVersion,
       isMajorChange,
       summary,
+      breakingChanges,
+      newFeatures,
     };
   }
 

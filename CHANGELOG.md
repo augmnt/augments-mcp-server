@@ -5,6 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.0.0] - 2026-03-13
+
+### Added
+- **Documentation-first search**: New `DocFetcher` fetches real documentation from GitHub repos via Git Trees API, with in-memory file-name-to-path indexing and 1hr caching
+- **BM25 search engine**: New `DocSearchEngine` indexes documentation by heading-based chunks with inverted index, BM25 scoring (k1=1.5, b=0.75), and 3x API name boosting
+- **25 concept synonym clusters**: Expanded from 8 to 25 clusters (added middleware, pagination, validation, testing, streaming, error, database, layout, modal, table, upload, realtime, deployment, i18n, SSR, component, context) with bidirectional reverse lookup
+- **`get_migration_guide` tool**: Cross-version migration guides with breaking changes, new features, deprecations, type diffs, and official migration docs from changelogs and GitHub Releases
+- **`diagnose_error` tool**: Error diagnosis using curated pattern database (~25 patterns across React, Next.js, Prisma, Zod, etc.), GitHub Issues search, and troubleshooting docs
+- **`compare_packages` tool**: Side-by-side comparison of 2-5 npm packages — downloads, bundle size, GitHub stars, dependencies, exported API counts
+- **`scan_project_deps` tool**: Scans package.json for outdated packages, deprecated dependencies, and security advisories via npm bulk advisory endpoint
+- **`diagnostics` tool**: Server health reporting — version, uptime, memory usage, cache statistics, Node.js version
+- **`augments://frameworks` MCP resource**: Lists all supported frameworks with package name mappings
+- **Changelog fetcher**: Fetches and parses CHANGELOG.md + GitHub Releases API, categorizes entries into breaking changes, features, bug fixes, deprecations
+- **Type differ**: Compares .d.ts exports between versions, reports added/removed/changed APIs
+- **LRU cache utility**: Generic LRU cache with max size eviction and hit/miss statistics, replacing FIFO eviction across all modules
+- **Test suite**: 295 tests across 10 test files — type-fetcher, version-registry, get-version-info, server, e2e-network, integration, and extended get-api-context tests
+- **E2E test script**: `npm run test:e2e` for real network tests against npm/GitHub/CDNs
+
+### Changed
+- **Documentation-first pipeline**: `get_api_context` now parallel-fetches types + docs + examples, using doc search results as primary prose source with README fallback
+- **`get_version_info` enhanced**: Now returns real breaking changes and new features from changelogs instead of generic messages
+- **`search_apis` fixed**: `DEFAULT_SEARCH_FRAMEWORKS` now uses correct framework alias keys instead of package names
+- **Exponential backoff with jitter**: Registry retries use `1000 * 2^attempt + random(0-500)ms` capped at 10s, with 429 Retry-After header support
+- **CDN circuit breaker**: Skips CDN endpoints after 3 failures within 5 minutes, auto-resets
+- **GitHub rate limiting**: Tracks `X-RateLimit-Remaining`/`X-RateLimit-Reset` headers, skips fetches when exhausted
+- **djb2 hash collision handling**: Parse cache now verifies content equality before returning cached results
+- **Levenshtein early termination**: Added `maxDistance` parameter that bails when row minimum exceeds threshold
+- **Cache warming**: Increased batch size 4→6 with 30s total timeout
+- **Build optimized**: Added `minify: true` and `treeshake: true` to tsup config
+- **Startup validation**: CLI validates Node.js >=18 and logs version/platform info
+- Bumped version to 7.0.0 (8 tools + diagnostics)
+
 ## [6.0.0] - 2026-03-12
 
 ### Changed
@@ -98,7 +130,8 @@ The v4 tools fetch TypeScript definitions as the source of truth for API signatu
 - 9 MCP tools for documentation lifecycle
 - FastMCP, Pydantic, httpx, BeautifulSoup4 stack
 
-[6.0.0]: https://github.com/augmnt/augments-mcp-server/releases/tag/v6.0.0
+[7.0.0]: https://github.com/augmentscode/augments-mcp-server/releases/tag/v7.0.0
+[6.0.0]: https://github.com/augmentscode/augments-mcp-server/releases/tag/v6.0.0
 [4.0.0]: https://github.com/augmnt/augments-mcp-server/releases/tag/v4.0.0
 [3.0.0]: https://github.com/augmnt/augments-mcp-server/releases/tag/v3.0.0
 [2.0.9]: https://github.com/augmnt/augments-mcp-server/releases/tag/v2.0.9

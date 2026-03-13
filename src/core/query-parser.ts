@@ -7,6 +7,7 @@
  */
 
 import { getLogger } from '@/utils/logger';
+import { LRUCache } from '@/utils/lru-cache';
 
 const logger = getLogger('query-parser');
 
@@ -470,8 +471,7 @@ const CONTEXT_KEYWORDS = [
  * Query parser for extracting framework and concept from natural language
  */
 export class QueryParser {
-  private parseCache: Map<string, ParsedQuery> = new Map();
-  private readonly MAX_PARSE_CACHE_SIZE = 200;
+  private parseCache: LRUCache<string, ParsedQuery> = new LRUCache(200);
 
   /**
    * Parse a natural language query into structured components
@@ -528,13 +528,7 @@ export class QueryParser {
       confidence: result.confidence,
     });
 
-    // Cache the result (evict oldest if at capacity)
-    if (this.parseCache.size >= this.MAX_PARSE_CACHE_SIZE) {
-      const firstKey = this.parseCache.keys().next().value;
-      if (firstKey !== undefined) {
-        this.parseCache.delete(firstKey);
-      }
-    }
+    // Cache the result (LRU eviction)
     this.parseCache.set(query, result);
 
     return result;
@@ -642,8 +636,8 @@ export class QueryParser {
       for (const token of tokens) {
         if (token.length < 3) continue;
         for (const [framework, info] of Object.entries(FRAMEWORK_ALIASES)) {
-          const distance = levenshteinDistance(token, framework);
           const tolerance = Math.ceil(framework.length * 0.3);
+          const distance = levenshteinDistance(token, framework, tolerance);
           if (distance > 0 && distance <= tolerance) {
             bestMatch = {
               framework,
@@ -861,13 +855,19 @@ export class QueryParser {
 }
 
 /**
- * Lightweight Levenshtein distance for fuzzy matching
+ * Lightweight Levenshtein distance for fuzzy matching.
+ * Supports early termination when distance exceeds maxDistance.
  */
-function levenshteinDistance(a: string, b: string): number {
+function levenshteinDistance(a: string, b: string, maxDistance?: number): number {
   const m = a.length;
   const n = b.length;
   if (m === 0) return n;
   if (n === 0) return m;
+
+  // Early termination: if length difference exceeds max, bail out
+  if (maxDistance !== undefined && Math.abs(m - n) > maxDistance) {
+    return maxDistance + 1;
+  }
 
   // Use single row for space efficiency
   let prev = Array.from({ length: n + 1 }, (_, i) => i);
@@ -875,6 +875,7 @@ function levenshteinDistance(a: string, b: string): number {
 
   for (let i = 1; i <= m; i++) {
     curr[0] = i;
+    let rowMin = curr[0];
     for (let j = 1; j <= n; j++) {
       const cost = a[i - 1] === b[j - 1] ? 0 : 1;
       curr[j] = Math.min(
@@ -882,6 +883,11 @@ function levenshteinDistance(a: string, b: string): number {
         curr[j - 1] + 1,  // insertion
         prev[j - 1] + cost // substitution
       );
+      if (curr[j] < rowMin) rowMin = curr[j];
+    }
+    // Early termination: if all values in this row exceed maxDistance, bail
+    if (maxDistance !== undefined && rowMin > maxDistance) {
+      return maxDistance + 1;
     }
     [prev, curr] = [curr, prev];
   }

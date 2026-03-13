@@ -207,6 +207,30 @@ export function formatVersionInfoResponse(output: GetVersionInfoOutput): string 
       lines.push(`- ${note}`);
     }
     lines.push('');
+
+    // Show actual breaking changes if found
+    if (output.diff.breakingChanges && output.diff.breakingChanges.length > 0) {
+      lines.push('### Breaking Changes');
+      for (const change of output.diff.breakingChanges.slice(0, 20)) {
+        lines.push(`- ${change}`);
+      }
+      if (output.diff.breakingChanges.length > 20) {
+        lines.push(`*...and ${output.diff.breakingChanges.length - 20} more*`);
+      }
+      lines.push('');
+    }
+
+    // Show new features if found
+    if (output.diff.newFeatures && output.diff.newFeatures.length > 0) {
+      lines.push('### New Features');
+      for (const feature of output.diff.newFeatures.slice(0, 15)) {
+        lines.push(`- ${feature}`);
+      }
+      if (output.diff.newFeatures.length > 15) {
+        lines.push(`*...and ${output.diff.newFeatures.length - 15} more*`);
+      }
+      lines.push('');
+    }
   }
 
   // Notes

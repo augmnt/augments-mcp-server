@@ -12,6 +12,7 @@
 
 import ts from 'typescript';
 import { getLogger } from '@/utils/logger';
+import { LRUCache } from '@/utils/lru-cache';
 
 const logger = getLogger('type-parser');
 
@@ -32,6 +33,7 @@ const SCORE_SYNONYM_MATCH = 40;
  * "state management" → matches useState, createStore, atom, etc.
  */
 const CONCEPT_SYNONYMS: Record<string, string[]> = {
+  // Original 8 clusters
   state: ['usestate', 'usereducer', 'createstore', 'atom', 'signal', 'ref', 'reactive', 'writable', 'store'],
   form: ['useform', 'formdata', 'register', 'handlesubmit', 'validate', 'field', 'control'],
   fetch: ['usequery', 'useswr', 'fetch', 'axios', 'request', 'get', 'post', 'createclient'],
@@ -40,19 +42,75 @@ const CONCEPT_SYNONYMS: Record<string, string[]> = {
   auth: ['useauth', 'signin', 'signout', 'session', 'token', 'authorize', 'authenticate', 'login'],
   cache: ['usecache', 'cache', 'memoize', 'memo', 'usememo', 'persist', 'store', 'invalidate'],
   effect: ['useeffect', 'watcheffect', 'watch', 'onmount', 'onmounted', 'afterrender', 'lifecycle'],
+
+  // Expanded clusters (17 new)
+  middleware: ['middleware', 'plugin', 'interceptor', 'hook', 'handler', 'pipe', 'guard', 'filter'],
+  pagination: ['pagination', 'paginate', 'cursor', 'offset', 'limit', 'skip', 'take', 'page', 'infinite', 'loadmore'],
+  validation: ['validate', 'validator', 'schema', 'parse', 'safeparse', 'check', 'assert', 'constraint', 'zod', 'yup'],
+  testing: ['test', 'describe', 'it', 'expect', 'mock', 'spy', 'stub', 'fixture', 'beforeeach', 'aftereach'],
+  streaming: ['stream', 'pipe', 'readable', 'writable', 'transform', 'chunk', 'buffer', 'sse', 'eventsource'],
+  error: ['error', 'errorhandler', 'errorboundary', 'catch', 'throw', 'fallback', 'retry', 'onerror'],
+  database: ['database', 'db', 'query', 'select', 'insert', 'update', 'delete', 'where', 'join', 'transaction', 'migration'],
+  layout: ['layout', 'grid', 'flex', 'container', 'sidebar', 'header', 'footer', 'responsive'],
+  modal: ['modal', 'dialog', 'drawer', 'sheet', 'overlay', 'popup', 'popover', 'tooltip'],
+  table: ['table', 'datagrid', 'column', 'row', 'sort', 'filter', 'pagination', 'datatable'],
+  upload: ['upload', 'file', 'dropzone', 'multipart', 'formdata', 'blob', 'fileinput'],
+  realtime: ['realtime', 'websocket', 'socket', 'subscribe', 'channel', 'broadcast', 'sse', 'eventstream'],
+  deployment: ['deploy', 'build', 'bundle', 'config', 'env', 'docker', 'ci', 'cd', 'vercel', 'netlify'],
+  i18n: ['i18n', 'intl', 'locale', 'translate', 'translation', 'localize', 'language', 'formatmessage'],
+  ssr: ['ssr', 'serverside', 'getserversideprops', 'getstaticprops', 'hydrate', 'hydrateroot', 'rendertostring'],
+  component: ['component', 'forwardref', 'memo', 'lazy', 'suspense', 'errorboundary', 'portal', 'fragment'],
+  context: ['context', 'createcontext', 'usecontext', 'provider', 'consumer', 'inject', 'provide'],
 };
 
 /**
- * Expand query terms with synonyms. If any query term matches a concept key,
- * add all synonym terms as additional match candidates.
+ * Reverse lookup: maps individual terms back to their concept clusters.
+ * Enables bidirectional matching — if query contains "usestate", match the "state" cluster.
+ */
+const REVERSE_SYNONYM_MAP: Map<string, string[]> = new Map();
+(function buildReverseLookup() {
+  for (const [concept, synonyms] of Object.entries(CONCEPT_SYNONYMS)) {
+    // Map concept key itself
+    const existing = REVERSE_SYNONYM_MAP.get(concept) || [];
+    existing.push(concept);
+    REVERSE_SYNONYM_MAP.set(concept, existing);
+
+    // Map each synonym
+    for (const syn of synonyms) {
+      const clusters = REVERSE_SYNONYM_MAP.get(syn) || [];
+      clusters.push(concept);
+      REVERSE_SYNONYM_MAP.set(syn, clusters);
+    }
+  }
+})();
+
+/**
+ * Expand query terms with synonyms using bidirectional lookup.
+ * If any query term matches a concept key OR a synonym value,
+ * add all related terms as additional match candidates.
  */
 function expandWithSynonyms(queryParts: string[]): string[] {
   const expanded = new Set(queryParts);
   for (const part of queryParts) {
+    // Forward lookup: part is a concept key
     const synonyms = CONCEPT_SYNONYMS[part];
     if (synonyms) {
       for (const syn of synonyms) {
         expanded.add(syn);
+      }
+    }
+
+    // Reverse lookup: part is a synonym value — find its cluster(s) and expand
+    const clusters = REVERSE_SYNONYM_MAP.get(part);
+    if (clusters) {
+      for (const cluster of clusters) {
+        expanded.add(cluster);
+        const clusterSynonyms = CONCEPT_SYNONYMS[cluster];
+        if (clusterSynonyms) {
+          for (const syn of clusterSynonyms) {
+            expanded.add(syn);
+          }
+        }
       }
     }
   }
@@ -139,8 +197,7 @@ function djb2Hash(str: string): number {
  */
 export class TypeParser {
   private printer: ts.Printer;
-  private parseCache: Map<number, ParseResult> = new Map();
-  private readonly MAX_PARSE_CACHE_SIZE = 200;
+  private parseCache: LRUCache<number, { content: string; result: ParseResult }> = new LRUCache(200);
 
   constructor() {
     this.printer = ts.createPrinter({
@@ -154,12 +211,12 @@ export class TypeParser {
    * Results are cached based on content hash.
    */
   parse(content: string, fileName: string = 'types.d.ts'): ParseResult {
-    // Check parse cache
+    // Check parse cache with collision verification
     const contentHash = djb2Hash(content);
     const cached = this.parseCache.get(contentHash);
-    if (cached) {
+    if (cached && cached.content === content) {
       logger.debug('Parse cache hit', { fileName, hash: contentHash });
-      return cached;
+      return cached.result;
     }
 
     const definitions: TypeDefinition[] = [];
@@ -203,14 +260,8 @@ export class TypeParser {
 
     const result = { definitions, relatedTypes, errors };
 
-    // Cache the result (evict oldest if at capacity)
-    if (this.parseCache.size >= this.MAX_PARSE_CACHE_SIZE) {
-      const firstKey = this.parseCache.keys().next().value;
-      if (firstKey !== undefined) {
-        this.parseCache.delete(firstKey);
-      }
-    }
-    this.parseCache.set(contentHash, result);
+    // Cache the result (LRU eviction)
+    this.parseCache.set(contentHash, { content, result });
 
     logger.debug('Parsed type definitions', {
       fileName,

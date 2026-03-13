@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import {
   formatApiContextResponse,
+  detectIntent,
   type GetApiContextOutput,
 } from './get-api-context';
 import type { ParsedQuery, ApiSignature, CodeExample } from '@/core';
@@ -233,6 +234,121 @@ describe('get-api-context', () => {
         const exampleCount = (response.match(/\*Source:/g) || []).length;
         expect(exampleCount).toBeLessThanOrEqual(5);
       });
+    });
+  });
+
+  describe('detectIntent', () => {
+    it('detects howto intent', () => {
+      expect(detectIntent('how to use useState')).toBe('howto');
+      expect(detectIntent('show me an example of useEffect')).toBe('howto');
+      expect(detectIntent('explain prisma findMany')).toBe('howto');
+      expect(detectIntent('getting started with zod')).toBe('howto');
+      expect(detectIntent('can you show how to use middleware')).toBe('howto');
+    });
+
+    it('detects reference intent', () => {
+      expect(detectIntent('useState signature')).toBe('reference');
+      expect(detectIntent('what are the parameters for findMany')).toBe('reference');
+      expect(detectIntent('return type of useQuery')).toBe('reference');
+      expect(detectIntent('overloads for createElement')).toBe('reference');
+    });
+
+    it('detects migration intent', () => {
+      expect(detectIntent('migrate from v18 to v19')).toBe('migration');
+      expect(detectIntent('upgrade react breaking changes')).toBe('migration');
+      expect(detectIntent('v18 to v19 migration')).toBe('migration');
+    });
+
+    it('returns balanced for generic queries', () => {
+      expect(detectIntent('react useState')).toBe('balanced');
+      expect(detectIntent('prisma findMany')).toBe('balanced');
+      expect(detectIntent('zustand middleware')).toBe('balanced');
+    });
+  });
+
+  describe('formatApiContextResponse edge cases', () => {
+    function makeOutput(overrides: Partial<GetApiContextOutput> = {}): GetApiContextOutput {
+      const defaultQuery: ParsedQuery = {
+        framework: 'react',
+        packageName: 'react',
+        concept: 'useState',
+        version: null,
+        originalQuery: 'react useState',
+        confidence: 0.8,
+        contextKeywords: [],
+      };
+
+      return {
+        framework: 'react',
+        packageName: 'react',
+        version: '18.2.0',
+        api: null,
+        relatedApis: [],
+        examples: [],
+        prose: null,
+        intent: 'balanced' as const,
+        confidence: 0.8,
+        query: defaultQuery,
+        notes: [],
+        ...overrides,
+      };
+    }
+
+    it('includes prose documentation when present', () => {
+      const output = makeOutput({
+        prose: 'useState is a React Hook that lets you add a state variable to your component.',
+      });
+      const response = formatApiContextResponse(output);
+      expect(response).toContain('## Description');
+      expect(response).toContain('useState is a React Hook');
+    });
+
+    it('handles output with no api, no examples, no prose', () => {
+      const output = makeOutput({
+        notes: ['No results found for this query'],
+      });
+      const response = formatApiContextResponse(output);
+      expect(response).toContain('# react API Context');
+      expect(response).toContain('No results found');
+      expect(response).not.toContain('## API Signature');
+      expect(response).not.toContain('## Code Examples');
+    });
+
+    it('renders howto intent with examples first', () => {
+      const api: ApiSignature = {
+        name: 'useState',
+        signature: 'function useState<S>(init: S): [S, (v: S) => void]',
+        relatedTypes: {},
+      };
+      const examples: CodeExample[] = [
+        { code: 'const [x, setX] = useState(0);', language: 'tsx', source: 'docs.md', concepts: ['usestate'] },
+      ];
+      const output = makeOutput({ intent: 'howto', api, examples });
+      const response = formatApiContextResponse(output);
+      const examplesIdx = response.indexOf('## Code Examples');
+      const sigIdx = response.indexOf('## API Signature');
+      expect(examplesIdx).toBeLessThan(sigIdx);
+    });
+
+    it('handles multiple examples with different languages', () => {
+      const examples: CodeExample[] = [
+        {
+          code: 'const [count, setCount] = useState(0);',
+          language: 'tsx',
+          source: 'docs/hooks.md',
+          concepts: ['usestate'],
+        },
+        {
+          code: "import { useState } from 'react';",
+          language: 'typescript',
+          source: 'README.md',
+          concepts: ['usestate'],
+        },
+      ];
+      const output = makeOutput({ examples });
+      const response = formatApiContextResponse(output);
+      expect(response).toContain('```tsx');
+      expect(response).toContain('```typescript');
     });
   });
 });

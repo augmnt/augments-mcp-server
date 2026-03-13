@@ -215,12 +215,17 @@ vi.mock('@/core', () => {
     }),
   };
 
+  const mockDocFetcher = {
+    searchDocs: vi.fn(async () => []),
+  };
+
   return {
     getQueryParser: () => mockQueryParser,
     getTypeFetcher: () => mockTypeFetcher,
     getTypeParser: () => mockTypeParser,
     getVersionRegistry: () => mockVersionRegistry,
     getExampleExtractor: () => mockExampleExtractor,
+    getDocFetcher: () => mockDocFetcher,
   };
 });
 

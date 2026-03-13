@@ -8,6 +8,8 @@ export default defineConfig({
   outDir: 'dist',
   clean: true,
   sourcemap: true,
+  minify: true,
+  treeshake: true,
   external: ['@modelcontextprotocol/sdk', 'zod', 'typescript'],
   esbuildOptions(options) {
     options.alias = {
