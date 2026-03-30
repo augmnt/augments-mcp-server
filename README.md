@@ -94,6 +94,10 @@ Set `GITHUB_TOKEN` for higher GitHub API rate limits when fetching examples and 
 @augments scan_project_deps
 ```
 
+## Hosted deployment
+
+A hosted deployment is available on [Fronteir AI](https://fronteir.ai/mcp/augmnt-augments-mcp-server).
+
 ## Tools
 
 | Tool | Description |
