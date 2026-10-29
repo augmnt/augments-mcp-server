@@ -258,4 +258,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Built for the Claude Code ecosystem** | **Version 7.0.0**
+**Built for the Claude Code ecosystem** | **Version 7.1.0**
